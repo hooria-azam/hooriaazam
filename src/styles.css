@@ -2,14 +2,20 @@
 @source "../src";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: "Katros";
+  src: url("/fonts/Katros.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Katros (commercial) with Fraunces as web-safe visual fallback */
   --font-display: "Katros", "Fraunces", "Times New Roman", serif;
   --font-sans: "DM Sans", system-ui, sans-serif;
-  /* Basis Grotesque (commercial) with Space Grotesk fallback */
-  --font-button: "Basis Grotesque", "Space Grotesk", system-ui, sans-serif;
+  --font-button: "Space Grotesk", system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
@@ -29,7 +35,7 @@
   --deep: #06040f;
   --foreground: #e8ecf3;
   --muted: rgba(255, 255, 255, 0.04);
-  --muted-foreground: #b4bdcc;
+  --muted-foreground: #c9d1de;
   --primary: #7c3aed;
   --primary-foreground: #ffffff;
   --accent: #a855f7;
@@ -81,39 +87,39 @@
     color: #000;
   }
 
-  /* Typography system — Katros (display) for every heading */
+  /* Typography — Katros applied ONLY to H1 + H2 per spec */
   h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h2 {
     font-family: var(--font-display);
     font-weight: 400;
   }
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+  }
 
   h1 {
-    /* Target 133/143 — clamps so 320px stays inside the viewport */
-    font-size: clamp(2.75rem, 9.2vw, 8.3125rem);
-    line-height: 1.075; /* 143/133 */
+    font-size: clamp(2.5rem, 9vw, 8.3125rem);
+    line-height: 1.05;
     text-transform: uppercase;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
   }
   h2 {
-    /* Target 61/77 */
-    font-size: clamp(2rem, 5vw, 3.8125rem);
-    line-height: 1.26;
+    font-size: clamp(1.875rem, 5vw, 3.8125rem);
+    line-height: 1.15;
     text-transform: uppercase;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.01em;
   }
   h3,
   h4,
   h5,
   h6 {
-    /* Target 35/61 */
-    font-size: clamp(1.375rem, 2.6vw, 2.1875rem);
-    line-height: 1.45;
-    letter-spacing: 0.2px;
+    font-size: clamp(1.25rem, 2.4vw, 2rem);
+    line-height: 1.4;
+    letter-spacing: 0.1px;
   }
 
   button,
