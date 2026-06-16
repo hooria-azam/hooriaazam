@@ -2,14 +2,20 @@
 @source "../src";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: "Katros";
+  src: url("/fonts/Katros.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Katros (commercial) with Fraunces as web-safe visual fallback */
   --font-display: "Katros", "Fraunces", "Times New Roman", serif;
   --font-sans: "DM Sans", system-ui, sans-serif;
-  /* Basis Grotesque (commercial) with Space Grotesk fallback */
-  --font-button: "Basis Grotesque", "Space Grotesk", system-ui, sans-serif;
+  --font-button: "Space Grotesk", system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
