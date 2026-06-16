@@ -86,8 +86,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Hooria Azam — Frontend & WordPress Developer" },
       { name: "twitter:description", content: "Frontend Developer, WordPress Expert & UI/UX Designer with 5+ years crafting cinematic, high-performance digital experiences." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/0f8f22c9-0bbc-4ad9-94b8-de2ae7adf6c4/id-preview-fd875bd7--41fee24d-2f4f-4ed3-91d1-545a04f8218d.lovable.app-1781170122414.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/0f8f22c9-0bbc-4ad9-94b8-de2ae7adf6c4/id-preview-fd875bd7--41fee24d-2f4f-4ed3-91d1-545a04f8218d.lovable.app-1781170122414.png" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/fc2b2346-4fa5-49af-9a98-d5ec0248da97" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/fc2b2346-4fa5-49af-9a98-d5ec0248da97" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
