@@ -48,7 +48,7 @@ function Nav() {
   }, []);
   const links: [string, string][] = [
     ["About", "#about"], ["Services", "#services"], ["Skills", "#skills"],
-    ["Work", "#projects"], ["Contact", "#contact"],
+    ["Work", "#projects"], ["Pricing", "#pricing"], ["Contact", "#contact"],
   ];
   return (
     <motion.nav
