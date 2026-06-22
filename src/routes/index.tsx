@@ -1186,6 +1186,8 @@ function Portfolio() {
       <Skills />
       <Process />
       <Projects />
+      <Pricing />
+
       <Why />
       <Testimonials />
       <Contact />
