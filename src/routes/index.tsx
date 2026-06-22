@@ -555,7 +555,7 @@ function AnimatedPrice({ value }: { value: number }) {
   return <span>${display.toLocaleString()}</span>;
 }
 
-function PricingCard({ p, i }: { p: typeof PLANS[number]; i: number }) {
+function PricingCard({ p, i }: { p: Plan; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0); // 0..100
   const my = useMotionValue(0);
