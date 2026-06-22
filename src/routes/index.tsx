@@ -509,7 +509,8 @@ function MagneticButton({
 }
 
 /* ───────── PRICING — luxury redesign ───────── */
-const PLANS = [
+type Plan = { name: string; price: number; blurb: string; features: readonly string[]; cta: string; featured?: boolean };
+const PLANS: readonly Plan[] = [
   {
     name: "Starter",
     price: 750,
