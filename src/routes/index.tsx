@@ -119,109 +119,566 @@ function SectionTag({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ───────── HERO — image-background redesign ───────── */
+/* ───────── HERO — rebuilt from scratch: spotlight + floating skills ───────── */
+const HERO_SKILLS = [
+  { t: "Front-End Development", i: "⚡" },
+  { t: "React & Next.js", i: "⚛" },
+  { t: "WordPress Development", i: "◆" },
+  { t: "Elementor Pro", i: "◇" },
+  { t: "UI/UX Design", i: "✦" },
+  { t: "Responsive Design", i: "▢" },
+  { t: "Custom Animations", i: "✺" },
+  { t: "Performance Optimization", i: "▲" },
+  { t: "E-Commerce Solutions", i: "🛒" },
+];
+
 function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const mx = useMotionValue(0); // -1..1 cursor x
+  const my = useMotionValue(0);
+  const smx = useSpring(mx, { stiffness: 60, damping: 18 });
+  const smy = useSpring(my, { stiffness: 60, damping: 18 });
+
+  // Spotlight angle (radians) — auto rotates; locks to hovered skill
+  const angle = useMotionValue(0);
+  const sAngle = useSpring(angle, { stiffness: 35, damping: 14, mass: 1 });
+  const [lockedAngle, setLockedAngle] = useState<number | null>(null);
+
+  // Parallax layers driven by cursor
+  const pxBg = useTransform(smx, (v) => v * -20);
+  const pyBg = useTransform(smy, (v) => v * -20);
+  const pxMid = useTransform(smx, (v) => v * -10);
+  const pyMid = useTransform(smy, (v) => v * -10);
+
+  // Scroll fade
+  const { scrollY } = useScroll();
+  const heroOpacity = useTransform(scrollY, [0, 600], [1, 0]);
+  const heroY = useTransform(scrollY, [0, 600], [0, 80]);
+
+  // Auto-rotate spotlight
+  useEffect(() => {
+    let raf = 0;
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = (now - last) / 1000;
+      last = now;
+      if (lockedAngle === null) {
+        angle.set(angle.get() + dt * 0.25); // slow scan
+      } else {
+        // smooth-set target
+        const cur = angle.get();
+        let diff = lockedAngle - cur;
+        // shortest path
+        diff = ((diff + Math.PI) % (Math.PI * 2)) - Math.PI;
+        angle.set(cur + diff * Math.min(1, dt * 4));
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [angle, lockedAngle]);
+
+  // Cursor handler
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
+      const ny = ((e.clientY - r.top) / r.height) * 2 - 1;
+      mx.set(Math.max(-1, Math.min(1, nx)));
+      my.set(Math.max(-1, Math.min(1, ny)));
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [mx, my]);
+
+  // Spotlight rotation transform
+  const spotRotate = useTransform(sAngle, (a) => `${(a * 180) / Math.PI}deg`);
+
+  const headline = ["Creating", "Digital", "Experiences", "Worth", "Remembering"];
+
   return (
-    <section
+    <motion.section
+      ref={sectionRef}
       id="hero"
+      style={{ opacity: heroOpacity, y: heroY }}
       className="relative isolate min-h-[100svh] w-full overflow-hidden flex items-center justify-center"
     >
-      {/* Ambient gradient washes */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(124,58,237,0.35),transparent_60%)]" aria-hidden />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(34,211,238,0.18),transparent_55%)]" aria-hidden />
-      <div className="absolute inset-0 grid-bg opacity-30" aria-hidden />
-
-      {/* Centered hero image — the focal point sits behind the headline */}
-      <div className="absolute inset-0 z-[1] flex items-center justify-center pointer-events-none" aria-hidden>
-        <motion.img
-          src={heroAsset.url}
-          alt=""
-          initial={{ opacity: 0, scale: 1.05 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.6, ease: [0.2, 0.8, 0.2, 1] }}
-          className="w-[min(140%,1400px)] max-w-none object-contain opacity-90 mix-blend-screen drop-shadow-[0_0_80px_rgba(192,132,252,0.4)] select-none"
-          style={{ filter: "saturate(1.1)" }}
-        />
-      </div>
-
-      {/* Readability overlay — radial dark in the center so text is always legible */}
+      {/* Layer 1 — luxury background wash */}
       <div
-        className="absolute inset-0 z-[2] pointer-events-none"
+        className="absolute inset-0"
         aria-hidden
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(2,2,7,0.78) 0%, rgba(2,2,7,0.55) 35%, rgba(2,2,7,0.2) 65%, rgba(2,2,7,0) 90%)",
+            "radial-gradient(ellipse at 20% 10%, #1a0b2e 0%, transparent 55%), radial-gradient(ellipse at 80% 90%, #2a0a3a 0%, transparent 55%), linear-gradient(180deg, #06040f 0%, #020207 100%)",
         }}
       />
-      <div className="absolute inset-x-0 bottom-0 z-[2] h-40 bg-gradient-to-b from-transparent to-[var(--background)] pointer-events-none" aria-hidden />
 
-      {/* Content — centered */}
-      <div className="container-x relative z-10 flex flex-col items-center text-center pt-28 pb-20 sm:pt-32">
-        <Reveal>
-          <div className="glass inline-flex items-center gap-2 rounded-full px-4 py-2 text-[10px] sm:text-xs uppercase tracking-[0.25em] text-white/90">
+      {/* Layer 2 — drifting orbs */}
+      <motion.div className="absolute inset-0" style={{ x: pxBg, y: pyBg }} aria-hidden>
+        <div className="hero-orb" style={{ top: "10%", left: "12%", width: 420, height: 420, background: "rgba(124,58,237,0.45)" }} />
+        <div className="hero-orb" style={{ top: "55%", left: "70%", width: 520, height: 520, background: "rgba(232,121,249,0.30)", animationDelay: "-6s" }} />
+        <div className="hero-orb" style={{ top: "70%", left: "5%", width: 360, height: 360, background: "rgba(34,211,238,0.22)", animationDelay: "-10s" }} />
+      </motion.div>
+
+      {/* Layer 3 — radar rings (centered behind content) */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" aria-hidden>
+        {[0, 1.5, 3, 4.5].map((d) => (
+          <div
+            key={d}
+            className="radar-ring"
+            style={{
+              width: 900,
+              height: 900,
+              marginLeft: -450,
+              marginTop: -450,
+              animationDelay: `-${d}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Layer 4 — grain (handled globally via body::before) */}
+
+      {/* Layer 5 — particles */}
+      <Particles count={28} />
+
+      {/* SPOTLIGHT BEAM */}
+      <motion.div
+        className="absolute left-1/2 top-1/2 pointer-events-none z-[3]"
+        style={{
+          width: 1400,
+          height: 1400,
+          marginLeft: -700,
+          marginTop: -700,
+          rotate: spotRotate,
+          x: pxMid,
+          y: pyMid,
+        }}
+        aria-hidden
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "conic-gradient(from 0deg, transparent 0deg, rgba(192,132,252,0.0) 75deg, rgba(192,132,252,0.18) 85deg, rgba(232,121,249,0.35) 90deg, rgba(192,132,252,0.18) 95deg, transparent 105deg, transparent 360deg)",
+            filter: "blur(20px)",
+          }}
+        />
+        {/* central glow */}
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          style={{
+            width: 240,
+            height: 240,
+            background: "radial-gradient(circle, rgba(232,121,249,0.55), rgba(124,58,237,0.2) 50%, transparent 75%)",
+            filter: "blur(8px)",
+          }}
+        />
+      </motion.div>
+
+      {/* Readability vignette */}
+      <div
+        className="absolute inset-0 z-[4] pointer-events-none"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(2,2,7,0.55) 0%, rgba(2,2,7,0.35) 40%, rgba(2,2,7,0.7) 100%)",
+        }}
+      />
+      <div className="absolute inset-x-0 bottom-0 z-[4] h-40 bg-gradient-to-b from-transparent to-[var(--background)] pointer-events-none" aria-hidden />
+
+      {/* FLOATING SKILL CARDS (desktop only, around the content) */}
+      <div className="absolute inset-0 z-[6] hidden lg:block pointer-events-none" aria-hidden={false}>
+        {HERO_SKILLS.map((s, i) => {
+          const a = (i / HERO_SKILLS.length) * Math.PI * 2 - Math.PI / 2;
+          const radius = 38; // % of min(w,h) — placed via vmin
+          const x = 50 + Math.cos(a) * radius;
+          const y = 50 + Math.sin(a) * radius * 0.78;
+          return (
+            <FloatingSkill
+              key={s.t}
+              label={s.t}
+              icon={s.i}
+              delay={i * 0.08}
+              style={{ left: `${x}%`, top: `${y}%` }}
+              onEnter={() => setLockedAngle(a)}
+              onLeave={() => setLockedAngle(null)}
+            />
+          );
+        })}
+      </div>
+
+      {/* CONTENT */}
+      <motion.div
+        className="container-x relative z-[7] flex flex-col items-center text-center pt-28 pb-20 sm:pt-32"
+        style={{ x: useTransform(smx, (v) => v * 6), y: useTransform(smy, (v) => v * 6) }}
+      >
+        {/* Status badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
+          className="badge-float"
+        >
+          <div className="glass-strong inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[10px] sm:text-xs uppercase tracking-[0.28em] text-white/95 shadow-[0_0_30px_rgba(192,132,252,0.25)] hover:shadow-[0_0_45px_rgba(232,121,249,0.4)] hover:border-[var(--neon)]/50 transition-all duration-500">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inset-0 animate-ping rounded-full bg-[var(--cyan)] opacity-75" />
-              <span className="relative h-2 w-2 rounded-full bg-[var(--cyan)]" />
+              <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
             </span>
             Available · 5+ Years Experience
           </div>
-        </Reveal>
+        </motion.div>
 
-        <Reveal delay={0.1}>
-          <h3 className="mt-6 sm:mt-8 text-sm sm:text-base font-medium uppercase tracking-[0.4em] text-[var(--neon)] drop-shadow-[0_2px_12px_rgba(192,132,252,0.5)]">
+        {/* Signature name */}
+        <motion.div
+          initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 1.2, delay: 0.15, ease: [0.2, 0.8, 0.2, 1] }}
+          className="mt-7 sm:mt-9 signature-glow"
+        >
+          <div className="font-display italic text-2xl sm:text-3xl md:text-4xl tracking-[0.04em] shimmer-text">
             Hooria Azam
-          </h3>
-        </Reveal>
-
-        <Reveal delay={0.2}>
-          <h1 className="mt-4 sm:mt-6 max-w-[18ch] mx-auto font-display !normal-case font-extrabold leading-[1.02] tracking-tight text-white"
-              style={{ fontSize: "clamp(2.25rem, 7vw, 6.5rem)", textShadow: "0 4px 30px rgba(0,0,0,0.6)" }}>
-            Creating{" "}
-            <span className="text-gradient">Digital Experiences</span>{" "}
-            Worth Remembering
-          </h1>
-        </Reveal>
-
-        <Reveal delay={0.35}>
-          <p className="mt-6 sm:mt-8 max-w-2xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed text-white/85">
-            The web is crowded with ordinary. I build experiences that stand apart.
-            Through thoughtful design, clean development, and meticulous attention to detail,
-            I craft websites that feel premium, perform flawlessly, and leave a lasting impression.
-          </p>
-        </Reveal>
-
-        <Reveal delay={0.5}>
-          <div className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-            <a href="#projects" className="btn-primary">View My Work</a>
-            <a href="#contact" className="btn-ghost">Start a Project →</a>
           </div>
-        </Reveal>
+          <div className="mx-auto mt-2 h-px w-20 bg-gradient-to-r from-transparent via-[var(--neon)] to-transparent" />
+        </motion.div>
 
-        {/* Stats — high contrast, fixed visibility */}
-        <Reveal delay={0.65}>
-          <div className="mt-12 sm:mt-16 grid grid-cols-3 gap-3 sm:gap-5 w-full max-w-2xl">
-            {[
-              { n: "5+", l: "Years" },
-              { n: "80+", l: "Projects" },
-              { n: "100%", l: "Satisfaction" },
-            ].map((s) => (
-              <div key={s.l} className="glass-strong rounded-2xl p-3 sm:p-5 text-center">
-                <div className="font-display font-extrabold leading-none text-gradient drop-shadow-[0_2px_12px_rgba(192,132,252,0.4)]"
-                     style={{ fontSize: "clamp(1.75rem, 4.5vw, 2.75rem)" }}>{s.n}</div>
-                <div className="mt-1.5 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.18em] text-white/85">{s.l}</div>
-              </div>
-            ))}
-          </div>
-        </Reveal>
+        {/* H1 with staggered word reveal */}
+        <h1
+          className="mt-6 sm:mt-8 max-w-[16ch] mx-auto font-display !normal-case font-extrabold leading-[1.02] tracking-tight text-white"
+          style={{ fontSize: "clamp(2.5rem, 7.4vw, 6.75rem)", textShadow: "0 4px 30px rgba(0,0,0,0.6)" }}
+        >
+          {headline.map((w, i) => (
+            <motion.span
+              key={w + i}
+              initial={{ opacity: 0, y: 40, filter: "blur(14px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.9, delay: 0.4 + i * 0.12, ease: [0.2, 0.8, 0.2, 1] }}
+              className="inline-block mr-[0.28em]"
+            >
+              {w === "Digital" || w === "Experiences" ? <span className="text-gradient">{w}</span> : w}
+            </motion.span>
+          ))}
+        </h1>
+
+        {/* Description */}
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 1.05, ease: [0.2, 0.8, 0.2, 1] }}
+          className="mt-7 sm:mt-9 max-w-[58ch] mx-auto text-sm sm:text-base md:text-lg leading-[1.75] text-white/85"
+        >
+          The web is crowded with ordinary. I build experiences that stand apart.
+          Through thoughtful design, clean development, and meticulous attention to detail,
+          I craft websites that feel premium, perform flawlessly, and leave a lasting impression.
+        </motion.p>
+
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 1.25, ease: [0.2, 0.8, 0.2, 1] }}
+          className="mt-9 sm:mt-11 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
+        >
+          <MagneticButton href="#projects" variant="primary">View My Work</MagneticButton>
+          <MagneticButton href="#contact" variant="ghost">
+            Start a Project
+            <motion.span
+              className="inline-block ml-1"
+              animate={{ x: [0, 4, 0] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+            >→</motion.span>
+          </MagneticButton>
+        </motion.div>
+      </motion.div>
+
+      {/* Skills as grid on mobile/tablet */}
+      <div className="absolute inset-x-0 bottom-0 z-[7] lg:hidden pb-10 px-4" aria-hidden={false}>
+        <div className="container-x grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {HERO_SKILLS.slice(0, 6).map((s) => (
+            <div key={s.t} className="glass rounded-2xl px-3 py-2.5 flex items-center gap-2 min-w-0">
+              <span className="text-base shrink-0">{s.i}</span>
+              <span className="text-[10px] sm:text-xs text-white/90 truncate font-medium">{s.t}</span>
+            </div>
+          ))}
+        </div>
       </div>
+    </motion.section>
+  );
+}
 
-      <div className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 text-[10px] uppercase tracking-[0.3em] text-white/70 hidden sm:block">
-        <div className="mx-auto mb-2 h-8 w-px bg-gradient-to-b from-[var(--neon)] to-transparent" />
-        Scroll
+function Particles({ count = 24 }: { count?: number }) {
+  const particles = useRef(
+    Array.from({ length: count }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      d: 6 + Math.random() * 12,
+      delay: Math.random() * 8,
+      size: 1 + Math.random() * 2.5,
+      o: 0.3 + Math.random() * 0.5,
+    })),
+  ).current;
+  return (
+    <div className="absolute inset-0 z-[5] pointer-events-none overflow-hidden" aria-hidden>
+      {particles.map((p) => (
+        <motion.span
+          key={p.id}
+          className="absolute rounded-full bg-white"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: p.size,
+            height: p.size,
+            opacity: p.o,
+            boxShadow: `0 0 ${p.size * 4}px rgba(192,132,252,0.8)`,
+          }}
+          animate={{ y: [0, -40, 0], opacity: [p.o, p.o * 0.3, p.o] }}
+          transition={{ duration: p.d, repeat: Infinity, ease: "easeInOut", delay: p.delay }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function FloatingSkill({
+  label, icon, delay, style, onEnter, onLeave,
+}: {
+  label: string; icon: string; delay: number;
+  style: React.CSSProperties;
+  onEnter: () => void; onLeave: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 200, damping: 18 });
+  const sy = useSpring(y, { stiffness: 200, damping: 18 });
+  return (
+    <motion.div
+      ref={ref}
+      style={{ ...style, x: sx, y: sy, translateX: "-50%", translateY: "-50%" }}
+      className="absolute pointer-events-auto"
+      initial={{ opacity: 0, scale: 0.85 }}
+      animate={{ opacity: 1, scale: 1, y: [0, -8, 0] }}
+      transition={{
+        opacity: { duration: 0.8, delay: 1.4 + delay },
+        scale: { duration: 0.8, delay: 1.4 + delay },
+        y: { duration: 5 + delay * 2, repeat: Infinity, ease: "easeInOut", delay: 1.4 + delay },
+      }}
+      onMouseEnter={() => { onEnter(); }}
+      onMouseLeave={() => { x.set(0); y.set(0); onLeave(); }}
+      onMouseMove={(e) => {
+        const r = ref.current!.getBoundingClientRect();
+        x.set((e.clientX - r.left - r.width / 2) * 0.35);
+        y.set((e.clientY - r.top - r.height / 2) * 0.35);
+      }}
+    >
+      <div className="glass-strong group flex items-center gap-2.5 rounded-full pl-3 pr-4 py-2 cursor-pointer hover:border-[var(--neon)]/60 hover:shadow-[0_0_40px_rgba(192,132,252,0.5)] transition-all duration-500">
+        <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/30 text-sm shrink-0">{icon}</span>
+        <span className="text-[11px] font-medium text-white/95 whitespace-nowrap">{label}</span>
+      </div>
+    </motion.div>
+  );
+}
+
+function MagneticButton({
+  href, variant, children,
+}: { href: string; variant: "primary" | "ghost"; children: React.ReactNode }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 220, damping: 18 });
+  const sy = useSpring(y, { stiffness: 220, damping: 18 });
+  return (
+    <motion.a
+      ref={ref}
+      href={href}
+      style={{ x: sx, y: sy }}
+      onMouseMove={(e) => {
+        const r = ref.current!.getBoundingClientRect();
+        x.set((e.clientX - r.left - r.width / 2) * 0.25);
+        y.set((e.clientY - r.top - r.height / 2) * 0.4);
+      }}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+      className={variant === "primary" ? "btn-primary" : "btn-ghost"}
+    >
+      {children}
+    </motion.a>
+  );
+}
+
+/* ───────── PRICING — luxury redesign ───────── */
+const PLANS = [
+  {
+    name: "Starter",
+    price: 750,
+    blurb: "Perfect for individuals and small projects that need a polished web presence.",
+    features: ["Up to 5 pages", "Custom responsive design", "WordPress or static build", "Basic SEO setup", "1 round of revisions", "2-week delivery"],
+    cta: "Start Small",
+  },
+  {
+    name: "Professional",
+    price: 1850,
+    blurb: "Most chosen — for serious brands ready to stand out with cinematic polish.",
+    features: ["Up to 12 pages", "Custom UI/UX system", "Premium animations & interactions", "WooCommerce integration", "Full SEO + performance pass", "3 rounds of revisions", "Priority delivery"],
+    cta: "Go Professional",
+    featured: true,
+  },
+  {
+    name: "Premium",
+    price: 3500,
+    blurb: "For agencies, founders, and brands building flagship experiences end-to-end.",
+    features: ["Unlimited pages", "Bespoke design system", "Advanced motion choreography", "Full e-commerce architecture", "Multi-round design sprints", "Post-launch support (30 days)", "Dedicated direct line"],
+    cta: "Go Premium",
+  },
+] as const;
+
+function AnimatedPrice({ value }: { value: number }) {
+  const mv = useMotionValue(0);
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    const controls = mv.on("change", (v) => setDisplay(Math.round(v)));
+    const anim = { current: 0 };
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / 1400);
+      const eased = 1 - Math.pow(1 - t, 3);
+      mv.set(value * eased);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); controls(); anim.current = 0; };
+  }, [mv, value]);
+  return <span>${display.toLocaleString()}</span>;
+}
+
+function PricingCard({ p, i }: { p: typeof PLANS[number]; i: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0); // 0..100
+  const my = useMotionValue(0);
+  const rx = useSpring(useTransform(my, [0, 100], [4, -4]), { stiffness: 150, damping: 18 });
+  const ry = useSpring(useTransform(mx, [0, 100], [-4, 4]), { stiffness: 150, damping: 18 });
+  const [hover, setHover] = useState(false);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.9, delay: i * 0.12, ease: [0.2, 0.8, 0.2, 1] }}
+      className={p.featured ? "lg:-mt-6 lg:mb-6" : ""}
+    >
+      <motion.div
+        ref={ref}
+        onMouseMove={(e) => {
+          const r = ref.current!.getBoundingClientRect();
+          mx.set(((e.clientX - r.left) / r.width) * 100);
+          my.set(((e.clientY - r.top) / r.height) * 100);
+        }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => { setHover(false); mx.set(50); my.set(50); }}
+        style={{ rotateX: rx, rotateY: ry, transformPerspective: 1200 }}
+        className={`group relative h-full overflow-hidden rounded-3xl p-7 sm:p-9 transition-all duration-500
+          ${p.featured
+            ? "glass-strong ring-1 ring-[var(--neon)]/40 shadow-[0_30px_80px_-20px_rgba(192,132,252,0.55)] lg:scale-[1.04]"
+            : "glass hover:-translate-y-1"
+          }`}
+      >
+        {/* cursor-tracking spotlight */}
+        <motion.div
+          className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{
+            background: useTransform(
+              [mx, my] as any,
+              ([x, y]: any) => `radial-gradient(400px circle at ${x}% ${y}%, rgba(232,121,249,0.22), transparent 60%)`,
+            ),
+          }}
+        />
+        {/* animated border on featured */}
+        {p.featured && (
+          <div className="pointer-events-none absolute inset-0 rounded-3xl"
+            style={{
+              padding: 1,
+              background: "linear-gradient(135deg, rgba(192,132,252,0.7), rgba(34,211,238,0.4), rgba(232,121,249,0.7))",
+              WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+            }}
+          />
+        )}
+
+        <div className="relative">
+          {p.featured && (
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] font-bold text-black shimmer-text"
+              style={{ background: "linear-gradient(90deg,#c084fc,#e879f9,#22d3ee)", color: "#0b0712" }}>
+              ✦ Most Popular
+            </div>
+          )}
+          <h3 className="text-xl sm:text-2xl font-semibold text-white">{p.name}</h3>
+          <p className="mt-2 text-sm text-[var(--muted-foreground)] leading-relaxed min-h-[3rem]">{p.blurb}</p>
+
+          <div className="mt-6 flex items-baseline gap-2">
+            <span className="font-display text-5xl sm:text-6xl font-extrabold text-gradient leading-none">
+              {hover || p.featured ? <AnimatedPrice value={p.price} /> : <span>${p.price.toLocaleString()}</span>}
+            </span>
+            <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">/ project</span>
+          </div>
+
+          <div className="my-7 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+
+          <ul className="space-y-3 mb-8">
+            {p.features.map((f, idx) => (
+              <motion.li
+                key={f}
+                initial={{ opacity: 0, x: -8 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.15 + idx * 0.06 }}
+                className="flex items-start gap-3 text-sm text-white/85"
+              >
+                <span className="mt-1 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[var(--neon)] to-[var(--cyan)] text-[10px] text-black font-bold">✓</span>
+                <span>{f}</span>
+              </motion.li>
+            ))}
+          </ul>
+
+          <a href="#contact" className={p.featured ? "btn-primary w-full" : "btn-ghost w-full"}>
+            {p.cta}
+          </a>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function Pricing() {
+  return (
+    <section id="pricing" className="relative py-24 md:py-32 overflow-hidden">
+      <div className="absolute -top-20 left-1/4 h-80 w-80 rounded-full bg-[var(--primary)]/15 blur-3xl float-y" aria-hidden />
+      <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-[var(--cyan)]/12 blur-3xl float-y" style={{ animationDelay: "-4s" }} aria-hidden />
+      <div className="container-x relative">
+        <div className="mb-14 sm:mb-20 text-center">
+          <Reveal className="flex justify-center"><SectionTag>Investment</SectionTag></Reveal>
+          <Reveal delay={0.1}>
+            <h2 className="leading-[1.05]">Pricing that matches<br /><span className="text-gradient">ambition.</span></h2>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mt-6 max-w-2xl mx-auto text-base sm:text-lg text-[var(--muted-foreground)]">
+              Choose the engagement that best fits your goals. Every project is crafted with strategy,
+              design excellence, and attention to detail.
+            </p>
+          </Reveal>
+        </div>
+
+        <div className="grid gap-6 lg:gap-7 md:grid-cols-2 lg:grid-cols-3 items-stretch">
+          {PLANS.map((p, i) => <PricingCard key={p.name} p={p} i={i} />)}
+        </div>
       </div>
     </section>
   );
 }
+
 
 /* ───────── About ───────── */
 function About() {
