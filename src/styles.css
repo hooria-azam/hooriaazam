@@ -278,4 +278,55 @@
   .pulse-glow {
     animation: pulseGlow 3s ease-in-out infinite;
   }
+
+  /* ── Hero spotlight system ── */
+  @keyframes radarRing {
+    0% { transform: scale(0.15); opacity: 0; }
+    25% { opacity: 0.55; }
+    100% { transform: scale(1.7); opacity: 0; }
+  }
+  @keyframes drift {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(24px, -30px, 0); }
+  }
+  @keyframes signatureGlow {
+    0%, 100% { filter: drop-shadow(0 0 12px rgba(192,132,252,0.4)); }
+    50% { filter: drop-shadow(0 0 28px rgba(232,121,249,0.7)); }
+  }
+  @keyframes badgeFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .radar-ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 9999px;
+    border: 1px solid rgba(192, 132, 252, 0.22);
+    transform-origin: center;
+    animation: radarRing 7s ease-out infinite;
+  }
+  .hero-orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(90px);
+    animation: drift 20s ease-in-out infinite;
+    will-change: transform;
+    pointer-events: none;
+  }
+  .signature-glow { animation: signatureGlow 6s ease-in-out infinite; }
+  .badge-float { animation: badgeFloat 5s ease-in-out infinite; }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .shimmer-text {
+    background: linear-gradient(90deg, #c084fc, #e879f9, #22d3ee, #c084fc);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 5s linear infinite;
+  }
 }
