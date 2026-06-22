@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/hooks/use-lenis";
-import heroAsset from "@/assets/hero-hands.png.asset.json";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
