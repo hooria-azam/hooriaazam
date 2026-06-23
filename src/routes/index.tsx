@@ -119,58 +119,63 @@ function SectionTag({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ───────── HERO — rebuilt from scratch: spotlight + floating skills ───────── */
+/* ───────── HERO — radar spotlight is the centerpiece (reference-driven layout) ───────── */
+// Each skill is placed at a specific (x%, y%) around a radar node anchored
+// at (50%, 70%). `ang` is pre-computed (radians) from the radar node toward
+// the card so the beam can magnetically lock to it on hover.
+const RADAR_CX = 50;
+const RADAR_CY = 70;
+function angleTo(x: number, y: number) {
+  return Math.atan2(y - RADAR_CY, x - RADAR_CX);
+}
 const HERO_SKILLS = [
-  { t: "Front-End Development", i: "⚡" },
-  { t: "React & Next.js", i: "⚛" },
-  { t: "WordPress Development", i: "◆" },
-  { t: "Elementor Pro", i: "◇" },
-  { t: "UI/UX Design", i: "✦" },
-  { t: "Responsive Design", i: "▢" },
-  { t: "Custom Animations", i: "✺" },
-  { t: "Performance Optimization", i: "▲" },
-  { t: "E-Commerce Solutions", i: "🛒" },
-];
+  { t: "Front-End Development",    i: "⚡", x: 10, y: 70 },
+  { t: "React & Next.js",          i: "⚛", x: 18, y: 88 },
+  { t: "WordPress Development",    i: "◆", x: 34, y: 96 },
+  { t: "Elementor Pro",            i: "◇", x: 50, y: 100 },
+  { t: "UI/UX Design",             i: "✦", x: 66, y: 96 },
+  { t: "Responsive Design",        i: "▢", x: 82, y: 88 },
+  { t: "Custom Animations",        i: "✺", x: 90, y: 70 },
+  { t: "Performance Optimization", i: "▲", x: 25, y: 55 },
+  { t: "E-Commerce Solutions",     i: "🛒", x: 75, y: 55 },
+].map((s) => ({ ...s, ang: angleTo(s.x, s.y) }));
 
 function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const mx = useMotionValue(0); // -1..1 cursor x
+  const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const smx = useSpring(mx, { stiffness: 60, damping: 18 });
   const smy = useSpring(my, { stiffness: 60, damping: 18 });
 
-  // Spotlight angle (radians) — auto rotates; locks to hovered skill
-  const angle = useMotionValue(0);
-  const sAngle = useSpring(angle, { stiffness: 35, damping: 14, mass: 1 });
+  // Spotlight angle (radians). Idle: gentle scan around π/2 (downward).
+  // Hover: smooth spring-tracking lock to skill's pre-computed angle.
+  const angle = useMotionValue(Math.PI / 2);
+  const sAngle = useSpring(angle, { stiffness: 38, damping: 16, mass: 1.1 });
   const [lockedAngle, setLockedAngle] = useState<number | null>(null);
 
-  // Parallax layers driven by cursor
-  const pxBg = useTransform(smx, (v) => v * -20);
-  const pyBg = useTransform(smy, (v) => v * -20);
-  const pxMid = useTransform(smx, (v) => v * -10);
-  const pyMid = useTransform(smy, (v) => v * -10);
+  const pxBg = useTransform(smx, (v) => v * -18);
+  const pyBg = useTransform(smy, (v) => v * -18);
 
-  // Scroll fade
   const { scrollY } = useScroll();
-  const heroOpacity = useTransform(scrollY, [0, 600], [1, 0]);
-  const heroY = useTransform(scrollY, [0, 600], [0, 80]);
+  const heroOpacity = useTransform(scrollY, [0, 700], [1, 0]);
+  const heroY = useTransform(scrollY, [0, 700], [0, 80]);
 
-  // Auto-rotate spotlight
   useEffect(() => {
     let raf = 0;
     let last = performance.now();
+    const start = last;
     const tick = (now: number) => {
       const dt = (now - last) / 1000;
       last = now;
       if (lockedAngle === null) {
-        angle.set(angle.get() + dt * 0.25); // slow scan
+        const t = (now - start) / 1000;
+        const target = Math.PI / 2 + Math.sin(t * 0.35) * 0.6;
+        angle.set(angle.get() + (target - angle.get()) * Math.min(1, dt * 1.4));
       } else {
-        // smooth-set target
         const cur = angle.get();
         let diff = lockedAngle - cur;
-        // shortest path
         diff = ((diff + Math.PI) % (Math.PI * 2)) - Math.PI;
-        angle.set(cur + diff * Math.min(1, dt * 4));
+        angle.set(cur + diff * Math.min(1, dt * 3.5));
       }
       raf = requestAnimationFrame(tick);
     };
@@ -178,7 +183,6 @@ function Hero() {
     return () => cancelAnimationFrame(raf);
   }, [angle, lockedAngle]);
 
-  // Cursor handler
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       const el = sectionRef.current;
@@ -193,17 +197,16 @@ function Hero() {
     return () => window.removeEventListener("mousemove", onMove);
   }, [mx, my]);
 
-  // Spotlight rotation transform
-  const spotRotate = useTransform(sAngle, (a) => `${(a * 180) / Math.PI}deg`);
-
-  const headline = ["Creating", "Digital", "Experiences", "Worth", "Remembering"];
+  // Beam rotation — conic gradient is built with bright sector pointing "down"
+  // at 0deg rotation, so subtract 90° to map angle=π/2 → 0°.
+  const spotRotate = useTransform(sAngle, (a) => `${(a * 180) / Math.PI - 90}deg`);
 
   return (
     <motion.section
       ref={sectionRef}
       id="hero"
       style={{ opacity: heroOpacity, y: heroY }}
-      className="relative isolate min-h-[100svh] w-full overflow-hidden flex items-center justify-center"
+      className="relative isolate min-h-[100svh] w-full overflow-hidden"
     >
       {/* Layer 1 — luxury background wash */}
       <div
@@ -215,114 +218,135 @@ function Hero() {
         }}
       />
 
-      {/* Layer 2 — drifting orbs */}
+      {/* Layer 2 — drifting ambient orbs */}
       <motion.div className="absolute inset-0" style={{ x: pxBg, y: pyBg }} aria-hidden>
-        <div className="hero-orb" style={{ top: "10%", left: "12%", width: 420, height: 420, background: "rgba(124,58,237,0.45)" }} />
-        <div className="hero-orb" style={{ top: "55%", left: "70%", width: 520, height: 520, background: "rgba(232,121,249,0.30)", animationDelay: "-6s" }} />
-        <div className="hero-orb" style={{ top: "70%", left: "5%", width: 360, height: 360, background: "rgba(34,211,238,0.22)", animationDelay: "-10s" }} />
+        <div className="hero-orb" style={{ top: "8%", left: "10%", width: 420, height: 420, background: "rgba(124,58,237,0.40)" }} />
+        <div className="hero-orb" style={{ top: "60%", left: "75%", width: 520, height: 520, background: "rgba(232,121,249,0.28)", animationDelay: "-6s" }} />
+        <div className="hero-orb" style={{ top: "80%", left: "5%", width: 360, height: 360, background: "rgba(34,211,238,0.18)", animationDelay: "-10s" }} />
       </motion.div>
 
-      {/* Layer 3 — radar rings (centered behind content) */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" aria-hidden>
-        {[0, 1.5, 3, 4.5].map((d) => (
+      <Particles count={32} />
+
+      {/* RADAR SYSTEM — anchored at (50%, 70%). The centerpiece. */}
+      <div
+        className="absolute pointer-events-none z-[3]"
+        style={{ left: `${RADAR_CX}%`, top: `${RADAR_CY}%`, transform: "translate(-50%, -50%)" }}
+        aria-hidden
+      >
+        {/* Animated radar rings */}
+        {[0, 1.2, 2.4, 3.6, 4.8, 6].map((d) => (
           <div
             key={d}
             className="radar-ring"
             style={{
-              width: 900,
-              height: 900,
-              marginLeft: -450,
-              marginTop: -450,
+              width: 1100, height: 1100, marginLeft: -550, marginTop: -550,
               animationDelay: `-${d}s`,
             }}
           />
         ))}
-      </div>
 
-      {/* Layer 4 — grain (handled globally via body::before) */}
+        {/* Static concentric guide rings */}
+        {[180, 320, 480, 660, 860].map((s) => (
+          <div
+            key={s}
+            className="absolute left-1/2 top-1/2 rounded-full border border-[rgba(192,132,252,0.10)]"
+            style={{ width: s, height: s, marginLeft: -s / 2, marginTop: -s / 2 }}
+          />
+        ))}
 
-      {/* Layer 5 — particles */}
-      <Particles count={28} />
+        {/* SPOTLIGHT BEAM — large visible cone radiating from node */}
+        <motion.div
+          className="absolute left-1/2 top-1/2"
+          style={{ width: 1600, height: 1600, marginLeft: -800, marginTop: -800, rotate: spotRotate }}
+        >
+          {/* Outer soft cone */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "conic-gradient(from 270deg, transparent 0deg, rgba(232,121,249,0) 55deg, rgba(232,121,249,0.10) 70deg, rgba(232,121,249,0.28) 85deg, rgba(244,114,182,0.42) 90deg, rgba(232,121,249,0.28) 95deg, rgba(232,121,249,0.10) 110deg, transparent 125deg, transparent 360deg)",
+              filter: "blur(28px)",
+              maskImage: "radial-gradient(circle at center, black 5%, black 60%, transparent 78%)",
+              WebkitMaskImage: "radial-gradient(circle at center, black 5%, black 60%, transparent 78%)",
+            }}
+          />
+          {/* Inner sharper cone */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "conic-gradient(from 270deg, transparent 0deg, transparent 80deg, rgba(255,182,234,0.35) 88deg, rgba(255,210,243,0.55) 90deg, rgba(255,182,234,0.35) 92deg, transparent 100deg, transparent 360deg)",
+              filter: "blur(10px)",
+              maskImage: "radial-gradient(circle at center, black 4%, black 45%, transparent 70%)",
+              WebkitMaskImage: "radial-gradient(circle at center, black 4%, black 45%, transparent 70%)",
+            }}
+          />
+        </motion.div>
 
-      {/* SPOTLIGHT BEAM */}
-      <motion.div
-        className="absolute left-1/2 top-1/2 pointer-events-none z-[3]"
-        style={{
-          width: 1400,
-          height: 1400,
-          marginLeft: -700,
-          marginTop: -700,
-          rotate: spotRotate,
-          x: pxMid,
-          y: pyMid,
-        }}
-        aria-hidden
-      >
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "conic-gradient(from 0deg, transparent 0deg, rgba(192,132,252,0.0) 75deg, rgba(192,132,252,0.18) 85deg, rgba(232,121,249,0.35) 90deg, rgba(192,132,252,0.18) 95deg, transparent 105deg, transparent 360deg)",
-            filter: "blur(20px)",
-          }}
-        />
-        {/* central glow */}
+        {/* Central glow halo around node */}
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            width: 240,
-            height: 240,
-            background: "radial-gradient(circle, rgba(232,121,249,0.55), rgba(124,58,237,0.2) 50%, transparent 75%)",
-            filter: "blur(8px)",
+            width: 260, height: 260,
+            background: "radial-gradient(circle, rgba(232,121,249,0.55), rgba(124,58,237,0.18) 50%, transparent 75%)",
+            filter: "blur(10px)",
           }}
         />
-      </motion.div>
 
-      {/* Readability vignette */}
+        {/* RADAR NODE — the central icon disc */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div
+            className="relative grid place-items-center h-20 w-20 sm:h-24 sm:w-24 rounded-full"
+            style={{
+              background: "radial-gradient(circle at 30% 30%, #1a1424, #07050d)",
+              border: "1px solid rgba(232,121,249,0.4)",
+              boxShadow:
+                "0 0 0 1px rgba(192,132,252,0.15), 0 0 40px rgba(232,121,249,0.55), inset 0 1px 0 rgba(255,255,255,0.08)",
+            }}
+          >
+            <svg viewBox="0 0 24 24" className="h-7 w-7 sm:h-8 sm:w-8 text-[var(--neon)]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 4l5 6h-3v6h-4v-6H7l5-6z" />
+              <path d="M7 18l5 2 5-2" opacity="0.6" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      {/* Readability vignette behind text */}
       <div
         className="absolute inset-0 z-[4] pointer-events-none"
         aria-hidden
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(2,2,7,0.55) 0%, rgba(2,2,7,0.35) 40%, rgba(2,2,7,0.7) 100%)",
+            "radial-gradient(ellipse at 50% 30%, rgba(2,2,7,0.65) 0%, rgba(2,2,7,0.25) 35%, transparent 70%)",
         }}
       />
       <div className="absolute inset-x-0 bottom-0 z-[4] h-40 bg-gradient-to-b from-transparent to-[var(--background)] pointer-events-none" aria-hidden />
 
-      {/* FLOATING SKILL CARDS (desktop only, around the content) */}
-      <div className="absolute inset-0 z-[6] hidden lg:block pointer-events-none" aria-hidden={false}>
-        {HERO_SKILLS.map((s, i) => {
-          const a = (i / HERO_SKILLS.length) * Math.PI * 2 - Math.PI / 2;
-          const radius = 38; // % of min(w,h) — placed via vmin
-          const x = 50 + Math.cos(a) * radius;
-          const y = 50 + Math.sin(a) * radius * 0.78;
-          return (
-            <FloatingSkill
-              key={s.t}
-              label={s.t}
-              icon={s.i}
-              delay={i * 0.08}
-              style={{ left: `${x}%`, top: `${y}%` }}
-              onEnter={() => setLockedAngle(a)}
-              onLeave={() => setLockedAngle(null)}
-            />
-          );
-        })}
+      {/* FLOATING SKILL CARDS — scattered around radar node (desktop) */}
+      <div className="absolute inset-0 z-[6] hidden lg:block">
+        {HERO_SKILLS.map((s, i) => (
+          <FloatingSkill
+            key={s.t}
+            label={s.t}
+            icon={s.i}
+            delay={i * 0.07}
+            style={{ left: `${s.x}%`, top: `${s.y}%` }}
+            onEnter={() => setLockedAngle(s.ang)}
+            onLeave={() => setLockedAngle(null)}
+          />
+        ))}
       </div>
 
-      {/* CONTENT */}
-      <motion.div
-        className="container-x relative z-[7] flex flex-col items-center text-center pt-28 pb-20 sm:pt-32"
-        style={{ x: useTransform(smx, (v) => v * 6), y: useTransform(smy, (v) => v * 6) }}
-      >
-        {/* Status badge */}
+      {/* CONTENT — positioned ABOVE the radar (top of section) */}
+      <div className="container-x relative z-[7] flex flex-col items-center text-center pt-28 sm:pt-32 pb-8">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
           className="badge-float"
         >
-          <div className="glass-strong inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[10px] sm:text-xs uppercase tracking-[0.28em] text-white/95 shadow-[0_0_30px_rgba(192,132,252,0.25)] hover:shadow-[0_0_45px_rgba(232,121,249,0.4)] hover:border-[var(--neon)]/50 transition-all duration-500">
+          <div className="glass-strong inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[10px] sm:text-xs uppercase tracking-[0.28em] text-white/95 shadow-[0_0_30px_rgba(192,132,252,0.25)]">
             <span className="relative flex h-2 w-2">
               <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
@@ -331,55 +355,43 @@ function Hero() {
           </div>
         </motion.div>
 
-        {/* Signature name */}
         <motion.div
           initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 1.2, delay: 0.15, ease: [0.2, 0.8, 0.2, 1] }}
-          className="mt-7 sm:mt-9 signature-glow"
+          className="mt-5 sm:mt-6 signature-glow"
         >
-          <div className="font-display italic text-2xl sm:text-3xl md:text-4xl tracking-[0.04em] shimmer-text">
+          <div className="font-display italic text-xl sm:text-2xl md:text-3xl tracking-[0.04em] shimmer-text">
             Hooria Azam
           </div>
-          <div className="mx-auto mt-2 h-px w-20 bg-gradient-to-r from-transparent via-[var(--neon)] to-transparent" />
         </motion.div>
 
-        {/* H1 with staggered word reveal */}
-        <h1
-          className="mt-6 sm:mt-8 max-w-[16ch] mx-auto font-display !normal-case font-extrabold leading-[1.02] tracking-tight text-white"
-          style={{ fontSize: "clamp(2.5rem, 7.4vw, 6.75rem)", textShadow: "0 4px 30px rgba(0,0,0,0.6)" }}
+        <motion.h1
+          initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 1.1, delay: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+          className="mt-4 sm:mt-5 max-w-[18ch] mx-auto font-display !normal-case font-extrabold leading-[1.02] tracking-tight text-white"
+          style={{ fontSize: "clamp(2rem, 5.6vw, 5rem)", textShadow: "0 4px 30px rgba(0,0,0,0.6)" }}
         >
-          {headline.map((w, i) => (
-            <motion.span
-              key={w + i}
-              initial={{ opacity: 0, y: 40, filter: "blur(14px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.9, delay: 0.4 + i * 0.12, ease: [0.2, 0.8, 0.2, 1] }}
-              className="inline-block mr-[0.28em]"
-            >
-              {w === "Digital" || w === "Experiences" ? <span className="text-gradient">{w}</span> : w}
-            </motion.span>
-          ))}
-        </h1>
+          Creating <span className="text-gradient">Digital Experiences</span> Worth Remembering
+        </motion.h1>
 
-        {/* Description */}
         <motion.p
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.05, ease: [0.2, 0.8, 0.2, 1] }}
-          className="mt-7 sm:mt-9 max-w-[58ch] mx-auto text-sm sm:text-base md:text-lg leading-[1.75] text-white/85"
+          transition={{ duration: 1, delay: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
+          className="mt-5 sm:mt-6 max-w-[58ch] mx-auto text-sm sm:text-base leading-[1.7] text-white/80"
         >
           The web is crowded with ordinary. I build experiences that stand apart.
           Through thoughtful design, clean development, and meticulous attention to detail,
           I craft websites that feel premium, perform flawlessly, and leave a lasting impression.
         </motion.p>
 
-        {/* CTAs */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1.25, ease: [0.2, 0.8, 0.2, 1] }}
-          className="mt-9 sm:mt-11 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
+          transition={{ duration: 1, delay: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
+          className="mt-7 sm:mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
         >
           <MagneticButton href="#projects" variant="primary">View My Work</MagneticButton>
           <MagneticButton href="#contact" variant="ghost">
@@ -391,12 +403,12 @@ function Hero() {
             >→</motion.span>
           </MagneticButton>
         </motion.div>
-      </motion.div>
+      </div>
 
-      {/* Skills as grid on mobile/tablet */}
-      <div className="absolute inset-x-0 bottom-0 z-[7] lg:hidden pb-10 px-4" aria-hidden={false}>
+      {/* Mobile / tablet skills grid (absolute scatter doesn't fit narrow viewports) */}
+      <div className="relative z-[7] lg:hidden px-4 pb-12 pt-4">
         <div className="container-x grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {HERO_SKILLS.slice(0, 6).map((s) => (
+          {HERO_SKILLS.map((s) => (
             <div key={s.t} className="glass rounded-2xl px-3 py-2.5 flex items-center gap-2 min-w-0">
               <span className="text-base shrink-0">{s.i}</span>
               <span className="text-[10px] sm:text-xs text-white/90 truncate font-medium">{s.t}</span>
