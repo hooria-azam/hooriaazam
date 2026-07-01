@@ -330,3 +330,47 @@
     animation: shimmer 5s linear infinite;
   }
 }
+
+/* Orbiting particles around the Available badge */
+@layer utilities {
+  @keyframes badgeOrbit {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes badgeAmbient {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%      { opacity: 1;    transform: scale(1.15); }
+  }
+  .badge-orbit {
+    position: absolute;
+    border-radius: 9999px;
+    pointer-events: none;
+    animation: badgeOrbit 12s linear infinite;
+    will-change: transform;
+  }
+  .badge-orbit-dot {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+  }
+  .badge-ambient {
+    position: absolute;
+    inset: -20%;
+    border-radius: 9999px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(192,132,252,0.35), transparent 55%),
+      radial-gradient(circle at 70% 70%, rgba(232,121,249,0.30), transparent 55%);
+    filter: blur(22px);
+    animation: badgeAmbient 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* 3D perspective helpers */
+  .perspective-1200 { perspective: 1200px; }
+  .preserve-3d { transform-style: preserve-3d; }
+}
+

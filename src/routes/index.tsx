@@ -119,63 +119,80 @@ function SectionTag({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ───────── HERO — radar spotlight is the centerpiece (reference-driven layout) ───────── */
-// Each skill is placed at a specific (x%, y%) around a radar node anchored
-// at (50%, 70%). `ang` is pre-computed (radians) from the radar node toward
-// the card so the beam can magnetically lock to it on hover.
-const RADAR_CX = 50;
-const RADAR_CY = 70;
-function angleTo(x: number, y: number) {
-  return Math.atan2(y - RADAR_CY, x - RADAR_CX);
-}
-const HERO_SKILLS = [
-  { t: "Front-End Development",    i: "⚡", x: 10, y: 70 },
-  { t: "React & Next.js",          i: "⚛", x: 18, y: 88 },
-  { t: "WordPress Development",    i: "◆", x: 34, y: 96 },
-  { t: "Elementor Pro",            i: "◇", x: 50, y: 100 },
-  { t: "UI/UX Design",             i: "✦", x: 66, y: 96 },
-  { t: "Responsive Design",        i: "▢", x: 82, y: 88 },
-  { t: "Custom Animations",        i: "✺", x: 90, y: 70 },
-  { t: "Performance Optimization", i: "▲", x: 25, y: 55 },
-  { t: "E-Commerce Solutions",     i: "🛒", x: 75, y: 55 },
-].map((s) => ({ ...s, ang: angleTo(s.x, s.y) }));
+/* ───────── HERO — radar spotlight centerpiece (contained, reference-driven) ───────── */
+/*
+ * Layout invariants (do not violate):
+ *  - Section height locked to ~97vh, overflow clipped so nothing escapes.
+ *  - Radar node anchored at (50%, 62%). All skill chips sit on a ring around it
+ *    using polar coordinates (angle, radius). Radius is clamped in vmin so cards
+ *    always stay inside the hero on every viewport.
+ *  - Spotlight beam rotation: atan2(dy, dx) in CSS space (y grows down).
+ *    Conic-gradient beam base points UP at rotate=0deg, so rotate = deg + 90
+ *    so the bright sector points TOWARD the hovered card.
+ */
+
+// 11 skills — evenly distributed on a ring around the radar core.
+const HERO_SKILLS_RAW = [
+  { t: "HTML5",                i: "🅗" },
+  { t: "CSS3",                 i: "🅒" },
+  { t: "JavaScript",           i: "🅙" },
+  { t: "Front-End Developer",  i: "⚡" },
+  { t: "WordPress",            i: "◆" },
+  { t: "Elementor Pro",        i: "◇" },
+  { t: "WooCommerce",          i: "🛒" },
+  { t: "Figma to Website",     i: "✦" },
+  { t: "Bootstrap",            i: "▤" },
+  { t: "Responsive Design",    i: "▢" },
+  { t: "UI/UX Design",         i: "✺" },
+];
+
+const HERO_SKILLS = HERO_SKILLS_RAW.map((s, i, arr) => {
+  // Start at the top-right and go clockwise; skip the top so the headline stays clean.
+  const a = -Math.PI / 2 + Math.PI / 6 + (i / arr.length) * Math.PI * 2;
+  return { ...s, ang: a };
+});
 
 function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
+
+  // Cursor tracking (normalized -1..1) — drives the center arrow + bg parallax.
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const smx = useSpring(mx, { stiffness: 60, damping: 18 });
-  const smy = useSpring(my, { stiffness: 60, damping: 18 });
+  const smx = useSpring(mx, { stiffness: 80, damping: 20 });
+  const smy = useSpring(my, { stiffness: 80, damping: 20 });
 
-  // Spotlight angle (radians). Idle: gentle scan around π/2 (downward).
-  // Hover: smooth spring-tracking lock to skill's pre-computed angle.
+  // Spotlight beam angle (radians). Idle = gentle scan; hover = lock to card.
   const angle = useMotionValue(Math.PI / 2);
-  const sAngle = useSpring(angle, { stiffness: 38, damping: 16, mass: 1.1 });
+  const sAngle = useSpring(angle, { stiffness: 55, damping: 18, mass: 1 });
   const [lockedAngle, setLockedAngle] = useState<number | null>(null);
 
-  const pxBg = useTransform(smx, (v) => v * -18);
-  const pyBg = useTransform(smy, (v) => v * -18);
+  // Center arrow — smoothly rotates toward the cursor.
+  const arrowRot = useSpring(0, { stiffness: 90, damping: 20 });
+
+  const pxBg = useTransform(smx, (v) => v * -22);
+  const pyBg = useTransform(smy, (v) => v * -22);
 
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 700], [1, 0]);
   const heroY = useTransform(scrollY, [0, 700], [0, 80]);
 
+  // Idle scan + hover lock loop.
   useEffect(() => {
     let raf = 0;
     let last = performance.now();
     const start = last;
     const tick = (now: number) => {
-      const dt = (now - last) / 1000;
+      const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       if (lockedAngle === null) {
         const t = (now - start) / 1000;
-        const target = Math.PI / 2 + Math.sin(t * 0.35) * 0.6;
-        angle.set(angle.get() + (target - angle.get()) * Math.min(1, dt * 1.4));
+        const target = Math.PI / 2 + Math.sin(t * 0.4) * 0.7;
+        angle.set(angle.get() + (target - angle.get()) * Math.min(1, dt * 1.6));
       } else {
         const cur = angle.get();
         let diff = lockedAngle - cur;
         diff = ((diff + Math.PI) % (Math.PI * 2)) - Math.PI;
-        angle.set(cur + diff * Math.min(1, dt * 3.5));
+        angle.set(cur + diff * Math.min(1, dt * 5));
       }
       raf = requestAnimationFrame(tick);
     };
@@ -190,223 +207,275 @@ function Hero() {
       const r = el.getBoundingClientRect();
       const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
       const ny = ((e.clientY - r.top) / r.height) * 2 - 1;
-      mx.set(Math.max(-1, Math.min(1, nx)));
-      my.set(Math.max(-1, Math.min(1, ny)));
+      const cx = Math.max(-1, Math.min(1, nx));
+      const cy = Math.max(-1, Math.min(1, ny));
+      mx.set(cx);
+      my.set(cy);
+      // Arrow points toward cursor relative to radar center (~50%, 62%).
+      const dx = (e.clientX - r.left) - r.width * 0.5;
+      const dy = (e.clientY - r.top) - r.height * 0.62;
+      const deg = (Math.atan2(dy, dx) * 180) / Math.PI + 90; // svg arrow points up at 0
+      arrowRot.set(deg);
     };
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
-  }, [mx, my]);
+  }, [mx, my, arrowRot]);
 
-  // Beam rotation — conic gradient is built with bright sector pointing "down"
-  // at 0deg rotation, so subtract 90° to map angle=π/2 → 0°.
-  const spotRotate = useTransform(sAngle, (a) => `${(a * 180) / Math.PI - 90}deg`);
+  // FIX: bright sector of conic beam points UP at rotate=0.
+  // atan=π/2 (down in CSS y) must rotate 180deg.
+  const spotRotate = useTransform(sAngle, (a) => `${(a * 180) / Math.PI + 90}deg`);
 
   return (
     <motion.section
       ref={sectionRef}
       id="hero"
       style={{ opacity: heroOpacity, y: heroY }}
-      className="relative isolate min-h-[100svh] w-full overflow-hidden"
+      className="relative isolate w-full overflow-hidden"
     >
-      {/* Layer 1 — luxury background wash */}
-      <div
-        className="absolute inset-0"
-        aria-hidden
-        style={{
-          background:
-            "radial-gradient(ellipse at 20% 10%, #1a0b2e 0%, transparent 55%), radial-gradient(ellipse at 80% 90%, #2a0a3a 0%, transparent 55%), linear-gradient(180deg, #06040f 0%, #020207 100%)",
-        }}
-      />
-
-      {/* Layer 2 — drifting ambient orbs */}
-      <motion.div className="absolute inset-0" style={{ x: pxBg, y: pyBg }} aria-hidden>
-        <div className="hero-orb" style={{ top: "8%", left: "10%", width: 420, height: 420, background: "rgba(124,58,237,0.40)" }} />
-        <div className="hero-orb" style={{ top: "60%", left: "75%", width: 520, height: 520, background: "rgba(232,121,249,0.28)", animationDelay: "-6s" }} />
-        <div className="hero-orb" style={{ top: "80%", left: "5%", width: 360, height: 360, background: "rgba(34,211,238,0.18)", animationDelay: "-10s" }} />
-      </motion.div>
-
-      <Particles count={32} />
-
-      {/* RADAR SYSTEM — anchored at (50%, 70%). The centerpiece. */}
-      <div
-        className="absolute pointer-events-none z-[3]"
-        style={{ left: `${RADAR_CX}%`, top: `${RADAR_CY}%`, transform: "translate(-50%, -50%)" }}
-        aria-hidden
-      >
-        {/* Animated radar rings */}
-        {[0, 1.2, 2.4, 3.6, 4.8, 6].map((d) => (
-          <div
-            key={d}
-            className="radar-ring"
-            style={{
-              width: 1100, height: 1100, marginLeft: -550, marginTop: -550,
-              animationDelay: `-${d}s`,
-            }}
-          />
-        ))}
-
-        {/* Static concentric guide rings */}
-        {[180, 320, 480, 660, 860].map((s) => (
-          <div
-            key={s}
-            className="absolute left-1/2 top-1/2 rounded-full border border-[rgba(192,132,252,0.10)]"
-            style={{ width: s, height: s, marginLeft: -s / 2, marginTop: -s / 2 }}
-          />
-        ))}
-
-        {/* SPOTLIGHT BEAM — large visible cone radiating from node */}
-        <motion.div
-          className="absolute left-1/2 top-1/2"
-          style={{ width: 1600, height: 1600, marginLeft: -800, marginTop: -800, rotate: spotRotate }}
-        >
-          {/* Outer soft cone */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "conic-gradient(from 270deg, transparent 0deg, rgba(232,121,249,0) 55deg, rgba(232,121,249,0.10) 70deg, rgba(232,121,249,0.28) 85deg, rgba(244,114,182,0.42) 90deg, rgba(232,121,249,0.28) 95deg, rgba(232,121,249,0.10) 110deg, transparent 125deg, transparent 360deg)",
-              filter: "blur(28px)",
-              maskImage: "radial-gradient(circle at center, black 5%, black 60%, transparent 78%)",
-              WebkitMaskImage: "radial-gradient(circle at center, black 5%, black 60%, transparent 78%)",
-            }}
-          />
-          {/* Inner sharper cone */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "conic-gradient(from 270deg, transparent 0deg, transparent 80deg, rgba(255,182,234,0.35) 88deg, rgba(255,210,243,0.55) 90deg, rgba(255,182,234,0.35) 92deg, transparent 100deg, transparent 360deg)",
-              filter: "blur(10px)",
-              maskImage: "radial-gradient(circle at center, black 4%, black 45%, transparent 70%)",
-              WebkitMaskImage: "radial-gradient(circle at center, black 4%, black 45%, transparent 70%)",
-            }}
-          />
-        </motion.div>
-
-        {/* Central glow halo around node */}
+      <div className="relative w-full" style={{ height: "97vh", minHeight: 680 }}>
+        {/* Layer 1 — luxury background wash */}
         <div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          className="absolute inset-0"
+          aria-hidden
           style={{
-            width: 260, height: 260,
-            background: "radial-gradient(circle, rgba(232,121,249,0.55), rgba(124,58,237,0.18) 50%, transparent 75%)",
-            filter: "blur(10px)",
+            background:
+              "radial-gradient(ellipse at 20% 10%, #1a0b2e 0%, transparent 55%), radial-gradient(ellipse at 80% 90%, #2a0a3a 0%, transparent 55%), linear-gradient(180deg, #06040f 0%, #020207 100%)",
           }}
         />
 
-        {/* RADAR NODE — the central icon disc */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div
-            className="relative grid place-items-center h-20 w-20 sm:h-24 sm:w-24 rounded-full"
+        {/* Layer 2 — drifting ambient orbs (clipped to hero) */}
+        <motion.div className="absolute inset-0" style={{ x: pxBg, y: pyBg }} aria-hidden>
+          <div className="hero-orb" style={{ top: "8%", left: "10%", width: 380, height: 380, background: "rgba(124,58,237,0.38)" }} />
+          <div className="hero-orb" style={{ top: "60%", left: "75%", width: 460, height: 460, background: "rgba(232,121,249,0.26)", animationDelay: "-6s" }} />
+          <div className="hero-orb" style={{ top: "80%", left: "5%", width: 320, height: 320, background: "rgba(34,211,238,0.16)", animationDelay: "-10s" }} />
+        </motion.div>
+
+        <Particles count={28} />
+
+        {/* RADAR SYSTEM — anchored at (50%, 62%). Everything sized in vmin to stay inside. */}
+        <div
+          className="absolute pointer-events-none z-[3]"
+          style={{ left: "50%", top: "62%", transform: "translate(-50%, -50%)" }}
+          aria-hidden
+        >
+          {/* Animated radar rings — sized in vmin so they never exceed viewport */}
+          {[0, 1.2, 2.4, 3.6, 4.8, 6].map((d) => (
+            <div
+              key={d}
+              className="radar-ring"
+              style={{
+                width: "min(80vmin, 900px)", height: "min(80vmin, 900px)",
+                marginLeft: "calc(min(80vmin, 900px) / -2)",
+                marginTop: "calc(min(80vmin, 900px) / -2)",
+                animationDelay: `-${d}s`,
+              }}
+            />
+          ))}
+
+          {/* Concentric guide rings */}
+          {[16, 26, 36, 46, 58].map((s) => (
+            <div
+              key={s}
+              className="absolute left-1/2 top-1/2 rounded-full border border-[rgba(192,132,252,0.10)]"
+              style={{ width: `${s}vmin`, height: `${s}vmin`, marginLeft: `-${s / 2}vmin`, marginTop: `-${s / 2}vmin` }}
+            />
+          ))}
+
+          {/* SPOTLIGHT BEAM — layered, feathered cone */}
+          <motion.div
+            className="absolute left-1/2 top-1/2"
             style={{
-              background: "radial-gradient(circle at 30% 30%, #1a1424, #07050d)",
-              border: "1px solid rgba(232,121,249,0.4)",
-              boxShadow:
-                "0 0 0 1px rgba(192,132,252,0.15), 0 0 40px rgba(232,121,249,0.55), inset 0 1px 0 rgba(255,255,255,0.08)",
+              width: "min(120vmin, 1400px)",
+              height: "min(120vmin, 1400px)",
+              marginLeft: "calc(min(120vmin, 1400px) / -2)",
+              marginTop: "calc(min(120vmin, 1400px) / -2)",
+              rotate: spotRotate,
             }}
           >
-            <svg viewBox="0 0 24 24" className="h-7 w-7 sm:h-8 sm:w-8 text-[var(--neon)]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 4l5 6h-3v6h-4v-6H7l5-6z" />
-              <path d="M7 18l5 2 5-2" opacity="0.6" />
-            </svg>
+            {/* Widest, softest outer wash */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "conic-gradient(from 240deg, transparent 0deg, rgba(232,121,249,0.06) 40deg, rgba(232,121,249,0.14) 60deg, rgba(232,121,249,0.22) 75deg, rgba(244,114,182,0.28) 90deg, rgba(232,121,249,0.22) 105deg, rgba(232,121,249,0.14) 120deg, rgba(232,121,249,0.06) 140deg, transparent 180deg, transparent 360deg)",
+                filter: "blur(42px)",
+                maskImage: "radial-gradient(circle at center, black 4%, black 55%, transparent 82%)",
+              }}
+            />
+            {/* Mid cone */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "conic-gradient(from 255deg, transparent 0deg, transparent 55deg, rgba(232,121,249,0.18) 75deg, rgba(255,182,234,0.36) 90deg, rgba(232,121,249,0.18) 105deg, transparent 125deg, transparent 360deg)",
+                filter: "blur(22px)",
+                maskImage: "radial-gradient(circle at center, black 4%, black 48%, transparent 74%)",
+              }}
+            />
+            {/* Inner soft core beam (no hard edge) */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "conic-gradient(from 268deg, transparent 0deg, transparent 82deg, rgba(255,210,243,0.42) 90deg, transparent 98deg, transparent 360deg)",
+                filter: "blur(12px)",
+                maskImage: "radial-gradient(circle at center, black 3%, black 42%, transparent 68%)",
+              }}
+            />
+          </motion.div>
+
+          {/* Central glow halo */}
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={{
+              width: 220, height: 220,
+              background: "radial-gradient(circle, rgba(232,121,249,0.55), rgba(124,58,237,0.18) 50%, transparent 75%)",
+              filter: "blur(10px)",
+            }}
+          />
+
+          {/* RADAR NODE with cursor-following arrow */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+            <div
+              className="relative grid place-items-center h-20 w-20 sm:h-24 sm:w-24 rounded-full"
+              style={{
+                background: "radial-gradient(circle at 30% 30%, #1a1424, #07050d)",
+                border: "1px solid rgba(232,121,249,0.4)",
+                boxShadow:
+                  "0 0 0 1px rgba(192,132,252,0.15), 0 0 40px rgba(232,121,249,0.55), inset 0 1px 0 rgba(255,255,255,0.08)",
+              }}
+            >
+              <motion.svg
+                viewBox="0 0 24 24"
+                className="h-9 w-9 sm:h-10 sm:w-10 text-[var(--neon)]"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ rotate: arrowRot }}
+              >
+                {/* Unique navigator glyph — a stylized compass needle */}
+                <circle cx="12" cy="12" r="9" opacity="0.35" />
+                <path d="M12 3.5 L15.2 13 L12 11.2 L8.8 13 Z" fill="currentColor" opacity="0.95" />
+                <path d="M12 20.5 L9.5 14.5 L12 15.6 L14.5 14.5 Z" opacity="0.55" />
+                <circle cx="12" cy="12" r="1.1" fill="currentColor" />
+              </motion.svg>
+            </div>
           </div>
+        </div>
+
+        {/* Readability vignette + bottom fade */}
+        <div
+          className="absolute inset-0 z-[4] pointer-events-none"
+          aria-hidden
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 22%, rgba(2,2,7,0.72) 0%, rgba(2,2,7,0.28) 38%, transparent 72%)",
+          }}
+        />
+        <div className="absolute inset-x-0 bottom-0 z-[4] h-32 bg-gradient-to-b from-transparent to-[var(--background)] pointer-events-none" aria-hidden />
+
+        {/* FLOATING SKILL CARDS — polar ring, clamped inside hero (desktop) */}
+        <div className="absolute inset-0 z-[6] hidden lg:block pointer-events-none">
+          {HERO_SKILLS.map((s, i) => {
+            // Radius clamped to safe area of the section.
+            const rX = "min(34vmin, 380px)";
+            const rY = "min(26vmin, 300px)";
+            const dx = `calc(${Math.cos(s.ang)} * ${rX})`;
+            const dy = `calc(${Math.sin(s.ang)} * ${rY})`;
+            return (
+              <FloatingSkill
+                key={s.t}
+                label={s.t}
+                icon={s.i}
+                delay={i * 0.06}
+                style={{
+                  left: "50%",
+                  top: "62%",
+                  transform: `translate(calc(-50% + ${dx}), calc(-50% + ${dy}))`,
+                }}
+                onEnter={() => setLockedAngle(s.ang)}
+                onLeave={() => setLockedAngle(null)}
+              />
+            );
+          })}
+        </div>
+
+        {/* CONTENT — headline stack, upper section */}
+        <div className="container-x relative z-[7] flex flex-col items-center text-center pt-24 sm:pt-28 pb-6 pointer-events-none">
+          <div className="pointer-events-auto">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
+              className="relative inline-block"
+            >
+              {/* Orbiting particles around the badge */}
+              <span aria-hidden className="absolute inset-0 pointer-events-none">
+                <span className="badge-orbit" style={{ width: "160%", height: "160%", left: "-30%", top: "-30%", animationDuration: "9s" }}>
+                  <span className="badge-orbit-dot" style={{ background: "#c084fc", boxShadow: "0 0 10px #c084fc" }} />
+                </span>
+                <span className="badge-orbit" style={{ width: "180%", height: "140%", left: "-40%", top: "-20%", animationDuration: "13s", animationDirection: "reverse" }}>
+                  <span className="badge-orbit-dot" style={{ background: "#e879f9", boxShadow: "0 0 12px #e879f9" }} />
+                </span>
+                <span className="badge-orbit" style={{ width: "200%", height: "170%", left: "-50%", top: "-35%", animationDuration: "17s" }}>
+                  <span className="badge-orbit-dot" style={{ background: "#22d3ee", boxShadow: "0 0 10px #22d3ee" }} />
+                </span>
+                <span className="badge-ambient" />
+              </span>
+              <div className="relative glass-strong inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[10px] sm:text-xs uppercase tracking-[0.28em] text-white shadow-[0_0_30px_rgba(192,132,252,0.25)]">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
+                </span>
+                <span className="text-white">Available · 5+ Years Experience</span>
+              </div>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 1.2, delay: 0.15, ease: [0.2, 0.8, 0.2, 1] }}
+            className="mt-5 sm:mt-6 signature-glow"
+          >
+            <div className="font-display italic text-xl sm:text-2xl md:text-3xl tracking-[0.04em] shimmer-text">
+              Hooria Azam
+            </div>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 1.1, delay: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+            className="mt-4 sm:mt-5 max-w-[18ch] mx-auto font-display !normal-case font-extrabold leading-[1.02] tracking-tight text-white"
+            style={{ fontSize: "clamp(1.9rem, 5vw, 4.4rem)", textShadow: "0 4px 30px rgba(0,0,0,0.6)" }}
+          >
+            Creating <span className="text-gradient">Digital Experiences</span> Worth Remembering
+          </motion.h1>
+
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.75, ease: [0.2, 0.8, 0.2, 1] }}
+            className="mt-6 sm:mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-4 pointer-events-auto"
+          >
+            <MagneticButton href="#projects" variant="primary">View My Work</MagneticButton>
+            <MagneticButton href="#contact" variant="ghost">
+              Start a Project
+              <motion.span
+                className="inline-block ml-1"
+                animate={{ x: [0, 4, 0] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+              >→</motion.span>
+            </MagneticButton>
+          </motion.div>
         </div>
       </div>
 
-      {/* Readability vignette behind text */}
-      <div
-        className="absolute inset-0 z-[4] pointer-events-none"
-        aria-hidden
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 30%, rgba(2,2,7,0.65) 0%, rgba(2,2,7,0.25) 35%, transparent 70%)",
-        }}
-      />
-      <div className="absolute inset-x-0 bottom-0 z-[4] h-40 bg-gradient-to-b from-transparent to-[var(--background)] pointer-events-none" aria-hidden />
-
-      {/* FLOATING SKILL CARDS — scattered around radar node (desktop) */}
-      <div className="absolute inset-0 z-[6] hidden lg:block">
-        {HERO_SKILLS.map((s, i) => (
-          <FloatingSkill
-            key={s.t}
-            label={s.t}
-            icon={s.i}
-            delay={i * 0.07}
-            style={{ left: `${s.x}%`, top: `${s.y}%` }}
-            onEnter={() => setLockedAngle(s.ang)}
-            onLeave={() => setLockedAngle(null)}
-          />
-        ))}
-      </div>
-
-      {/* CONTENT — positioned ABOVE the radar (top of section) */}
-      <div className="container-x relative z-[7] flex flex-col items-center text-center pt-28 sm:pt-32 pb-8">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
-          className="badge-float"
-        >
-          <div className="glass-strong inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[10px] sm:text-xs uppercase tracking-[0.28em] text-white/95 shadow-[0_0_30px_rgba(192,132,252,0.25)]">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
-            </span>
-            Available · 5+ Years Experience
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 1.2, delay: 0.15, ease: [0.2, 0.8, 0.2, 1] }}
-          className="mt-5 sm:mt-6 signature-glow"
-        >
-          <div className="font-display italic text-xl sm:text-2xl md:text-3xl tracking-[0.04em] shimmer-text">
-            Hooria Azam
-          </div>
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 1.1, delay: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
-          className="mt-4 sm:mt-5 max-w-[18ch] mx-auto font-display !normal-case font-extrabold leading-[1.02] tracking-tight text-white"
-          style={{ fontSize: "clamp(2rem, 5.6vw, 5rem)", textShadow: "0 4px 30px rgba(0,0,0,0.6)" }}
-        >
-          Creating <span className="text-gradient">Digital Experiences</span> Worth Remembering
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
-          className="mt-5 sm:mt-6 max-w-[58ch] mx-auto text-sm sm:text-base leading-[1.7] text-white/80"
-        >
-          The web is crowded with ordinary. I build experiences that stand apart.
-          Through thoughtful design, clean development, and meticulous attention to detail,
-          I craft websites that feel premium, perform flawlessly, and leave a lasting impression.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
-          className="mt-7 sm:mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
-        >
-          <MagneticButton href="#projects" variant="primary">View My Work</MagneticButton>
-          <MagneticButton href="#contact" variant="ghost">
-            Start a Project
-            <motion.span
-              className="inline-block ml-1"
-              animate={{ x: [0, 4, 0] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-            >→</motion.span>
-          </MagneticButton>
-        </motion.div>
-      </div>
-
-      {/* Mobile / tablet skills grid (absolute scatter doesn't fit narrow viewports) */}
-      <div className="relative z-[7] lg:hidden px-4 pb-12 pt-4">
+      {/* Mobile / tablet skills grid — below the 97vh hero, still visually connected */}
+      <div className="relative z-[7] lg:hidden px-4 py-8 bg-[var(--background)]">
         <div className="container-x grid grid-cols-2 sm:grid-cols-3 gap-2">
           {HERO_SKILLS.map((s) => (
             <div key={s.t} className="glass rounded-2xl px-3 py-2.5 flex items-center gap-2 min-w-0">
@@ -461,35 +530,25 @@ function FloatingSkill({
   style: React.CSSProperties;
   onEnter: () => void; onLeave: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 200, damping: 18 });
-  const sy = useSpring(y, { stiffness: 200, damping: 18 });
   return (
     <motion.div
-      ref={ref}
-      style={{ ...style, x: sx, y: sy, translateX: "-50%", translateY: "-50%" }}
+      style={style}
       className="absolute pointer-events-auto"
       initial={{ opacity: 0, scale: 0.85 }}
-      animate={{ opacity: 1, scale: 1, y: [0, -8, 0] }}
-      transition={{
-        opacity: { duration: 0.8, delay: 1.4 + delay },
-        scale: { duration: 0.8, delay: 1.4 + delay },
-        y: { duration: 5 + delay * 2, repeat: Infinity, ease: "easeInOut", delay: 1.4 + delay },
-      }}
-      onMouseEnter={() => { onEnter(); }}
-      onMouseLeave={() => { x.set(0); y.set(0); onLeave(); }}
-      onMouseMove={(e) => {
-        const r = ref.current!.getBoundingClientRect();
-        x.set((e.clientX - r.left - r.width / 2) * 0.35);
-        y.set((e.clientY - r.top - r.height / 2) * 0.35);
-      }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, delay: 1.2 + delay, ease: [0.2, 0.8, 0.2, 1] }}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
     >
-      <div className="glass-strong group flex items-center gap-2.5 rounded-full pl-3 pr-4 py-2 cursor-pointer hover:border-[var(--neon)]/60 hover:shadow-[0_0_40px_rgba(192,132,252,0.5)] transition-all duration-500">
-        <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/30 text-sm shrink-0">{icon}</span>
-        <span className="text-[11px] font-medium text-white/95 whitespace-nowrap">{label}</span>
-      </div>
+      <motion.div
+        animate={{ y: [0, -6, 0] }}
+        transition={{ duration: 5 + delay * 2, repeat: Infinity, ease: "easeInOut", delay: 1.2 + delay }}
+        className="glass-strong group flex items-center gap-2 rounded-full pl-2.5 pr-3.5 py-1.5 cursor-pointer hover:border-[var(--neon)]/60 hover:shadow-[0_0_36px_rgba(192,132,252,0.5)] transition-all duration-500 will-change-transform"
+        whileHover={{ scale: 1.08 }}
+      >
+        <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/30 text-[11px] shrink-0">{icon}</span>
+        <span className="text-[10.5px] font-medium text-white/95 whitespace-nowrap">{label}</span>
+      </motion.div>
     </motion.div>
   );
 }
@@ -693,55 +752,141 @@ function Pricing() {
 }
 
 
-/* ───────── About ───────── */
+/* ───────── About — immersive 3D glass panel with orbiting info cards ───────── */
 function About() {
-  return (
-    <section id="about" className="relative py-24 md:py-32">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(124,58,237,0.12),transparent_60%)]" aria-hidden />
-      <div className="container-x relative grid items-center gap-12 lg:gap-16 lg:grid-cols-2">
-        <Reveal className="relative flex items-center justify-center order-2 lg:order-1">
-          <div className="relative aspect-square w-full max-w-[420px]">
-            <div className="absolute inset-0 rounded-full border border-[var(--border)] spin-slow" />
-            <div className="absolute inset-[8%] rounded-full border border-[var(--border)] spin-slow" style={{ animationDuration: "22s", animationDirection: "reverse" }} />
-            <div className="absolute inset-[18%] rounded-full border border-[var(--border)] spin-slow" style={{ animationDuration: "16s" }} />
-            <div className="absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_180deg,#7c3aed,#e879f9,#22d3ee,#7c3aed)] blur-[2px] pulse-glow" />
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-              <div className="font-display text-5xl sm:text-6xl font-extrabold text-white drop-shadow-[0_4px_20px_rgba(192,132,252,0.7)]">5+</div>
-              <div className="mt-1 text-[10px] uppercase tracking-[0.3em] text-white/80 font-semibold">Years</div>
-            </div>
-          </div>
-        </Reveal>
+  const ref = useRef<HTMLDivElement>(null);
+  const rx = useMotionValue(0);
+  const ry = useMotionValue(0);
+  const srx = useSpring(rx, { stiffness: 90, damping: 18 });
+  const sry = useSpring(ry, { stiffness: 90, damping: 18 });
 
-        <div className="order-1 lg:order-2 min-w-0">
-          <Reveal><SectionTag>About Me</SectionTag></Reveal>
+  const stats = [
+    { k: "5+",   l: "Years Experience" },
+    { k: "40+",  l: "Projects Shipped" },
+    { k: "98%",  l: "Client Retention" },
+    { k: "∞",    l: "Details Obsessed" },
+  ];
+
+  return (
+    <section id="about" className="relative py-28 md:py-36 overflow-hidden">
+      {/* Ambient background */}
+      <div className="absolute inset-0" aria-hidden style={{
+        background:
+          "radial-gradient(ellipse at 15% 20%, rgba(124,58,237,0.18), transparent 55%), radial-gradient(ellipse at 85% 80%, rgba(232,121,249,0.14), transparent 55%)",
+      }} />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 h-[520px] w-[520px] rounded-full bg-[var(--primary)]/10 blur-[120px] float-y" aria-hidden />
+      <Particles count={22} />
+
+      <div className="container-x relative">
+        <div className="mb-12 sm:mb-16 text-center">
+          <Reveal className="flex justify-center"><SectionTag>About Me</SectionTag></Reveal>
           <Reveal delay={0.1}>
             <h2 className="leading-[1.05]">Design that thinks.<br /><span className="text-gradient">Code that performs.</span></h2>
           </Reveal>
-          <Reveal delay={0.2}>
-            <p className="mt-6 sm:mt-8 text-base sm:text-lg text-[var(--muted-foreground)]">
-              I'm <strong className="text-[var(--foreground)]">Hooria Azam</strong> — a frontend developer and WordPress
-              specialist with <strong className="text-[var(--neon)]">5+ years of hands-on experience</strong> crafting
-              digital experiences that strike the balance between beautiful and functional.
-            </p>
-          </Reveal>
-          <Reveal delay={0.3}>
-            <p className="mt-4 sm:mt-5 text-base sm:text-lg text-[var(--muted-foreground)]">
-              I don't just build websites — I architect <strong className="text-[var(--foreground)]">digital experiences</strong>{" "}
-              that engage, convert, and leave a lasting impression.
-            </p>
-          </Reveal>
-          <Reveal delay={0.4}>
-            <div className="mt-6 sm:mt-8 flex flex-wrap gap-2">
-              {["UI/UX Design","Frontend Dev","WordPress","WooCommerce","Elementor Pro","Responsive Design","Web Animations"].map((p) => (
-                <span key={p} className="glass rounded-full px-3.5 py-2 text-[10px] sm:text-xs uppercase tracking-wider text-[var(--muted-foreground)] hover:text-[var(--neon)] transition-colors">{p}</span>
-              ))}
+        </div>
+
+        <div
+          ref={ref}
+          onMouseMove={(e) => {
+            const r = ref.current!.getBoundingClientRect();
+            const nx = (e.clientX - r.left) / r.width - 0.5;
+            const ny = (e.clientY - r.top) / r.height - 0.5;
+            ry.set(nx * 10);
+            rx.set(-ny * 10);
+          }}
+          onMouseLeave={() => { rx.set(0); ry.set(0); }}
+          className="relative perspective-1200"
+        >
+          <motion.div
+            style={{ rotateX: srx, rotateY: sry, transformStyle: "preserve-3d" }}
+            className="relative mx-auto max-w-5xl"
+          >
+            {/* Orbiting decorative rings behind the panel */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
+              <div className="absolute h-[540px] w-[540px] rounded-full border border-[rgba(192,132,252,0.12)] spin-slow" />
+              <div className="absolute h-[420px] w-[420px] rounded-full border border-[rgba(232,121,249,0.10)] spin-slow" style={{ animationDuration: "26s", animationDirection: "reverse" }} />
+              <div className="absolute h-[300px] w-[300px] rounded-full bg-[conic-gradient(from_120deg,#7c3aed,#e879f9,#22d3ee,#7c3aed)] opacity-25 blur-2xl pulse-glow" />
             </div>
-          </Reveal>
+
+            {/* Main glass panel */}
+            <div
+              className="relative glass-strong rounded-[32px] p-8 sm:p-12 lg:p-16 overflow-hidden"
+              style={{
+                transform: "translateZ(40px)",
+                boxShadow:
+                  "0 40px 120px -30px rgba(124,58,237,0.55), 0 0 0 1px rgba(255,255,255,0.06) inset",
+              }}
+            >
+              {/* animated gradient border */}
+              <div className="pointer-events-none absolute inset-0 rounded-[32px]"
+                style={{
+                  padding: 1,
+                  background:
+                    "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.25), rgba(232,121,249,0.55))",
+                  WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
+                }}
+              />
+              <div className="pointer-events-none absolute -top-32 -left-32 h-72 w-72 rounded-full bg-[var(--primary)]/25 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-32 -right-32 h-72 w-72 rounded-full bg-[var(--pink)]/20 blur-3xl" />
+
+              <div className="relative grid gap-10 lg:grid-cols-[1.15fr_1fr] items-center">
+                <div className="min-w-0" style={{ transform: "translateZ(30px)" }}>
+                  <div className="mb-4 inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-[10px] uppercase tracking-[0.25em] text-white/85">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
+                    Hooria Azam · Frontend & WordPress
+                  </div>
+                  <p className="text-lg sm:text-xl leading-relaxed text-white/90">
+                    I craft <span className="text-gradient font-semibold">cinematic digital experiences</span> that
+                    balance beauty and function. With <strong className="text-[var(--neon)]">5+ years</strong> of
+                    hands-on work in frontend engineering, WordPress, and interaction design, I bring your ideas
+                    to life with precision and soul.
+                  </p>
+                  <p className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] leading-relaxed">
+                    I don't just build websites — I architect immersive interfaces that engage,
+                    convert, and leave a lasting impression.
+                  </p>
+                  <div className="mt-7 flex flex-wrap gap-2">
+                    {["UI/UX","Frontend","WordPress","WooCommerce","Elementor Pro","Responsive","Animations"].map((p) => (
+                      <span key={p} className="glass rounded-full px-3.5 py-1.5 text-[10.5px] uppercase tracking-wider text-white/80 hover:text-[var(--neon)] transition-colors">{p}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Floating stats grid */}
+                <div className="grid grid-cols-2 gap-4" style={{ transform: "translateZ(60px)" }}>
+                  {stats.map((s, i) => (
+                    <motion.div
+                      key={s.l}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.7, delay: 0.1 + i * 0.08, ease: [0.2, 0.8, 0.2, 1] }}
+                      whileHover={{ y: -4 }}
+                      className="glass relative overflow-hidden rounded-2xl p-5 sm:p-6"
+                    >
+                      <div className="absolute -top-16 -right-16 h-32 w-32 rounded-full bg-[var(--primary)]/25 blur-3xl" />
+                      <div className="relative">
+                        <div className="font-display text-3xl sm:text-4xl font-extrabold text-gradient leading-none">{s.k}</div>
+                        <div className="mt-2 text-[10px] sm:text-xs uppercase tracking-[0.22em] text-white/75">{s.l}</div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Floating holographic accents */}
+            <div aria-hidden className="pointer-events-none absolute -top-6 -left-6 h-16 w-16 rounded-2xl glass rotate-12 float-y" style={{ transform: "translateZ(80px) rotate(12deg)" }} />
+            <div aria-hidden className="pointer-events-none absolute -bottom-8 -right-4 h-20 w-20 rounded-full glass float-y" style={{ animationDelay: "-3s", transform: "translateZ(90px)" }} />
+          </motion.div>
         </div>
       </div>
     </section>
   );
 }
+
 
 /* ───────── Services ───────── */
 const SERVICES = [
@@ -1165,25 +1310,176 @@ function Field({ as, ...props }: any) {
   );
 }
 
-/* ───────── Footer ───────── */
+/* ───────── Footer — floating glass card, premium 3D ───────── */
 function Footer() {
+  const ref = useRef<HTMLDivElement>(null);
+  const rx = useMotionValue(0);
+  const ry = useMotionValue(0);
+  const srx = useSpring(rx, { stiffness: 90, damping: 20 });
+  const sry = useSpring(ry, { stiffness: 90, damping: 20 });
+
+  const nav: [string, string][] = [
+    ["Home", "#hero"], ["About", "#about"], ["Projects", "#projects"],
+    ["Services", "#services"], ["Contact", "#contact"],
+  ];
+  const socials: [string, string, string][] = [
+    ["GitHub",   "#", "M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.94c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.76.4-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.77 1.06.77 2.13v3.16c0 .31.2.67.8.55A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"],
+    ["LinkedIn", "#", "M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.5c0-1.3-.02-3-1.83-3-1.83 0-2.12 1.43-2.12 2.9V21h-4V9Z"],
+    ["Behance",  "#", "M8.2 6.5c1.8 0 3.3.9 3.3 3 0 1.2-.6 2-1.5 2.5 1.3.4 2 1.4 2 2.9 0 2.4-2 3.6-4.2 3.6H2V6.5h6.2Zm-3 4.6h2.8c1 0 1.6-.5 1.6-1.4S9 8.3 8 8.3H5.2v2.8Zm0 5.6h3c1 0 1.9-.4 1.9-1.7s-.7-1.7-1.9-1.7H5.2v3.4Zm12.6-6.1c2.7 0 4.2 2 4.2 4.6v.6h-6.1c.1 1.3.9 2 2.1 2 .8 0 1.5-.3 1.8-1h2.1c-.4 1.8-2 2.7-4 2.7-2.7 0-4.4-1.8-4.4-4.4 0-2.5 1.8-4.5 4.3-4.5Zm-2 3.6h4c-.1-1.1-.8-1.8-2-1.8s-1.9.7-2 1.8ZM14 7h5v1.4h-5V7Z"],
+    ["Dribbble", "#", "M12 .5A11.5 11.5 0 1 0 23.5 12 11.5 11.5 0 0 0 12 .5Zm7.6 5.3a9.7 9.7 0 0 1 2.2 6c-.4-.1-4-.9-7.7-.4-.1-.2-.2-.4-.3-.6-.2-.5-.5-1.1-.7-1.6 4-1.6 5.9-4 6.5-3.4ZM12 2.2c2.4 0 4.6.9 6.3 2.4-.6.8-2.3 2.9-6.1 4.3-1.8-3.3-3.7-6-4-6.4 1.2-.2 2.5-.3 3.8-.3Zm-5.7 1c.3.5 2.2 3.2 4 6.4-5 1.3-9.5 1.3-10 1.3A9.8 9.8 0 0 1 6.3 3.2ZM2.2 12v-.3c.5 0 5.7.1 11.1-1.5.3.6.6 1.2.9 1.9-4.7 1.3-8.8 5.4-9.4 6A9.7 9.7 0 0 1 2.2 12Zm3.9 7.6c.6-.9 3.4-4.4 8.6-6a35.8 35.8 0 0 1 2 8.1 9.7 9.7 0 0 1-10.6-2.1Zm12.5 1a37.6 37.6 0 0 0-1.9-7.6c3.4-.5 6.4.4 6.7.5a9.7 9.7 0 0 1-4.8 7.1Z"],
+    ["Email",    "mailto:hooria@example.com", "M2.5 5.5a2 2 0 0 1 2-2h15a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-15a2 2 0 0 1-2-2v-13Zm1.9-.1L12 12l7.6-6.6H4.4ZM20.5 6.7l-8 6.9a1 1 0 0 1-1.2 0L3.5 6.7v11.8h17V6.7Z"],
+  ];
+
   return (
-    <footer className="relative border-t border-[var(--border)] py-12 sm:py-16">
-      <div className="absolute inset-0 grid-bg opacity-30" aria-hidden />
-      <div className="container-x relative flex flex-col items-center gap-5 text-center">
-        <div className="font-display text-2xl sm:text-3xl font-bold text-gradient">Hooria Azam</div>
-        <div className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-          © 2024 Hooria Azam · Built with precision &amp; passion
-        </div>
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm">
-          {[["About","#about"],["Services","#services"],["Work","#projects"],["Contact","#contact"]].map(([l,h]) => (
-            <a key={l} href={h} className="text-[var(--muted-foreground)] transition-colors hover:text-[var(--neon)]">{l}</a>
-          ))}
+    <footer className="relative pt-24 pb-10 overflow-hidden">
+      {/* Top separator glow */}
+      <div className="absolute inset-x-0 top-0 h-24 pointer-events-none" aria-hidden style={{
+        background: "radial-gradient(ellipse at 50% 0%, rgba(192,132,252,0.22), transparent 60%)"
+      }} />
+      {/* Decorative background */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div className="hero-orb" style={{ top: "-10%", left: "5%", width: 360, height: 360, background: "rgba(124,58,237,0.22)" }} />
+        <div className="hero-orb" style={{ bottom: "-15%", right: "10%", width: 420, height: 420, background: "rgba(232,121,249,0.18)", animationDelay: "-6s" }} />
+        <div className="absolute left-1/2 top-1/3 -translate-x-1/2 h-[600px] w-[600px] rounded-full border border-[rgba(192,132,252,0.08)] spin-slow" />
+      </div>
+      <Particles count={16} />
+
+      <div className="container-x relative">
+        <div
+          ref={ref}
+          onMouseMove={(e) => {
+            const r = ref.current!.getBoundingClientRect();
+            const nx = (e.clientX - r.left) / r.width - 0.5;
+            const ny = (e.clientY - r.top) / r.height - 0.5;
+            ry.set(nx * 6);
+            rx.set(-ny * 6);
+          }}
+          onMouseLeave={() => { rx.set(0); ry.set(0); }}
+          className="perspective-1200"
+        >
+          <motion.div
+            style={{ rotateX: srx, rotateY: sry, transformStyle: "preserve-3d" }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
+            className="relative mx-auto glass-strong rounded-[36px] px-6 py-10 sm:px-10 sm:py-12 lg:p-14 overflow-hidden"
+          >
+            {/* Gradient border */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 rounded-[36px]" style={{
+              padding: 1,
+              background: "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.2), rgba(232,121,249,0.55))",
+              WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+            }} />
+            <div aria-hidden className="pointer-events-none absolute -top-40 -left-24 h-80 w-80 rounded-full bg-[var(--primary)]/25 blur-3xl" />
+            <div aria-hidden className="pointer-events-none absolute -bottom-40 -right-24 h-80 w-80 rounded-full bg-[var(--pink)]/20 blur-3xl" />
+
+            <div className="relative grid gap-10 lg:gap-14 lg:grid-cols-4">
+              {/* Brand */}
+              <div className="min-w-0" style={{ transform: "translateZ(30px)" }}>
+                <div className="font-display text-3xl sm:text-4xl font-extrabold text-gradient">Hooria Azam</div>
+                <p className="mt-4 text-sm text-white/75 leading-relaxed max-w-xs">
+                  Crafting immersive digital experiences with strategy, creativity, and modern development.
+                </p>
+                <div className="mt-5 inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-[10.5px] uppercase tracking-[0.22em] text-white/85">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-70" />
+                    <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
+                  </span>
+                  Available for Freelance
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <div style={{ transform: "translateZ(20px)" }}>
+                <div className="mb-4 text-[11px] uppercase tracking-[0.28em] text-white/60">Explore</div>
+                <ul className="space-y-2.5">
+                  {nav.map(([l, h]) => (
+                    <li key={l}>
+                      <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-white transition-all duration-300 hover:translate-x-1">
+                        <span className="relative">
+                          {l}
+                          <span className="absolute left-0 -bottom-0.5 h-px w-0 bg-gradient-to-r from-[var(--primary)] to-[var(--pink)] transition-all duration-300 group-hover:w-full shadow-[0_0_8px_var(--neon)]" />
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Connect */}
+              <div style={{ transform: "translateZ(20px)" }}>
+                <div className="mb-4 text-[11px] uppercase tracking-[0.28em] text-white/60">Connect</div>
+                <div className="flex flex-wrap gap-3">
+                  {socials.map(([n, h, path]) => (
+                    <motion.a
+                      key={n}
+                      href={h}
+                      aria-label={n}
+                      whileHover={{ y: -4, rotate: 6 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 18 }}
+                      className="group grid h-11 w-11 place-items-center rounded-full glass border border-white/10 text-white/85 hover:text-white hover:border-[var(--neon)]/60 hover:shadow-[0_0_24px_rgba(192,132,252,0.55)] transition-all"
+                    >
+                      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current"><path d={path} /></svg>
+                    </motion.a>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div style={{ transform: "translateZ(40px)" }}>
+                <div className="mb-2 text-[11px] uppercase tracking-[0.28em] text-white/60">Let's collaborate</div>
+                <h3 className="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">Have an idea?</h3>
+                <p className="mt-2 text-sm text-white/70 leading-relaxed">
+                  Let's transform it into an unforgettable digital experience.
+                </p>
+                <MagneticButton href="#contact" variant="primary">
+                  Start a Project
+                  <motion.span
+                    className="inline-block ml-1"
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                  >→</motion.span>
+                </MagneticButton>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="relative mt-10 h-px overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--neon)]/40 to-transparent" />
+              <motion.div
+                className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/70 to-transparent"
+                animate={{ x: ["-100%", "300%"] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+              />
+            </div>
+
+            {/* Bottom bar */}
+            <div className="relative mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] uppercase tracking-[0.22em] text-white/60">
+              <div>© 2026 Umair Sattar. All Rights Reserved.</div>
+              <div className="text-center">Designed &amp; Developed with Passion.</div>
+              <a
+                href="#hero"
+                onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                className="group inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-white/85 hover:text-white hover:border-[var(--neon)]/60 hover:shadow-[0_0_20px_rgba(192,132,252,0.4)] transition-all"
+              >
+                Back to Top
+                <motion.span
+                  className="inline-block"
+                  whileHover={{ rotate: -10, y: -2 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 18 }}
+                >↑</motion.span>
+              </a>
+            </div>
+          </motion.div>
         </div>
       </div>
     </footer>
   );
 }
+
 
 /* ───────── Page ───────── */
 function Portfolio() {
