@@ -752,55 +752,141 @@ function Pricing() {
 }
 
 
-/* ───────── About ───────── */
+/* ───────── About — immersive 3D glass panel with orbiting info cards ───────── */
 function About() {
-  return (
-    <section id="about" className="relative py-24 md:py-32">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(124,58,237,0.12),transparent_60%)]" aria-hidden />
-      <div className="container-x relative grid items-center gap-12 lg:gap-16 lg:grid-cols-2">
-        <Reveal className="relative flex items-center justify-center order-2 lg:order-1">
-          <div className="relative aspect-square w-full max-w-[420px]">
-            <div className="absolute inset-0 rounded-full border border-[var(--border)] spin-slow" />
-            <div className="absolute inset-[8%] rounded-full border border-[var(--border)] spin-slow" style={{ animationDuration: "22s", animationDirection: "reverse" }} />
-            <div className="absolute inset-[18%] rounded-full border border-[var(--border)] spin-slow" style={{ animationDuration: "16s" }} />
-            <div className="absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[conic-gradient(from_180deg,#7c3aed,#e879f9,#22d3ee,#7c3aed)] blur-[2px] pulse-glow" />
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-              <div className="font-display text-5xl sm:text-6xl font-extrabold text-white drop-shadow-[0_4px_20px_rgba(192,132,252,0.7)]">5+</div>
-              <div className="mt-1 text-[10px] uppercase tracking-[0.3em] text-white/80 font-semibold">Years</div>
-            </div>
-          </div>
-        </Reveal>
+  const ref = useRef<HTMLDivElement>(null);
+  const rx = useMotionValue(0);
+  const ry = useMotionValue(0);
+  const srx = useSpring(rx, { stiffness: 90, damping: 18 });
+  const sry = useSpring(ry, { stiffness: 90, damping: 18 });
 
-        <div className="order-1 lg:order-2 min-w-0">
-          <Reveal><SectionTag>About Me</SectionTag></Reveal>
+  const stats = [
+    { k: "5+",   l: "Years Experience" },
+    { k: "40+",  l: "Projects Shipped" },
+    { k: "98%",  l: "Client Retention" },
+    { k: "∞",    l: "Details Obsessed" },
+  ];
+
+  return (
+    <section id="about" className="relative py-28 md:py-36 overflow-hidden">
+      {/* Ambient background */}
+      <div className="absolute inset-0" aria-hidden style={{
+        background:
+          "radial-gradient(ellipse at 15% 20%, rgba(124,58,237,0.18), transparent 55%), radial-gradient(ellipse at 85% 80%, rgba(232,121,249,0.14), transparent 55%)",
+      }} />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 h-[520px] w-[520px] rounded-full bg-[var(--primary)]/10 blur-[120px] float-y" aria-hidden />
+      <Particles count={22} />
+
+      <div className="container-x relative">
+        <div className="mb-12 sm:mb-16 text-center">
+          <Reveal className="flex justify-center"><SectionTag>About Me</SectionTag></Reveal>
           <Reveal delay={0.1}>
             <h2 className="leading-[1.05]">Design that thinks.<br /><span className="text-gradient">Code that performs.</span></h2>
           </Reveal>
-          <Reveal delay={0.2}>
-            <p className="mt-6 sm:mt-8 text-base sm:text-lg text-[var(--muted-foreground)]">
-              I'm <strong className="text-[var(--foreground)]">Hooria Azam</strong> — a frontend developer and WordPress
-              specialist with <strong className="text-[var(--neon)]">5+ years of hands-on experience</strong> crafting
-              digital experiences that strike the balance between beautiful and functional.
-            </p>
-          </Reveal>
-          <Reveal delay={0.3}>
-            <p className="mt-4 sm:mt-5 text-base sm:text-lg text-[var(--muted-foreground)]">
-              I don't just build websites — I architect <strong className="text-[var(--foreground)]">digital experiences</strong>{" "}
-              that engage, convert, and leave a lasting impression.
-            </p>
-          </Reveal>
-          <Reveal delay={0.4}>
-            <div className="mt-6 sm:mt-8 flex flex-wrap gap-2">
-              {["UI/UX Design","Frontend Dev","WordPress","WooCommerce","Elementor Pro","Responsive Design","Web Animations"].map((p) => (
-                <span key={p} className="glass rounded-full px-3.5 py-2 text-[10px] sm:text-xs uppercase tracking-wider text-[var(--muted-foreground)] hover:text-[var(--neon)] transition-colors">{p}</span>
-              ))}
+        </div>
+
+        <div
+          ref={ref}
+          onMouseMove={(e) => {
+            const r = ref.current!.getBoundingClientRect();
+            const nx = (e.clientX - r.left) / r.width - 0.5;
+            const ny = (e.clientY - r.top) / r.height - 0.5;
+            ry.set(nx * 10);
+            rx.set(-ny * 10);
+          }}
+          onMouseLeave={() => { rx.set(0); ry.set(0); }}
+          className="relative perspective-1200"
+        >
+          <motion.div
+            style={{ rotateX: srx, rotateY: sry, transformStyle: "preserve-3d" }}
+            className="relative mx-auto max-w-5xl"
+          >
+            {/* Orbiting decorative rings behind the panel */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
+              <div className="absolute h-[540px] w-[540px] rounded-full border border-[rgba(192,132,252,0.12)] spin-slow" />
+              <div className="absolute h-[420px] w-[420px] rounded-full border border-[rgba(232,121,249,0.10)] spin-slow" style={{ animationDuration: "26s", animationDirection: "reverse" }} />
+              <div className="absolute h-[300px] w-[300px] rounded-full bg-[conic-gradient(from_120deg,#7c3aed,#e879f9,#22d3ee,#7c3aed)] opacity-25 blur-2xl pulse-glow" />
             </div>
-          </Reveal>
+
+            {/* Main glass panel */}
+            <div
+              className="relative glass-strong rounded-[32px] p-8 sm:p-12 lg:p-16 overflow-hidden"
+              style={{
+                transform: "translateZ(40px)",
+                boxShadow:
+                  "0 40px 120px -30px rgba(124,58,237,0.55), 0 0 0 1px rgba(255,255,255,0.06) inset",
+              }}
+            >
+              {/* animated gradient border */}
+              <div className="pointer-events-none absolute inset-0 rounded-[32px]"
+                style={{
+                  padding: 1,
+                  background:
+                    "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.25), rgba(232,121,249,0.55))",
+                  WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
+                }}
+              />
+              <div className="pointer-events-none absolute -top-32 -left-32 h-72 w-72 rounded-full bg-[var(--primary)]/25 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-32 -right-32 h-72 w-72 rounded-full bg-[var(--pink)]/20 blur-3xl" />
+
+              <div className="relative grid gap-10 lg:grid-cols-[1.15fr_1fr] items-center">
+                <div className="min-w-0" style={{ transform: "translateZ(30px)" }}>
+                  <div className="mb-4 inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-[10px] uppercase tracking-[0.25em] text-white/85">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" />
+                    Hooria Azam · Frontend & WordPress
+                  </div>
+                  <p className="text-lg sm:text-xl leading-relaxed text-white/90">
+                    I craft <span className="text-gradient font-semibold">cinematic digital experiences</span> that
+                    balance beauty and function. With <strong className="text-[var(--neon)]">5+ years</strong> of
+                    hands-on work in frontend engineering, WordPress, and interaction design, I bring your ideas
+                    to life with precision and soul.
+                  </p>
+                  <p className="mt-5 text-base sm:text-lg text-[var(--muted-foreground)] leading-relaxed">
+                    I don't just build websites — I architect immersive interfaces that engage,
+                    convert, and leave a lasting impression.
+                  </p>
+                  <div className="mt-7 flex flex-wrap gap-2">
+                    {["UI/UX","Frontend","WordPress","WooCommerce","Elementor Pro","Responsive","Animations"].map((p) => (
+                      <span key={p} className="glass rounded-full px-3.5 py-1.5 text-[10.5px] uppercase tracking-wider text-white/80 hover:text-[var(--neon)] transition-colors">{p}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Floating stats grid */}
+                <div className="grid grid-cols-2 gap-4" style={{ transform: "translateZ(60px)" }}>
+                  {stats.map((s, i) => (
+                    <motion.div
+                      key={s.l}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.7, delay: 0.1 + i * 0.08, ease: [0.2, 0.8, 0.2, 1] }}
+                      whileHover={{ y: -4 }}
+                      className="glass relative overflow-hidden rounded-2xl p-5 sm:p-6"
+                    >
+                      <div className="absolute -top-16 -right-16 h-32 w-32 rounded-full bg-[var(--primary)]/25 blur-3xl" />
+                      <div className="relative">
+                        <div className="font-display text-3xl sm:text-4xl font-extrabold text-gradient leading-none">{s.k}</div>
+                        <div className="mt-2 text-[10px] sm:text-xs uppercase tracking-[0.22em] text-white/75">{s.l}</div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Floating holographic accents */}
+            <div aria-hidden className="pointer-events-none absolute -top-6 -left-6 h-16 w-16 rounded-2xl glass rotate-12 float-y" style={{ transform: "translateZ(80px) rotate(12deg)" }} />
+            <div aria-hidden className="pointer-events-none absolute -bottom-8 -right-4 h-20 w-20 rounded-full glass float-y" style={{ animationDelay: "-3s", transform: "translateZ(90px)" }} />
+          </motion.div>
         </div>
       </div>
     </section>
   );
 }
+
 
 /* ───────── Services ───────── */
 const SERVICES = [
