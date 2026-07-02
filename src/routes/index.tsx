@@ -1255,8 +1255,22 @@ function Testimonials() {
 }
 
 /* ───────── Contact ───────── */
+const CONTACT_EMAIL = "hooria.webdesigns@gmail.com";
+
 function Contact() {
   const [sent, setSent] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", type: "", message: "" });
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const subject = encodeURIComponent(`New project inquiry from ${form.name || "website"}`);
+    const body = encodeURIComponent(
+      `Name: ${form.name}\nEmail: ${form.email}\nProject type: ${form.type}\n\n${form.message}`
+    );
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    setSent(true);
+  };
+
   return (
     <section id="contact" className="relative py-24 md:py-32">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(124,58,237,0.2),transparent_60%)]" aria-hidden />
@@ -1276,24 +1290,20 @@ function Contact() {
               <p className="mb-8 text-sm sm:text-base text-[var(--muted-foreground)]">
                 Tell me about your project — I'd love to hear what you're building and explore how we can make it exceptional.
               </p>
-              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+              <form className="space-y-4" onSubmit={onSubmit}>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field placeholder="Your name" />
-                  <Field type="email" placeholder="Email address" />
+                  <Field required maxLength={100} placeholder="Your name" value={form.name} onChange={(e: any) => setForm({ ...form, name: e.target.value })} />
+                  <Field required type="email" maxLength={255} placeholder="Email address" value={form.email} onChange={(e: any) => setForm({ ...form, email: e.target.value })} />
                 </div>
-                <Field placeholder="Project type (e.g. WordPress site, Landing page, UI design…)" />
-                <Field as="textarea" rows={5} placeholder="Tell me about your project…" />
+                <Field maxLength={120} placeholder="Project type (e.g. WordPress site, Landing page, UI design…)" value={form.type} onChange={(e: any) => setForm({ ...form, type: e.target.value })} />
+                <Field as="textarea" rows={5} required maxLength={2000} placeholder="Tell me about your project…" value={form.message} onChange={(e: any) => setForm({ ...form, message: e.target.value })} />
                 <button type="submit" className="btn-primary w-full !py-4" disabled={sent}>
-                  {sent ? "Message Sent ✓" : "Send Message"}
+                  {sent ? "Opening your email…  ✓" : "Send Message"}
                 </button>
               </form>
               <div className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm">
-                {[
-                  ["📧 Email","mailto:hooria@example.com"],
-                  ["💼 LinkedIn","#"], ["🐦 Twitter","#"], ["🎨 Behance","#"],
-                ].map(([l, h]) => (
-                  <a key={l} href={h} className="text-[var(--muted-foreground)] transition-colors hover:text-[var(--neon)]">{l}</a>
-                ))}
+                <a href={`mailto:${CONTACT_EMAIL}`} className="text-[var(--muted-foreground)] transition-colors hover:text-[var(--neon)]">📧 {CONTACT_EMAIL}</a>
+                <a href="https://www.linkedin.com/in/hooria-azam-web-developer/" target="_blank" rel="noopener noreferrer" className="text-[var(--muted-foreground)] transition-colors hover:text-[var(--neon)]">💼 LinkedIn</a>
               </div>
             </div>
           </div>
