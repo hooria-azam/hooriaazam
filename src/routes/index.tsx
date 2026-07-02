@@ -379,11 +379,14 @@ function Hero() {
         {/* FLOATING SKILL CARDS — polar ring, clamped inside hero (desktop) */}
         <div className="absolute inset-0 z-[6] hidden lg:block pointer-events-none">
           {HERO_SKILLS.map((s, i) => {
-            // Radius clamped to safe area of the section.
-            const rX = "min(34vmin, 380px)";
-            const rY = "min(26vmin, 300px)";
-            const dx = `calc(${Math.cos(s.ang)} * ${rX})`;
-            const dy = `calc(${Math.sin(s.ang)} * ${rY})`;
+            // Elliptical ring — wider than tall so cards don't clash with headline.
+            const RX = 34; // vmin
+            const RY = 26; // vmin
+            const dx = `calc(${Math.cos(s.ang)} * min(${RX}vmin, 380px))`;
+            const dy = `calc(${Math.sin(s.ang)} * min(${RY}vmin, 300px))`;
+            // Actual visual angle of the card center from radar origin (ellipse-adjusted).
+            // The beam rotation must track THIS, not the raw parametric angle.
+            const displayAng = Math.atan2(Math.sin(s.ang) * RY, Math.cos(s.ang) * RX);
             return (
               <FloatingSkill
                 key={s.t}
@@ -395,7 +398,7 @@ function Hero() {
                   top: "62%",
                   transform: `translate(calc(-50% + ${dx}), calc(-50% + ${dy}))`,
                 }}
-                onEnter={() => setLockedAngle(s.ang)}
+                onEnter={() => setLockedAngle(displayAng)}
                 onLeave={() => setLockedAngle(null)}
               />
             );
