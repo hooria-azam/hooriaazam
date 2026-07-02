@@ -1412,17 +1412,22 @@ function Footer() {
               {/* Connect */}
               <div style={{ transform: "translateZ(20px)" }}>
                 <div className="mb-4 text-[11px] uppercase tracking-[0.28em] text-white/60">Connect</div>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-col gap-3">
                   {socials.map(([n, h, path]) => (
                     <motion.a
                       key={n}
                       href={h}
                       aria-label={n}
-                      whileHover={{ y: -4, rotate: 6 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                      className="group grid h-11 w-11 place-items-center rounded-full glass border border-white/10 text-white/85 hover:text-white hover:border-[var(--neon)]/60 hover:shadow-[0_0_24px_rgba(192,132,252,0.55)] transition-all"
+                      target={h.startsWith("http") ? "_blank" : undefined}
+                      rel={h.startsWith("http") ? "noopener noreferrer" : undefined}
+                      whileHover={{ x: 4 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      className="group inline-flex items-center gap-3 rounded-full glass border border-white/10 pl-2 pr-4 py-2 text-sm text-white/85 hover:text-white hover:border-[var(--neon)]/60 hover:shadow-[0_0_24px_rgba(192,132,252,0.45)] transition-all"
                     >
-                      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current"><path d={path} /></svg>
+                      <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/25">
+                        <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current"><path d={path} /></svg>
+                      </span>
+                      <span className="truncate">{n === "Email" ? "hooria.webdesigns@gmail.com" : "linkedin.com/in/hooria-azam"}</span>
                     </motion.a>
                   ))}
                 </div>
