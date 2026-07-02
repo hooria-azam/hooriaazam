@@ -379,11 +379,14 @@ function Hero() {
         {/* FLOATING SKILL CARDS — polar ring, clamped inside hero (desktop) */}
         <div className="absolute inset-0 z-[6] hidden lg:block pointer-events-none">
           {HERO_SKILLS.map((s, i) => {
-            // Radius clamped to safe area of the section.
-            const rX = "min(34vmin, 380px)";
-            const rY = "min(26vmin, 300px)";
-            const dx = `calc(${Math.cos(s.ang)} * ${rX})`;
-            const dy = `calc(${Math.sin(s.ang)} * ${rY})`;
+            // Elliptical ring — wider than tall so cards don't clash with headline.
+            const RX = 34; // vmin
+            const RY = 26; // vmin
+            const dx = `calc(${Math.cos(s.ang)} * min(${RX}vmin, 380px))`;
+            const dy = `calc(${Math.sin(s.ang)} * min(${RY}vmin, 300px))`;
+            // Actual visual angle of the card center from radar origin (ellipse-adjusted).
+            // The beam rotation must track THIS, not the raw parametric angle.
+            const displayAng = Math.atan2(Math.sin(s.ang) * RY, Math.cos(s.ang) * RX);
             return (
               <FloatingSkill
                 key={s.t}
@@ -395,7 +398,7 @@ function Hero() {
                   top: "62%",
                   transform: `translate(calc(-50% + ${dx}), calc(-50% + ${dy}))`,
                 }}
-                onEnter={() => setLockedAngle(s.ang)}
+                onEnter={() => setLockedAngle(displayAng)}
                 onLeave={() => setLockedAngle(null)}
               />
             );
@@ -1121,9 +1124,9 @@ function Projects() {
       <div className="container-x">
         <div className="mb-12 sm:mb-16 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 sm:gap-6">
           <div className="min-w-0">
-            <Reveal><SectionTag>Featured Work</SectionTag></Reveal>
+            <Reveal><SectionTag>Selected Work</SectionTag></Reveal>
             <Reveal delay={0.1}>
-              <h2 className="leading-[1.05]">Projects that<br /><span className="text-gradient">speak louder.</span></h2>
+              <h2 className="leading-[1.05]">Featured Digital<br /><span className="text-gradient">Experiences.</span></h2>
             </Reveal>
           </div>
           <Reveal delay={0.2} className="shrink-0">
@@ -1252,8 +1255,22 @@ function Testimonials() {
 }
 
 /* ───────── Contact ───────── */
+const CONTACT_EMAIL = "hooria.webdesigns@gmail.com";
+
 function Contact() {
   const [sent, setSent] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", type: "", message: "" });
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const subject = encodeURIComponent(`New project inquiry from ${form.name || "website"}`);
+    const body = encodeURIComponent(
+      `Name: ${form.name}\nEmail: ${form.email}\nProject type: ${form.type}\n\n${form.message}`
+    );
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    setSent(true);
+  };
+
   return (
     <section id="contact" className="relative py-24 md:py-32">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(124,58,237,0.2),transparent_60%)]" aria-hidden />
@@ -1273,24 +1290,20 @@ function Contact() {
               <p className="mb-8 text-sm sm:text-base text-[var(--muted-foreground)]">
                 Tell me about your project — I'd love to hear what you're building and explore how we can make it exceptional.
               </p>
-              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+              <form className="space-y-4" onSubmit={onSubmit}>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field placeholder="Your name" />
-                  <Field type="email" placeholder="Email address" />
+                  <Field required maxLength={100} placeholder="Your name" value={form.name} onChange={(e: any) => setForm({ ...form, name: e.target.value })} />
+                  <Field required type="email" maxLength={255} placeholder="Email address" value={form.email} onChange={(e: any) => setForm({ ...form, email: e.target.value })} />
                 </div>
-                <Field placeholder="Project type (e.g. WordPress site, Landing page, UI design…)" />
-                <Field as="textarea" rows={5} placeholder="Tell me about your project…" />
+                <Field maxLength={120} placeholder="Project type (e.g. WordPress site, Landing page, UI design…)" value={form.type} onChange={(e: any) => setForm({ ...form, type: e.target.value })} />
+                <Field as="textarea" rows={5} required maxLength={2000} placeholder="Tell me about your project…" value={form.message} onChange={(e: any) => setForm({ ...form, message: e.target.value })} />
                 <button type="submit" className="btn-primary w-full !py-4" disabled={sent}>
-                  {sent ? "Message Sent ✓" : "Send Message"}
+                  {sent ? "Opening your email…  ✓" : "Send Message"}
                 </button>
               </form>
               <div className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm">
-                {[
-                  ["📧 Email","mailto:hooria@example.com"],
-                  ["💼 LinkedIn","#"], ["🐦 Twitter","#"], ["🎨 Behance","#"],
-                ].map(([l, h]) => (
-                  <a key={l} href={h} className="text-[var(--muted-foreground)] transition-colors hover:text-[var(--neon)]">{l}</a>
-                ))}
+                <a href={`mailto:${CONTACT_EMAIL}`} className="text-[var(--muted-foreground)] transition-colors hover:text-[var(--neon)]">📧 {CONTACT_EMAIL}</a>
+                <a href="https://www.linkedin.com/in/hooria-azam-web-developer/" target="_blank" rel="noopener noreferrer" className="text-[var(--muted-foreground)] transition-colors hover:text-[var(--neon)]">💼 LinkedIn</a>
               </div>
             </div>
           </div>
@@ -1323,11 +1336,8 @@ function Footer() {
     ["Services", "#services"], ["Contact", "#contact"],
   ];
   const socials: [string, string, string][] = [
-    ["GitHub",   "#", "M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.94c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.76.4-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.77 1.06.77 2.13v3.16c0 .31.2.67.8.55A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"],
-    ["LinkedIn", "#", "M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.5c0-1.3-.02-3-1.83-3-1.83 0-2.12 1.43-2.12 2.9V21h-4V9Z"],
-    ["Behance",  "#", "M8.2 6.5c1.8 0 3.3.9 3.3 3 0 1.2-.6 2-1.5 2.5 1.3.4 2 1.4 2 2.9 0 2.4-2 3.6-4.2 3.6H2V6.5h6.2Zm-3 4.6h2.8c1 0 1.6-.5 1.6-1.4S9 8.3 8 8.3H5.2v2.8Zm0 5.6h3c1 0 1.9-.4 1.9-1.7s-.7-1.7-1.9-1.7H5.2v3.4Zm12.6-6.1c2.7 0 4.2 2 4.2 4.6v.6h-6.1c.1 1.3.9 2 2.1 2 .8 0 1.5-.3 1.8-1h2.1c-.4 1.8-2 2.7-4 2.7-2.7 0-4.4-1.8-4.4-4.4 0-2.5 1.8-4.5 4.3-4.5Zm-2 3.6h4c-.1-1.1-.8-1.8-2-1.8s-1.9.7-2 1.8ZM14 7h5v1.4h-5V7Z"],
-    ["Dribbble", "#", "M12 .5A11.5 11.5 0 1 0 23.5 12 11.5 11.5 0 0 0 12 .5Zm7.6 5.3a9.7 9.7 0 0 1 2.2 6c-.4-.1-4-.9-7.7-.4-.1-.2-.2-.4-.3-.6-.2-.5-.5-1.1-.7-1.6 4-1.6 5.9-4 6.5-3.4ZM12 2.2c2.4 0 4.6.9 6.3 2.4-.6.8-2.3 2.9-6.1 4.3-1.8-3.3-3.7-6-4-6.4 1.2-.2 2.5-.3 3.8-.3Zm-5.7 1c.3.5 2.2 3.2 4 6.4-5 1.3-9.5 1.3-10 1.3A9.8 9.8 0 0 1 6.3 3.2ZM2.2 12v-.3c.5 0 5.7.1 11.1-1.5.3.6.6 1.2.9 1.9-4.7 1.3-8.8 5.4-9.4 6A9.7 9.7 0 0 1 2.2 12Zm3.9 7.6c.6-.9 3.4-4.4 8.6-6a35.8 35.8 0 0 1 2 8.1 9.7 9.7 0 0 1-10.6-2.1Zm12.5 1a37.6 37.6 0 0 0-1.9-7.6c3.4-.5 6.4.4 6.7.5a9.7 9.7 0 0 1-4.8 7.1Z"],
-    ["Email",    "mailto:hooria@example.com", "M2.5 5.5a2 2 0 0 1 2-2h15a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-15a2 2 0 0 1-2-2v-13Zm1.9-.1L12 12l7.6-6.6H4.4ZM20.5 6.7l-8 6.9a1 1 0 0 1-1.2 0L3.5 6.7v11.8h17V6.7Z"],
+    ["LinkedIn", "https://www.linkedin.com/in/hooria-azam-web-developer/", "M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.5c0-1.3-.02-3-1.83-3-1.83 0-2.12 1.43-2.12 2.9V21h-4V9Z"],
+    ["Email",    "mailto:hooria.webdesigns@gmail.com", "M2.5 5.5a2 2 0 0 1 2-2h15a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-15a2 2 0 0 1-2-2v-13Zm1.9-.1L12 12l7.6-6.6H4.4ZM20.5 6.7l-8 6.9a1 1 0 0 1-1.2 0L3.5 6.7v11.8h17V6.7Z"],
   ];
 
   return (
@@ -1412,17 +1422,22 @@ function Footer() {
               {/* Connect */}
               <div style={{ transform: "translateZ(20px)" }}>
                 <div className="mb-4 text-[11px] uppercase tracking-[0.28em] text-white/60">Connect</div>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-col gap-3">
                   {socials.map(([n, h, path]) => (
                     <motion.a
                       key={n}
                       href={h}
                       aria-label={n}
-                      whileHover={{ y: -4, rotate: 6 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                      className="group grid h-11 w-11 place-items-center rounded-full glass border border-white/10 text-white/85 hover:text-white hover:border-[var(--neon)]/60 hover:shadow-[0_0_24px_rgba(192,132,252,0.55)] transition-all"
+                      target={h.startsWith("http") ? "_blank" : undefined}
+                      rel={h.startsWith("http") ? "noopener noreferrer" : undefined}
+                      whileHover={{ x: 4 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      className="group inline-flex items-center gap-3 rounded-full glass border border-white/10 pl-2 pr-4 py-2 text-sm text-white/85 hover:text-white hover:border-[var(--neon)]/60 hover:shadow-[0_0_24px_rgba(192,132,252,0.45)] transition-all"
                     >
-                      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current"><path d={path} /></svg>
+                      <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/25">
+                        <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current"><path d={path} /></svg>
+                      </span>
+                      <span className="truncate">{n === "Email" ? "hooria.webdesigns@gmail.com" : "linkedin.com/in/hooria-azam"}</span>
                     </motion.a>
                   ))}
                 </div>
@@ -1458,7 +1473,7 @@ function Footer() {
 
             {/* Bottom bar */}
             <div className="relative mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] uppercase tracking-[0.22em] text-white/60">
-              <div>© 2026 Umair Sattar. All Rights Reserved.</div>
+              <div>© 2026 Hooria Azam. All Rights Reserved.</div>
               <div className="text-center">Designed &amp; Developed with Passion.</div>
               <a
                 href="#hero"
