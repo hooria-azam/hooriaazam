@@ -1124,9 +1124,9 @@ function Projects() {
       <div className="container-x">
         <div className="mb-12 sm:mb-16 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 sm:gap-6">
           <div className="min-w-0">
-            <Reveal><SectionTag>Featured Work</SectionTag></Reveal>
+            <Reveal><SectionTag>Selected Work</SectionTag></Reveal>
             <Reveal delay={0.1}>
-              <h2 className="leading-[1.05]">Projects that<br /><span className="text-gradient">speak louder.</span></h2>
+              <h2 className="leading-[1.05]">Featured Digital<br /><span className="text-gradient">Experiences.</span></h2>
             </Reveal>
           </div>
           <Reveal delay={0.2} className="shrink-0">
