@@ -1458,7 +1458,7 @@ function Footer() {
 
             {/* Bottom bar */}
             <div className="relative mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] uppercase tracking-[0.22em] text-white/60">
-              <div>© 2026 Umair Sattar. All Rights Reserved.</div>
+              <div>© 2026 Hooria Azam. All Rights Reserved.</div>
               <div className="text-center">Designed &amp; Developed with Passion.</div>
               <a
                 href="#hero"
