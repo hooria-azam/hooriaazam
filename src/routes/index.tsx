@@ -1296,21 +1296,155 @@ function Field({ as, ...props }: any) {
   );
 }
 
-/* ───────── Footer ───────── */
+/* ───────── FOOTER — floating 3D glassmorphism card ───────── */
 function Footer() {
+  const ref = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const rx = useSpring(useTransform(my, [0, 1], [3, -3]), { stiffness: 120, damping: 20 });
+  const ry = useSpring(useTransform(mx, [0, 1], [-4, 4]), { stiffness: 120, damping: 20 });
+  const lx = useTransform(mx, (v) => `${v * 100}%`);
+  const ly = useTransform(my, (v) => `${v * 100}%`);
+
+  const nav: [string, string][] = [["Home", "#hero"], ["About", "#about"], ["Projects", "#projects"], ["Services", "#services"], ["Contact", "#contact"]];
+  const socials: { Icon: React.ComponentType<{ className?: string }>; href: string; label: string }[] = [
+    { Icon: Github, href: "#", label: "GitHub" },
+    { Icon: Linkedin, href: "#", label: "LinkedIn" },
+    { Icon: Dribbble, href: "#", label: "Dribbble" },
+    { Icon: Figma, href: "#", label: "Behance" },
+    { Icon: Mail, href: "mailto:hooria@example.com", label: "Email" },
+  ];
+
   return (
-    <footer className="relative border-t border-[var(--border)] py-12 sm:py-16">
-      <div className="absolute inset-0 grid-bg opacity-30" aria-hidden />
-      <div className="container-x relative flex flex-col items-center gap-5 text-center">
-        <div className="font-display text-2xl sm:text-3xl font-bold text-gradient">Hooria Azam</div>
-        <div className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-          © 2024 Hooria Azam · Built with precision &amp; passion
-        </div>
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm">
-          {[["About","#about"],["Services","#services"],["Work","#projects"],["Contact","#contact"]].map(([l,h]) => (
-            <a key={l} href={h} className="text-[var(--muted-foreground)] transition-colors hover:text-[var(--neon)]">{l}</a>
-          ))}
-        </div>
+    <footer className="relative pt-16 pb-10 sm:pt-24 sm:pb-14 overflow-hidden">
+      {/* Decorative background */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-[var(--primary)]/12 blur-3xl float-y" />
+        <div className="absolute bottom-10 right-10 h-80 w-80 rounded-full bg-[var(--pink)]/12 blur-3xl float-y" style={{ animationDelay: "-6s" }} />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-square w-[70%] max-w-[900px] rounded-full border border-[rgba(192,132,252,0.06)] spin-slow" />
+      </div>
+
+      <div className="container-x relative">
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
+          ref={ref}
+          onMouseMove={(e) => {
+            const r = ref.current!.getBoundingClientRect();
+            mx.set((e.clientX - r.left) / r.width);
+            my.set((e.clientY - r.top) / r.height);
+          }}
+          onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
+          style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600 }}
+          className="relative glass-strong rounded-[36px] p-8 sm:p-12 md:p-14 overflow-hidden badge-float"
+        >
+          {/* Cursor-reactive glow */}
+          <motion.div
+            className="pointer-events-none absolute inset-0 opacity-70"
+            style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(600px circle at ${x} ${y}, rgba(192,132,252,0.16), transparent 60%)`) }}
+            aria-hidden
+          />
+          {/* Top glow */}
+          <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-48 w-[60%] rounded-full bg-[var(--neon)]/25 blur-3xl pointer-events-none" aria-hidden />
+          {/* Gradient border */}
+          <div className="pointer-events-none absolute inset-0 rounded-[36px]" style={{
+            padding: 1,
+            background: "linear-gradient(135deg, rgba(192,132,252,0.5), rgba(34,211,238,0.25), rgba(232,121,249,0.5))",
+            WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+          }} aria-hidden />
+
+          <div className="relative grid gap-10 lg:gap-12 md:grid-cols-2 lg:grid-cols-4">
+            {/* Brand */}
+            <div className="min-w-0">
+              <div className="font-display text-3xl font-bold text-gradient mb-4">Hooria Azam</div>
+              <p className="text-sm text-[var(--muted-foreground)] leading-relaxed mb-5">
+                Crafting immersive digital experiences with strategy, creativity, and modern development.
+              </p>
+              <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-white/90">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
+                </span>
+                Available for Freelance
+              </div>
+            </div>
+
+            {/* Nav */}
+            <div className="min-w-0">
+              <div className="mb-5 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
+              <ul className="space-y-2.5">
+                {nav.map(([l, h]) => (
+                  <li key={l}>
+                    <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-[var(--neon)] transition-all duration-300 hover:translate-x-1">
+                      <span className="h-px w-3 bg-current opacity-0 group-hover:opacity-100 group-hover:w-5 transition-all" />
+                      {l}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Socials */}
+            <div className="min-w-0">
+              <div className="mb-5 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Connect</div>
+              <div className="flex flex-wrap gap-2.5">
+                {socials.map(({ Icon, href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    className="group relative grid h-11 w-11 place-items-center rounded-full glass hover:border-[var(--neon)]/50 hover:-translate-y-1 hover:shadow-[0_10px_30px_-10px_rgba(192,132,252,0.6)] transition-all duration-300"
+                  >
+                    <Icon className="h-4 w-4 text-white/90 group-hover:text-[var(--neon)] transition-colors" />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="min-w-0">
+              <div className="mb-2 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Let's build</div>
+              <h4 className="font-display text-xl sm:text-2xl font-bold text-white mb-3">Have an idea?</h4>
+              <p className="text-sm text-[var(--muted-foreground)] mb-5 leading-relaxed">
+                Let's transform it into an unforgettable digital experience.
+              </p>
+              <a href="#contact" className="group inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
+                style={{
+                  background: "linear-gradient(135deg, rgba(124,58,237,0.35), rgba(232,121,249,0.35))",
+                  boxShadow: "0 10px 30px -10px rgba(192,132,252,0.6), inset 0 1px 0 rgba(255,255,255,0.15)",
+                  border: "1px solid rgba(192,132,252,0.4)",
+                }}>
+                Start a Project
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="relative mt-10 pt-6">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--neon)]/50 to-transparent" aria-hidden />
+            <div className="grid gap-3 sm:grid-cols-3 items-center text-[11px] sm:text-xs text-[var(--muted-foreground)]">
+              <div className="text-center sm:text-left">© 2026 Hooria Azam. All Rights Reserved.</div>
+              <div className="text-center">Designed &amp; Developed with Passion.</div>
+              <div className="flex sm:justify-end justify-center">
+                <button
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="group inline-flex items-center gap-2 rounded-full glass px-4 py-2 hover:border-[var(--neon)]/60 hover:shadow-[0_0_20px_rgba(192,132,252,0.4)] transition-all"
+                  aria-label="Back to top"
+                >
+                  <span className="group-hover:text-[var(--neon)] transition-colors">Back to Top</span>
+                  <span className="grid h-6 w-6 place-items-center rounded-full bg-white/5 group-hover:bg-[var(--neon)]/20 group-hover:rotate-45 transition-all duration-300">
+                    <ArrowUp className="h-3 w-3" />
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </footer>
   );
