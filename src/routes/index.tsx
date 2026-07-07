@@ -1,7 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useSpring, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/hooks/use-lenis";
+import {
+  Code2, Palette, Braces, MonitorSmartphone, Globe, LayoutTemplate,
+  ShoppingCart, Figma, LayoutGrid, Smartphone, Sparkles, Navigation,
+  Github, Linkedin, Mail, Dribbble, ArrowUpRight, ArrowUp,
+  Zap, Award, Target, Rocket,
+} from "lucide-react";
 
 
 export const Route = createFileRoute("/")({
