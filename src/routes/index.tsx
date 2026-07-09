@@ -1362,7 +1362,7 @@ function Footer() {
           <div className="relative grid gap-10 lg:gap-12 md:grid-cols-2 lg:grid-cols-4">
             {/* Brand */}
             <div className="min-w-0">
-              <div className="font-display text-3xl font-bold text-gradient mb-4">Hooria Azam</div>
+              <div className="mb-4"><Logo variant="full" tone="gradient" /></div>
               <p className="text-sm text-[var(--muted-foreground)] leading-relaxed mb-5">
                 Crafting immersive digital experiences with strategy, creativity, and modern development.
               </p>
