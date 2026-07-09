@@ -7,7 +7,9 @@ import {
   ShoppingCart, Figma, LayoutGrid, Smartphone, Sparkles, Navigation,
   Github, Linkedin, Mail, Dribbble, ArrowUpRight, ArrowUp,
   Zap, Award, Target, Rocket,
+  Zap, Award, Target, Rocket, Check, Sparkle, Layers, Wand2,
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 
 export const Route = createFileRoute("/")({
