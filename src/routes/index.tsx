@@ -163,7 +163,7 @@ function Hero() {
 
   // Arrow (center icon) rotation — smoothly springs toward mouse direction
   const arrowRot = useMotionValue(0);
-  const sArrowRot = useSpring(arrowRot, { stiffness: 90, damping: 18 });
+  const sArrowRot = useSpring(arrowRot, { stiffness: 180, damping: 20, mass: 0.4 });
 
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 700], [1, 0]);
