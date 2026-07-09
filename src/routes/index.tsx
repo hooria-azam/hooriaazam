@@ -65,8 +65,8 @@ function Nav() {
       className={`fixed left-1/2 top-3 sm:top-5 z-50 -translate-x-1/2 transition-all duration-500 w-[min(94vw,1200px)] ${scrolled ? "max-w-[1100px]" : ""}`}
     >
       <div className="glass-strong flex items-center justify-between rounded-full pl-5 pr-3 py-2.5 sm:pl-6 sm:pr-4 sm:py-3 gap-3">
-        <a href="#hero" className="font-display text-base sm:text-lg font-bold tracking-wide shrink-0">
-          <span className="text-gradient">HA</span><span className="text-[var(--neon)]">.</span>
+        <a href="#hero" className="shrink-0 group" aria-label="Hooria Azam — Home">
+          <Logo variant="full" tone="gradient" className="transition-opacity group-hover:opacity-80" />
         </a>
         <ul className="hidden lg:flex items-center gap-7 min-w-0">
           {links.map(([label, href]) => (
