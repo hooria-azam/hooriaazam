@@ -163,7 +163,7 @@ function Hero() {
 
   // Arrow (center icon) rotation — smoothly springs toward mouse direction
   const arrowRot = useMotionValue(0);
-  const sArrowRot = useSpring(arrowRot, { stiffness: 90, damping: 18 });
+  const sArrowRot = useSpring(arrowRot, { stiffness: 180, damping: 20, mass: 0.4 });
 
   const { scrollY } = useScroll();
   const heroOpacity = useTransform(scrollY, [0, 700], [1, 0]);
@@ -238,9 +238,10 @@ function Hero() {
     setLockedAngle(Math.atan2(ty - cy, tx - cx));
   };
 
-  // Beam is built with bright sector pointing DOWN at rotate=0. Convert angle
-  // (0=right, π/2=down, π=left, -π/2=up) → CSS rotation degrees.
-  const spotRotate = useTransform(angle, (a) => `${(a * 180) / Math.PI - 90}deg`);
+  // Beam's bright sector points UP at rotate=0 (conic-gradient `from 270deg`
+  // places the bright wedge at 12 o'clock). Standard math angle a has 0=right,
+  // π/2=down, -π/2=up. Rotation to aim beam at a = aDeg - (-90) = aDeg + 90.
+  const spotRotate = useTransform(angle, (a) => `${(a * 180) / Math.PI + 90}deg`);
   const arrowRotStr = useTransform(sArrowRot, (v) => `${v}deg`);
 
   return (
