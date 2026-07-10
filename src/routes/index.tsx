@@ -5,7 +5,7 @@ import { useLenis } from "@/hooks/use-lenis";
 import {
   Code2, Palette, Braces, MonitorSmartphone, Globe, LayoutTemplate,
   ShoppingCart, Figma, LayoutGrid, Smartphone, Sparkles, Navigation,
-  Github, Linkedin, Mail, Dribbble, ArrowUpRight, ArrowUp,
+  Linkedin, Mail, ArrowUpRight, ArrowUp,
   Zap, Award, Target, Rocket, Check, Sparkle, Layers, Wand2,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
