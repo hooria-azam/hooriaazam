@@ -1555,25 +1555,135 @@ const WHY = [
 ] as const;
 
 function Why() {
+  const [active, setActive] = useState(0);
+
   return (
-    <section id="why" className="relative py-24 md:py-32">
-      <div className="container-x">
-        <div className="mb-12 sm:mb-16 text-center">
-          <Reveal className="flex justify-center"><SectionTag>Why Work With Me</SectionTag></Reveal>
-          <Reveal delay={0.1}>
-            <h2 className="leading-[1.05]">The difference is in<br /><span className="text-gradient">the details.</span></h2>
-          </Reveal>
-        </div>
-        <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {WHY.map(([icon, title, text], i) => (
-            <Reveal key={title} delay={i * 0.05}>
-              <TiltCard>
-                <div className="mb-4 text-3xl">{icon}</div>
-                <h3 className="mb-3 text-base sm:text-lg font-semibold text-white">{title}</h3>
-                <p className="text-sm text-[var(--muted-foreground)]">{text}</p>
-              </TiltCard>
+    <section id="why" className="relative py-24 md:py-32 overflow-hidden">
+      {/* Ambient */}
+      <div className="absolute inset-0 -z-10" aria-hidden style={{
+        background:
+          "radial-gradient(700px 400px at 15% 15%, rgba(232,121,249,0.14), transparent 60%)," +
+          "radial-gradient(800px 500px at 90% 85%, rgba(34,211,238,0.10), transparent 60%)",
+      }} />
+      {/* Floating decorative shapes */}
+      <motion.div
+        aria-hidden
+        className="absolute top-16 right-[8%] hidden md:block h-32 w-32 rounded-3xl glass-strong"
+        animate={{ y: [0, -20, 0], rotate: [-6, 4, -6] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden
+        className="absolute bottom-24 left-[6%] hidden md:block h-24 w-24 rounded-full border border-[var(--neon)]/30"
+        animate={{ y: [0, 18, 0], scale: [1, 1.08, 1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="container-x relative">
+        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] items-start">
+          {/* LEFT — editorial */}
+          <div className="min-w-0">
+            <Reveal><SectionTag>Why Work With Me</SectionTag></Reveal>
+            <Reveal delay={0.08}>
+              <h2 className="leading-[1.02] mt-4">
+                Every project<br />
+                <span className="italic font-display text-white/50">deserves</span><br />
+                <span className="text-gradient">an obsession.</span>
+              </h2>
             </Reveal>
-          ))}
+            <Reveal delay={0.16}>
+              <p className="mt-6 max-w-md text-base text-[var(--muted-foreground)] leading-relaxed">
+                Six reasons founders and studios choose me — beyond the pixel.
+                Hover any principle to see how it shows up in the work.
+              </p>
+            </Reveal>
+
+            {/* Featured "spotlight" panel — mirrors the active item */}
+            <Reveal delay={0.24}>
+              <div className="relative mt-8 glass-strong rounded-[28px] p-6 sm:p-8 overflow-hidden">
+                <div className="pointer-events-none absolute inset-0 rounded-[28px]" style={{
+                  padding: 1,
+                  background: "linear-gradient(135deg, rgba(192,132,252,0.5), rgba(34,211,238,0.2), rgba(232,121,249,0.5))",
+                  WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
+                } as React.CSSProperties} aria-hidden />
+                <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[var(--primary)]/30 blur-3xl" aria-hidden />
+                <div className="relative">
+                  <div className="mb-4 text-[10px] uppercase tracking-[0.32em] text-[var(--neon)]">
+                    Principle · 0{active + 1} / 0{WHY.length}
+                  </div>
+                  <motion.div
+                    key={active}
+                    initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    transition={{ duration: 0.5 }}
+                    className="flex items-start gap-4"
+                  >
+                    <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-[var(--primary)]/45 to-[var(--pink)]/30 text-3xl">
+                      {WHY[active][0]}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-display text-2xl text-white leading-tight mb-2">{WHY[active][1]}</h3>
+                      <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">{WHY[active][2]}</p>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* RIGHT — asymmetric interactive stack */}
+          <div className="relative">
+            <div className="grid gap-3 sm:gap-4">
+              {WHY.map(([icon, title, text], i) => {
+                const isActive = active === i;
+                return (
+                  <motion.button
+                    key={title}
+                    type="button"
+                    initial={{ opacity: 0, x: 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-60px" }}
+                    transition={{ delay: 0.1 + i * 0.06, duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
+                    onMouseEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    className={`group relative w-full text-left overflow-hidden rounded-2xl transition-all duration-500
+                      ${isActive ? "glass-strong lg:translate-x-4" : "glass hover:lg:translate-x-2"}`}
+                    style={{ marginLeft: `${i % 2 === 0 ? 0 : 24}px` }}
+                  >
+                    {isActive && (
+                      <span className="pointer-events-none absolute inset-0 rounded-2xl" style={{
+                        padding: 1,
+                        background: "linear-gradient(90deg, rgba(192,132,252,0.6), rgba(34,211,238,0.3), rgba(232,121,249,0.6))",
+                        WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                        WebkitMaskComposite: "xor",
+                        maskComposite: "exclude",
+                      } as React.CSSProperties} aria-hidden />
+                    )}
+                    <div className="relative flex items-center gap-4 p-4 sm:p-5">
+                      <span className={`font-display text-xs tracking-[0.3em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
+                        0{i + 1}
+                      </span>
+                      <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-2xl transition-all duration-500 ${isActive ? "bg-gradient-to-br from-[var(--primary)]/50 to-[var(--pink)]/35 scale-110" : "bg-white/[0.04]"}`}>
+                        {icon}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm sm:text-base font-semibold text-white truncate">{title}</div>
+                        <div className={`text-[12px] text-[var(--muted-foreground)] transition-all duration-500 ${isActive ? "opacity-100 max-h-20 mt-1" : "opacity-0 max-h-0 overflow-hidden"}`}>
+                          {text}
+                        </div>
+                      </div>
+                      <ArrowUpRight
+                        size={16}
+                        className={`shrink-0 transition-all duration-500 ${isActive ? "text-[var(--neon)] translate-x-0 opacity-100" : "text-white/30 -translate-x-2 opacity-0"}`}
+                      />
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </section>
