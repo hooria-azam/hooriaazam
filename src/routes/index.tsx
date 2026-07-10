@@ -860,12 +860,11 @@ function About() {
             <div className="relative grid gap-12 lg:gap-16 lg:grid-cols-[1.15fr_1fr] items-start">
               {/* LEFT — editorial copy */}
               <div className="min-w-0">
-                <div className="flex items-center gap-3 mb-8">
-                  <Logo variant="icon" className="h-10 w-10" />
-                  <div>
-                    <div className="font-display italic text-lg text-white/90">Hooria Azam</div>
-                    <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">Frontend · WordPress · UI</div>
-                  </div>
+                <div className="mb-8 font-display italic text-lg text-white/90">
+                  Hooria Azam
+                  <span className="ml-3 text-[10px] not-italic uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
+                    Frontend · WordPress · UI
+                  </span>
                 </div>
 
                 <h3 className="font-display text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.08] text-white mb-6">
@@ -882,23 +881,6 @@ function About() {
                   Over <strong className="text-white">5+ years</strong>, I've partnered with founders, agencies,
                   and brands to ship websites that feel premium, load fast, and convert.
                 </p>
-
-                {/* Chips */}
-                <div className="flex flex-wrap gap-2 mb-10">
-                  {["150+ Projects Shipped","Pixel-perfect Builds","Performance-first","Motion Choreography","WordPress Architect","Conversion-focused"].map((c, i) => (
-                    <motion.span
-                      key={c}
-                      initial={{ opacity: 0, y: 8 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.15 + i * 0.05, duration: 0.5 }}
-                      className="group relative glass rounded-full px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.16em] text-white/85 hover:text-white transition-colors"
-                    >
-                      <span className="pointer-events-none absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(90deg, rgba(192,132,252,0.15), rgba(34,211,238,0.12))" }} />
-                      <span className="relative">{c}</span>
-                    </motion.span>
-                  ))}
-                </div>
 
                 <div className="flex flex-wrap gap-3">
                   <a href="#projects" className="btn-primary !py-3 !px-6 text-sm">Explore my work <ArrowUpRight size={16} /></a>
@@ -935,6 +917,25 @@ function About() {
                   </motion.div>
                 ))}
               </div>
+            </div>
+
+            {/* Feature badges — moved below the columns, full-width responsive grid */}
+            <div className="mt-10 sm:mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {["150+ Projects Shipped","Pixel-perfect Builds","Performance-first","Motion Choreography","WordPress Architect","Conversion-focused"].map((c, i) => (
+                <motion.div
+                  key={c}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 + i * 0.05, duration: 0.5 }}
+                  className="group relative glass rounded-2xl px-3 py-3 text-center hover:-translate-y-0.5 transition-transform"
+                >
+                  <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(135deg, rgba(192,132,252,0.14), rgba(34,211,238,0.10))" }} />
+                  <span className="relative text-[10.5px] sm:text-[11px] font-medium uppercase tracking-[0.14em] text-white/85 group-hover:text-white transition-colors">
+                    {c}
+                  </span>
+                </motion.div>
+              ))}
             </div>
 
             {/* Divider */}
