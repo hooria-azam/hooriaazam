@@ -1905,22 +1905,30 @@ function Footer() {
   const lx = useTransform(mx, (v) => `${v * 100}%`);
   const ly = useTransform(my, (v) => `${v * 100}%`);
 
-  const nav: [string, string][] = [["Home", "#hero"], ["About", "#about"], ["Projects", "#projects"], ["Services", "#services"], ["Contact", "#contact"]];
-  const socials: { Icon: React.ComponentType<{ className?: string }>; href: string; label: string }[] = [
-    { Icon: Github, href: "#", label: "GitHub" },
-    { Icon: Linkedin, href: "#", label: "LinkedIn" },
-    { Icon: Dribbble, href: "#", label: "Dribbble" },
-    { Icon: Figma, href: "#", label: "Behance" },
-    { Icon: Mail, href: "mailto:hooria@example.com", label: "Email" },
+  const nav: [string, string][] = [
+    ["Home", "#hero"], ["About", "#about"], ["Services", "#services"],
+    ["Skills", "#skills"], ["Process", "#process"], ["Projects", "#projects"],
+    ["Pricing", "#pricing"], ["Contact", "#contact"],
   ];
 
   return (
     <footer className="relative pt-16 pb-10 sm:pt-24 sm:pb-14 overflow-hidden">
-      {/* Decorative background */}
+      {/* Layered decorative background */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-[var(--primary)]/12 blur-3xl float-y" />
         <div className="absolute bottom-10 right-10 h-80 w-80 rounded-full bg-[var(--pink)]/12 blur-3xl float-y" style={{ animationDelay: "-6s" }} />
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-square w-[70%] max-w-[900px] rounded-full border border-[rgba(192,132,252,0.06)] spin-slow" />
+        {/* Floating shapes */}
+        <motion.div
+          className="absolute top-20 right-[10%] hidden md:block h-16 w-16 rounded-2xl glass-strong"
+          animate={{ y: [0, -12, 0], rotate: [-5, 5, -5] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-24 left-[8%] hidden md:block h-12 w-12 rounded-full border border-[var(--cyan)]/30"
+          animate={{ y: [0, 14, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
       </div>
 
       <div className="container-x relative">
@@ -1939,15 +1947,12 @@ function Footer() {
           style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600 }}
           className="relative glass-strong rounded-[36px] p-8 sm:p-12 md:p-14 overflow-hidden badge-float"
         >
-          {/* Cursor-reactive glow */}
           <motion.div
             className="pointer-events-none absolute inset-0 opacity-70"
             style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(600px circle at ${x} ${y}, rgba(192,132,252,0.16), transparent 60%)`) }}
             aria-hidden
           />
-          {/* Top glow */}
           <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-48 w-[60%] rounded-full bg-[var(--neon)]/25 blur-3xl pointer-events-none" aria-hidden />
-          {/* Gradient border */}
           <div className="pointer-events-none absolute inset-0 rounded-[36px]" style={{
             padding: 1,
             background: "linear-gradient(135deg, rgba(192,132,252,0.5), rgba(34,211,238,0.25), rgba(232,121,249,0.5))",
@@ -1956,26 +1961,46 @@ function Footer() {
             maskComposite: "exclude",
           }} aria-hidden />
 
-          <div className="relative grid gap-10 lg:gap-12 md:grid-cols-2 lg:grid-cols-4">
-            {/* Brand */}
-            <div className="min-w-0">
-              <div className="mb-4"><Logo variant="full" tone="gradient" /></div>
-              <p className="text-sm text-[var(--muted-foreground)] leading-relaxed mb-5">
-                Crafting immersive digital experiences with strategy, creativity, and modern development.
-              </p>
-              <div className="inline-flex items-center gap-2 rounded-full glass px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-white/90">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
-                </span>
-                Available for Freelance
+          {/* HERO ROW — giant editorial signature */}
+          <div className="relative mb-12 sm:mb-14 pb-10 sm:pb-12 border-b border-white/10">
+            <div className="grid gap-6 md:grid-cols-[1.2fr_1fr] items-end">
+              <div className="min-w-0">
+                <div className="mb-4"><Logo variant="full" tone="gradient" /></div>
+                <h3 className="font-display text-[clamp(1.75rem,4.5vw,3.75rem)] italic text-white leading-[1.05]">
+                  Let's craft <span className="text-gradient not-italic">something</span><br />
+                  worth remembering.
+                </h3>
               </div>
+              <div className="flex flex-col items-start md:items-end gap-4">
+                <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-[10px] uppercase tracking-[0.28em] text-white/90">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
+                  </span>
+                  Available for Freelance
+                </div>
+                <a href="#contact" className="btn-primary !py-3 !px-6 text-sm">
+                  Start a Project <ArrowUpRight size={16} />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* CONTENT GRID */}
+          <div className="relative grid gap-10 lg:gap-12 md:grid-cols-2 lg:grid-cols-3">
+            {/* About */}
+            <div className="min-w-0">
+              <div className="mb-4 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Studio</div>
+              <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+                A frontend studio of one, crafting premium websites and interfaces for founders,
+                agencies, and brands worldwide. Karachi → Everywhere.
+              </p>
             </div>
 
             {/* Nav */}
             <div className="min-w-0">
-              <div className="mb-5 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
-              <ul className="space-y-2.5">
+              <div className="mb-4 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
                 {nav.map(([l, h]) => (
                   <li key={l}>
                     <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-[var(--neon)] transition-all duration-300 hover:translate-x-1">
@@ -1987,44 +2012,40 @@ function Footer() {
               </ul>
             </div>
 
-            {/* Socials */}
+            {/* Contact — ONLY LinkedIn + Email */}
             <div className="min-w-0">
-              <div className="mb-5 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Connect</div>
-              <div className="flex flex-wrap gap-2.5">
-                {socials.map(({ Icon, href, label }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    aria-label={label}
-                    className="group relative grid h-11 w-11 place-items-center rounded-full glass hover:border-[var(--neon)]/50 hover:-translate-y-1 hover:shadow-[0_10px_30px_-10px_rgba(192,132,252,0.6)] transition-all duration-300"
-                  >
-                    <Icon className="h-4 w-4 text-white/90 group-hover:text-[var(--neon)] transition-colors" />
-                  </a>
-                ))}
+              <div className="mb-4 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Connect</div>
+              <div className="space-y-2.5">
+                <a
+                  href="mailto:hooria.webdesigns@gmail.com"
+                  className="group flex items-center gap-3 rounded-2xl glass px-3.5 py-2.5 hover:border-[var(--neon)]/50 hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--primary)]/45 to-[var(--pink)]/30">
+                    <Mail size={15} className="text-white" />
+                  </span>
+                  <span className="min-w-0 flex-1 text-[13px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
+                    hooria.webdesigns@gmail.com
+                  </span>
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/hooria-azam-web-developer/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3 rounded-2xl glass px-3.5 py-2.5 hover:border-[var(--neon)]/50 hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--cyan)]/40 to-[var(--primary)]/30">
+                    <Linkedin size={15} className="text-white" />
+                  </span>
+                  <span className="min-w-0 flex-1 text-[13px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
+                    LinkedIn Profile
+                  </span>
+                </a>
               </div>
-            </div>
-
-            {/* CTA */}
-            <div className="min-w-0">
-              <div className="mb-2 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Let's build</div>
-              <h4 className="font-display text-xl sm:text-2xl font-bold text-white mb-3">Have an idea?</h4>
-              <p className="text-sm text-[var(--muted-foreground)] mb-5 leading-relaxed">
-                Let's transform it into an unforgettable digital experience.
-              </p>
-              <a href="#contact" className="group inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5"
-                style={{
-                  background: "linear-gradient(135deg, rgba(124,58,237,0.35), rgba(232,121,249,0.35))",
-                  boxShadow: "0 10px 30px -10px rgba(192,132,252,0.6), inset 0 1px 0 rgba(255,255,255,0.15)",
-                  border: "1px solid rgba(192,132,252,0.4)",
-                }}>
-                Start a Project
-                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </a>
             </div>
           </div>
 
           {/* Bottom bar */}
-          <div className="relative mt-10 pt-6">
+          <div className="relative mt-12 pt-6">
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--neon)]/50 to-transparent" aria-hidden />
             <div className="grid gap-3 sm:grid-cols-3 items-center text-[11px] sm:text-xs text-[var(--muted-foreground)]">
               <div className="text-center sm:text-left">© 2026 Hooria Azam. All Rights Reserved.</div>
