@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
       { title: "Hooria Azam — Frontend & WordPress Developer" },
       { name: "description", content: "5+ years crafting cinematic, premium digital experiences. Frontend, WordPress, UI/UX." },
       { property: "og:title", content: "Hooria Azam — Frontend & WordPress Developer" },
-      { property: "og:description", content: "Creating digital experiences worth remembering." },
+      { property: "og:description", content: "5+ years crafting cinematic, premium digital experiences. Frontend, WordPress, UI/UX." },
     ],
   }),
   component: Portfolio,
