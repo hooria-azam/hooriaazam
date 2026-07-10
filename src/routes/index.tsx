@@ -1161,6 +1161,113 @@ const STEPS = [
   { n: "04", title: "Launch & Optimize", desc: "Thorough testing, performance optimization, and a smooth handoff. Production-ready and set for long-term success.", icon: "◓" },
 ] as const;
 
+function ProcessFloatDecor() {
+  // Floating premium decorative assets — wireframes, browser chrome, cursor,
+  // code brackets, grid, connection lines. Purely aesthetic; positioned so they
+  // never overlap the main timeline column and never break out of the section.
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* subtle grid backdrop */}
+      <div className="absolute inset-0 grid-bg opacity-40" />
+
+      {/* Browser window — top right */}
+      <motion.div
+        className="absolute top-[8%] right-[6%] hidden md:block"
+        animate={{ y: [0, -14, 0], rotate: [-2, 1, -2] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <div className="glass rounded-xl w-56 h-36 p-2 shadow-[0_20px_60px_-20px_rgba(192,132,252,0.4)]">
+          <div className="flex gap-1.5 mb-2">
+            <span className="h-2 w-2 rounded-full bg-[#ff6b6b]/70" />
+            <span className="h-2 w-2 rounded-full bg-[#feca57]/70" />
+            <span className="h-2 w-2 rounded-full bg-[#48dbfb]/70" />
+          </div>
+          <div className="space-y-1.5">
+            <div className="h-1.5 w-3/4 rounded bg-white/15" />
+            <div className="h-1.5 w-1/2 rounded bg-white/10" />
+            <div className="mt-3 grid grid-cols-3 gap-1.5">
+              <div className="h-6 rounded bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/20" />
+              <div className="h-6 rounded bg-white/5" />
+              <div className="h-6 rounded bg-white/5" />
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Wireframe card — bottom left */}
+      <motion.div
+        className="absolute bottom-[10%] left-[5%] hidden md:block"
+        animate={{ y: [0, 18, 0], rotate: [3, -1, 3] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <div className="glass rounded-xl w-44 h-52 p-3">
+          <div className="h-16 w-full rounded-lg bg-gradient-to-br from-[var(--primary)]/25 to-[var(--cyan)]/15 mb-3" />
+          <div className="space-y-1.5">
+            <div className="h-1.5 w-full rounded bg-white/15" />
+            <div className="h-1.5 w-5/6 rounded bg-white/10" />
+            <div className="h-1.5 w-2/3 rounded bg-white/10" />
+          </div>
+          <div className="mt-4 flex gap-2">
+            <div className="h-5 w-14 rounded-full bg-gradient-to-r from-[var(--primary)]/50 to-[var(--pink)]/40" />
+            <div className="h-5 w-10 rounded-full bg-white/5 border border-white/10" />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Code snippet — middle right */}
+      <motion.div
+        className="absolute top-[45%] right-[8%] hidden lg:block"
+        animate={{ y: [0, -12, 0] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: -3 }}
+      >
+        <div className="glass rounded-lg px-3 py-2.5 font-mono text-[10px] leading-relaxed text-white/60">
+          <div><span className="text-[var(--pink)]">const</span> <span className="text-[var(--cyan)]">design</span> = ()=&gt;</div>
+          <div className="pl-3"><span className="text-[var(--neon)]">craft</span>(<span className="text-white/40">'∞'</span>);</div>
+        </div>
+      </motion.div>
+
+      {/* Cursor icon — floats through */}
+      <motion.svg
+        className="absolute top-[30%] left-[42%] hidden lg:block drop-shadow-[0_0_10px_rgba(232,121,249,0.6)]"
+        width="22" height="22" viewBox="0 0 24 24" fill="none"
+        animate={{ x: [0, 30, -10, 0], y: [0, -20, 15, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <path d="M4 3 L20 12 L13 13.5 L10 20 Z" fill="#e879f9" stroke="#fff" strokeWidth="0.8" />
+      </motion.svg>
+
+      {/* Floating particles */}
+      {[
+        { l: "18%", t: "22%", d: 0 },
+        { l: "78%", t: "60%", d: 2 },
+        { l: "32%", t: "78%", d: 4 },
+        { l: "62%", t: "18%", d: 6 },
+      ].map((p, i) => (
+        <motion.span
+          key={i}
+          className="absolute h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_12px_var(--neon)]"
+          style={{ left: p.l, top: p.t }}
+          animate={{ y: [0, -20, 0], opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut", delay: p.d }}
+        />
+      ))}
+
+      {/* Connection lines SVG */}
+      <svg className="absolute inset-0 h-full w-full opacity-30" aria-hidden>
+        <defs>
+          <linearGradient id="proc-line" x1="0" x2="1">
+            <stop offset="0%" stopColor="transparent" />
+            <stop offset="50%" stopColor="#c084fc" />
+            <stop offset="100%" stopColor="transparent" />
+          </linearGradient>
+        </defs>
+        <line x1="15%" y1="20%" x2="85%" y2="30%" stroke="url(#proc-line)" strokeWidth="1" strokeDasharray="3 6" />
+        <line x1="85%" y1="65%" x2="12%" y2="80%" stroke="url(#proc-line)" strokeWidth="1" strokeDasharray="3 6" />
+      </svg>
+    </div>
+  );
+}
+
 function Process() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 70%", "end 30%"] });
@@ -1171,6 +1278,8 @@ function Process() {
       <div className="absolute top-1/4 left-10 h-72 w-72 rounded-full bg-[var(--primary)]/10 blur-3xl float-y" aria-hidden />
       <div className="absolute bottom-1/4 right-10 h-72 w-72 rounded-full bg-[var(--cyan)]/10 blur-3xl float-y" style={{ animationDelay: "-4s" }} aria-hidden />
 
+      <ProcessFloatDecor />
+
       <div className="container-x relative">
         <div className="mb-16 sm:mb-20 text-center">
           <Reveal className="flex justify-center"><SectionTag>My Process</SectionTag></Reveal>
@@ -1179,35 +1288,43 @@ function Process() {
           </Reveal>
         </div>
 
-        <div ref={ref} className="relative max-w-5xl mx-auto">
-          {/* Animated connector */}
-          <div className="absolute left-5 top-0 h-full w-px bg-white/5 md:left-1/2 md:-translate-x-1/2" aria-hidden />
+        <div ref={ref} className="relative max-w-3xl mx-auto">
+          {/* Timeline rail — always on the left */}
+          <div className="absolute left-5 top-0 h-full w-px bg-white/5" aria-hidden />
           <motion.div
             style={{ height: lineHeight }}
-            className="absolute left-5 top-0 w-px bg-gradient-to-b from-[var(--primary)] via-[var(--pink)] to-[var(--cyan)] shadow-[0_0_16px_var(--neon)] md:left-1/2 md:-translate-x-1/2"
+            className="absolute left-5 top-0 w-px bg-gradient-to-b from-[var(--primary)] via-[var(--pink)] to-[var(--cyan)] shadow-[0_0_16px_var(--neon)]"
           />
 
-          <div className="space-y-10 sm:space-y-14">
+          <div className="space-y-8 sm:space-y-10">
             {STEPS.map((s, i) => (
               <Reveal key={s.n} delay={i * 0.05}>
-                <div className={`relative grid items-center gap-6 md:grid-cols-2 ${i % 2 ? "md:[&>*:first-child]:order-2" : ""}`}>
-                  <div className={`pl-14 md:pl-0 min-w-0 ${i % 2 ? "md:pl-14 md:text-left" : "md:pr-14 md:text-right"}`}>
-                    <div className="glass-strong relative overflow-hidden rounded-3xl p-6 sm:p-7 group hover:-translate-y-1 transition-transform duration-500">
-                      <div className="pointer-events-none absolute -top-20 -right-20 h-40 w-40 rounded-full bg-[var(--primary)]/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                      <div className="relative">
-                        <div className={`flex items-center gap-3 mb-3 ${i % 2 ? "md:justify-start" : "md:justify-end"}`}>
-                          <span className="font-display text-4xl sm:text-5xl font-extrabold text-gradient leading-none">{s.n}</span>
-                          <span className="text-2xl text-[var(--neon)]">{s.icon}</span>
-                        </div>
-                        <h3 className="mb-3 text-lg sm:text-xl font-semibold text-white">{s.title}</h3>
-                        <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">{s.desc}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="hidden md:block" />
-                  <div className="absolute left-5 top-8 -translate-x-1/2 md:left-1/2">
+                <div className="relative pl-14">
+                  {/* Node dot */}
+                  <div className="absolute left-5 top-6 -translate-x-1/2">
                     <div className="relative grid h-5 w-5 place-items-center rounded-full bg-[var(--neon)] shadow-[0_0_18px_var(--neon)] ring-4 ring-[var(--background)]">
                       <div className="absolute inset-0 rounded-full bg-[var(--neon)] animate-ping opacity-60" />
+                    </div>
+                  </div>
+
+                  {/* Card — fully left-aligned */}
+                  <div className="glass-strong relative overflow-hidden rounded-3xl p-6 sm:p-8 text-left group hover:-translate-y-1 hover:shadow-[0_30px_80px_-30px_rgba(192,132,252,0.5)] transition-all duration-500">
+                    <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[var(--primary)]/25 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
+                      padding: 1,
+                      background: "linear-gradient(135deg, rgba(192,132,252,0.4), rgba(34,211,238,0.15), rgba(232,121,249,0.4))",
+                      WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                      WebkitMaskComposite: "xor",
+                      maskComposite: "exclude",
+                    } as React.CSSProperties} />
+
+                    <div className="relative">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="font-display text-4xl sm:text-5xl font-extrabold text-gradient leading-none">{s.n}</span>
+                        <span className="text-2xl text-[var(--neon)]">{s.icon}</span>
+                      </div>
+                      <h3 className="mb-3 text-lg sm:text-xl font-semibold text-white text-left">{s.title}</h3>
+                      <p className="text-sm text-[var(--muted-foreground)] leading-relaxed text-left max-w-[54ch]">{s.desc}</p>
                     </div>
                   </div>
                 </div>
