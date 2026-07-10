@@ -1730,47 +1730,156 @@ function Testimonials() {
 /* ───────── Contact ───────── */
 function Contact() {
   const [sent, setSent] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const rx = useSpring(useTransform(my, [0, 1], [4, -4]), { stiffness: 120, damping: 20 });
+  const ry = useSpring(useTransform(mx, [0, 1], [-5, 5]), { stiffness: 120, damping: 20 });
+  const lx = useTransform(mx, (v) => `${v * 100}%`);
+  const ly = useTransform(my, (v) => `${v * 100}%`);
+
   return (
-    <section id="contact" className="relative py-24 md:py-32">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(124,58,237,0.2),transparent_60%)]" aria-hidden />
-      <div className="container-x relative max-w-4xl">
-        <div className="mb-12 sm:mb-16 text-center">
+    <section id="contact" className="relative py-24 md:py-32 overflow-hidden">
+      {/* Ambient lighting */}
+      <div className="absolute inset-0 -z-10" aria-hidden style={{
+        background:
+          "radial-gradient(900px 500px at 50% 100%, rgba(124,58,237,0.24), transparent 60%)," +
+          "radial-gradient(700px 400px at 10% 10%, rgba(232,121,249,0.12), transparent 60%)," +
+          "radial-gradient(700px 400px at 90% 20%, rgba(34,211,238,0.10), transparent 60%)",
+      }} />
+
+      {/* Floating decorative shapes */}
+      <motion.div
+        aria-hidden
+        className="absolute top-20 left-[6%] hidden md:block h-28 w-28 rounded-3xl glass-strong"
+        animate={{ y: [0, -16, 0], rotate: [-4, 4, -4] }}
+        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        aria-hidden
+        className="absolute bottom-24 right-[8%] hidden md:block h-20 w-20 rounded-full border border-[var(--neon)]/40"
+        animate={{ y: [0, 16, 0], scale: [1, 1.1, 1] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.svg
+        aria-hidden
+        className="absolute top-1/3 right-[14%] hidden lg:block opacity-40"
+        width="32" height="32" viewBox="0 0 24 24" fill="none"
+        animate={{ y: [0, -18, 0], rotate: [0, 20, 0] }}
+        transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z" fill="#e879f9" opacity="0.6" />
+      </motion.svg>
+
+      <div className="container-x relative">
+        <div className="mb-14 sm:mb-16 text-center">
           <Reveal className="flex justify-center"><SectionTag>Get In Touch</SectionTag></Reveal>
           <Reveal delay={0.1}>
             <h2 className="leading-[1.05]">Let's build something<br /><span className="text-gradient">remarkable.</span></h2>
           </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mt-6 max-w-xl mx-auto text-base text-[var(--muted-foreground)]">
+              Tell me about your project. I'll reply within one business day.
+            </p>
+          </Reveal>
         </div>
 
-        <Reveal delay={0.2}>
-          <div className="glass relative overflow-hidden rounded-3xl p-6 sm:p-8 md:p-12">
-            <div className="absolute -top-32 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-[var(--primary)]/30 blur-3xl" aria-hidden />
-            <div className="relative">
-              <h3 className="mb-3 text-xl sm:text-2xl font-semibold text-white">Ready to start?</h3>
-              <p className="mb-8 text-sm sm:text-base text-[var(--muted-foreground)]">
-                Tell me about your project — I'd love to hear what you're building and explore how we can make it exceptional.
-              </p>
-              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Field placeholder="Your name" />
-                  <Field type="email" placeholder="Email address" />
+        <div className="grid gap-6 lg:gap-8 lg:grid-cols-[1fr_1.15fr] items-start max-w-6xl mx-auto">
+          {/* LEFT — contact info floating card */}
+          <Reveal>
+            <div className="relative glass-strong rounded-[28px] p-7 sm:p-9 overflow-hidden">
+              <div className="pointer-events-none absolute inset-0 rounded-[28px]" style={{
+                padding: 1,
+                background: "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.2), rgba(232,121,249,0.55))",
+                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+              } as React.CSSProperties} aria-hidden />
+              <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[var(--primary)]/30 blur-3xl" aria-hidden />
+
+              <div className="relative">
+                <div className="mb-2 text-[10px] uppercase tracking-[0.3em] text-[var(--neon)]">Direct Line</div>
+                <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight mb-6">
+                  Prefer to<br />reach out directly?
+                </h3>
+
+                <div className="space-y-3">
+                  <a
+                    href="mailto:hooria.webdesigns@gmail.com"
+                    className="group flex items-center gap-4 rounded-2xl p-4 glass hover:-translate-y-0.5 hover:border-[var(--neon)]/50 hover:shadow-[0_10px_30px_-10px_rgba(192,132,252,0.5)] transition-all duration-500"
+                  >
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--primary)]/45 to-[var(--pink)]/30">
+                      <Mail size={18} className="text-white" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">Email</div>
+                      <div className="text-sm text-white/95 truncate group-hover:text-[var(--neon)] transition-colors">hooria.webdesigns@gmail.com</div>
+                    </div>
+                    <ArrowUpRight size={14} className="text-white/40 group-hover:text-[var(--neon)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+                  </a>
+
+                  <a
+                    href="https://www.linkedin.com/in/hooria-azam-web-developer/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-4 rounded-2xl p-4 glass hover:-translate-y-0.5 hover:border-[var(--neon)]/50 hover:shadow-[0_10px_30px_-10px_rgba(192,132,252,0.5)] transition-all duration-500"
+                  >
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--cyan)]/40 to-[var(--primary)]/30">
+                      <Linkedin size={18} className="text-white" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">LinkedIn</div>
+                      <div className="text-sm text-white/95 truncate group-hover:text-[var(--neon)] transition-colors">/in/hooria-azam-web-developer</div>
+                    </div>
+                    <ArrowUpRight size={14} className="text-white/40 group-hover:text-[var(--neon)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+                  </a>
                 </div>
-                <Field placeholder="Project type (e.g. WordPress site, Landing page, UI design…)" />
-                <Field as="textarea" rows={5} placeholder="Tell me about your project…" />
-                <button type="submit" className="btn-primary w-full !py-4" disabled={sent}>
-                  {sent ? "Message Sent ✓" : "Send Message"}
-                </button>
-              </form>
-              <div className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm">
-                {[
-                  ["📧 Email","mailto:hooria@example.com"],
-                  ["💼 LinkedIn","#"], ["🐦 Twitter","#"], ["🎨 Behance","#"],
-                ].map(([l, h]) => (
-                  <a key={l} href={h} className="text-[var(--muted-foreground)] transition-colors hover:text-[var(--neon)]">{l}</a>
-                ))}
+
+                <div className="mt-8 flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
+                  </span>
+                  Available · Replies in &lt; 24h
+                </div>
               </div>
             </div>
-          </div>
-        </Reveal>
+          </Reveal>
+
+          {/* RIGHT — form card with 3D tilt */}
+          <Reveal delay={0.15}>
+            <motion.div
+              ref={cardRef}
+              onMouseMove={(e) => {
+                const r = cardRef.current!.getBoundingClientRect();
+                mx.set((e.clientX - r.left) / r.width);
+                my.set((e.clientY - r.top) / r.height);
+              }}
+              onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
+              style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600 }}
+              className="relative glass-strong rounded-[28px] p-7 sm:p-9 overflow-hidden"
+            >
+              <motion.div className="pointer-events-none absolute inset-0" style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(500px circle at ${x} ${y}, rgba(232,121,249,0.16), transparent 60%)`) }} />
+              <div className="absolute -top-24 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-[var(--primary)]/25 blur-3xl" aria-hidden />
+
+              <div className="relative">
+                <div className="mb-2 text-[10px] uppercase tracking-[0.3em] text-[var(--neon)]">Project Brief</div>
+                <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight mb-6">Tell me about your project.</h3>
+                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field placeholder="Your name" />
+                    <Field type="email" placeholder="Email address" />
+                  </div>
+                  <Field placeholder="Project type (e.g. WordPress site, Landing page, UI design…)" />
+                  <Field as="textarea" rows={5} placeholder="Tell me about your project…" />
+                  <button type="submit" className="btn-primary w-full !py-4" disabled={sent}>
+                    {sent ? "Message Sent ✓" : "Send Message"}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
