@@ -55,7 +55,7 @@ function Nav() {
   }, []);
   const links: [string, string][] = [
     ["About", "#about"], ["Services", "#services"], ["Skills", "#skills"],
-    ["Work", "#projects"], ["Pricing", "#pricing"], ["Contact", "#contact"],
+    ["Work", "#projects"], ["Contact", "#contact"],
   ];
   return (
     <motion.nav
@@ -167,7 +167,6 @@ function Hero() {
   const sArrowRot = useSpring(arrowRot, { stiffness: 180, damping: 20, mass: 0.4 });
 
   const { scrollY } = useScroll();
-  const heroOpacity = useTransform(scrollY, [0, 700], [1, 0]);
   const heroY = useTransform(scrollY, [0, 700], [0, 80]);
 
   // Idle scan / hover lock via RAF, with shortest-path normalization
@@ -249,7 +248,7 @@ function Hero() {
     <motion.section
       ref={sectionRef}
       id="hero"
-      style={{ opacity: heroOpacity, y: heroY }}
+      style={{ y: heroY }}
       className="relative isolate w-full overflow-hidden"
     >
       {/* Hard-clamped hero canvas — everything below is confined to 97vh */}
@@ -376,7 +375,7 @@ function Hero() {
             transition={{ duration: 1.2, delay: 0.15, ease: [0.2, 0.8, 0.2, 1] }}
             className="mt-4 sm:mt-5 signature-glow"
           >
-            <div className="font-display italic text-lg sm:text-2xl md:text-3xl tracking-[0.04em] shimmer-text">
+            <div className="font-display italic font-semibold text-xl sm:text-[1.75rem] md:text-4xl tracking-[0.04em] shimmer-text">
               Hooria Azam
             </div>
           </motion.div>
@@ -751,8 +750,7 @@ function About() {
   const pillars = [
     { tag: "UI", Icon: Palette, title: "Interface Design", desc: "Considered systems, fluid spacing, premium typography." },
     { tag: "FE", Icon: Code2, title: "Frontend Engineering", desc: "Semantic, accessible, GPU-friendly motion at 60fps." },
-    { tag: "WP", Icon: Globe, title: "WordPress & Woo", desc: "Custom themes, Elementor Pro, scalable commerce." },
-    { tag: "MX", Icon: Wand2, title: "Micro-interactions", desc: "Spring physics & cinematic detail that delights." },
+    { tag: "WP", Icon: Globe, title: "WordPress & WooCommerce", desc: "Custom themes, Elementor Pro, scalable commerce." },
   ];
 
   const workflow = [
@@ -851,33 +849,20 @@ function About() {
               style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(600px circle at ${x} ${y}, rgba(232,121,249,0.18), transparent 60%)`) }}
             />
 
-            {/* Corner luxury glyphs */}
-            <div className="absolute top-6 right-6 flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-              <Sparkle size={12} className="text-[var(--neon)]" />
-              Est. 2020
-            </div>
-
             <div className="relative grid gap-12 lg:gap-16 lg:grid-cols-[1.15fr_1fr] items-start">
               {/* LEFT — editorial copy */}
               <div className="min-w-0">
-                <div className="mb-8 font-display italic text-lg text-white/90">
-                  Hooria Azam
-                  <span className="ml-3 text-[10px] not-italic uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-                    Frontend · WordPress · UI
-                  </span>
-                </div>
-
                 <h3 className="font-display text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.08] text-white mb-6">
                   Frontend developer <span className="text-white/50">&</span><br />
                   WordPress specialist crafting<br />
                   <span className="text-gradient">premium digital experiences.</span>
                 </h3>
 
-                <p className="text-base sm:text-lg text-[var(--muted-foreground)] leading-relaxed mb-4 max-w-[52ch]">
+                <p className="text-[17px] sm:text-xl text-[var(--muted-foreground)] leading-relaxed mb-5 max-w-[52ch]">
                   I architect interfaces that strike the balance between beautiful and functional —
                   thoughtful design, clean code, and meticulous detail that elevates every interaction.
                 </p>
-                <p className="text-sm sm:text-base text-[var(--muted-foreground)]/85 leading-relaxed mb-8 max-w-[52ch]">
+                <p className="text-[15px] sm:text-[17px] text-[var(--muted-foreground)]/85 leading-relaxed mb-8 max-w-[52ch]">
                   Over <strong className="text-white">5+ years</strong>, I've partnered with founders, agencies,
                   and brands to ship websites that feel premium, load fast, and convert.
                 </p>
@@ -917,25 +902,6 @@ function About() {
                   </motion.div>
                 ))}
               </div>
-            </div>
-
-            {/* Feature badges — moved below the columns, full-width responsive grid */}
-            <div className="mt-10 sm:mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              {["150+ Projects Shipped","Pixel-perfect Builds","Performance-first","Motion Choreography","WordPress Architect","Conversion-focused"].map((c, i) => (
-                <motion.div
-                  key={c}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1 + i * 0.05, duration: 0.5 }}
-                  className="group relative glass rounded-2xl px-3 py-3 text-center hover:-translate-y-0.5 transition-transform"
-                >
-                  <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(135deg, rgba(192,132,252,0.14), rgba(34,211,238,0.10))" }} />
-                  <span className="relative text-[10.5px] sm:text-[11px] font-medium uppercase tracking-[0.14em] text-white/85 group-hover:text-white transition-colors">
-                    {c}
-                  </span>
-                </motion.div>
-              ))}
             </div>
 
             {/* Divider */}
@@ -1080,7 +1046,7 @@ const SKILLS = [
   { name: "WooCommerce", pct: 85, icon: "▤", desc: "Stores, checkout flows, product templates, conversions." },
   { name: "Responsive Design", pct: 98, icon: "▢", desc: "Mobile-first layouts that adapt across every viewport." },
 ] as const;
-const TECH = ["HTML5","CSS3","JavaScript","WordPress","Elementor Pro","WooCommerce","Figma","Adobe XD","GSAP","CSS Animations","Git","Sass/SCSS","Bootstrap","Flexbox","CSS Grid","SEO Basics"];
+const TECH = ["HTML5","CSS3","JavaScript","WordPress","Elementor Pro","WooCommerce","Figma","CSS Animations","Bootstrap","Responsive Design","SEO Basics"];
 
 function Skills() {
   return (
@@ -1648,9 +1614,9 @@ function Why() {
                     transition={{ delay: 0.1 + i * 0.06, duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
                     onMouseEnter={() => setActive(i)}
                     onFocus={() => setActive(i)}
-                    className={`group relative w-full text-left overflow-hidden rounded-2xl transition-all duration-500
-                      ${isActive ? "glass-strong lg:translate-x-4" : "glass hover:lg:translate-x-2"}`}
-                    style={{ marginLeft: `${i % 2 === 0 ? 0 : 24}px` }}
+                    className={`group relative w-full max-w-full text-left overflow-hidden rounded-2xl transition-all duration-500
+                      ${isActive ? "glass-strong lg:translate-x-4" : "glass lg:hover:translate-x-2"}
+                      ${i % 2 === 1 ? "lg:ml-6" : ""}`}
                   >
                     {isActive && (
                       <span className="pointer-events-none absolute inset-0 rounded-2xl" style={{
@@ -1908,7 +1874,7 @@ function Footer() {
   const nav: [string, string][] = [
     ["Home", "#hero"], ["About", "#about"], ["Services", "#services"],
     ["Skills", "#skills"], ["Process", "#process"], ["Projects", "#projects"],
-    ["Pricing", "#pricing"], ["Contact", "#contact"],
+    ["Contact", "#contact"],
   ];
 
   return (
@@ -1966,7 +1932,7 @@ function Footer() {
             <div className="grid gap-6 md:grid-cols-[1.2fr_1fr] items-end">
               <div className="min-w-0">
                 <div className="mb-4"><Logo variant="full" tone="gradient" /></div>
-                <h3 className="font-display text-[clamp(1.75rem,4.5vw,3.75rem)] italic text-white leading-[1.05]">
+                <h3 className="font-display text-[clamp(1.3125rem,3.9vw,3.3125rem)] italic text-white leading-[1.08]">
                   Let's craft <span className="text-gradient not-italic">something</span><br />
                   worth remembering.
                 </h3>
@@ -2083,7 +2049,6 @@ function Portfolio() {
       <Skills />
       <Process />
       <Projects />
-      <Pricing />
 
       <Why />
       <Testimonials />
