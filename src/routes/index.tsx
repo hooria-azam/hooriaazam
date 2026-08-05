@@ -567,12 +567,8 @@ function About() {
   const blobY2 = useTransform(scrollYProgress, [0, 1], [40, -70]);
   const blobY3 = useTransform(scrollYProgress, [0, 1], [-20, 60]);
 
-  const stats = [
-    { Icon: Award, value: 5, suffix: "+", label: "Years Experience" },
-    { Icon: Rocket, value: 150, suffix: "+", label: "Projects Shipped" },
-    { Icon: Target, value: 60, suffix: "+", label: "Happy Clients" },
-    { Icon: Zap, value: 99, suffix: "%", label: "On-Time Delivery" },
-  ];
+
+
 
   const pillars = [
     { tag: "UI", Icon: Palette, title: "Interface Design", desc: "Considered systems, fluid spacing, premium typography." },
