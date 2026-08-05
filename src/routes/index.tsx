@@ -119,7 +119,7 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
 
 function SectionTag({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-6 inline-flex items-center gap-3 text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
+    <div className="mb-6 inline-flex items-center gap-3 text-[15px] sm:text-sm uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
       <span className="h-px w-8 bg-[var(--neon)]" />
       {children}
     </div>
@@ -360,7 +360,7 @@ function Hero() {
             transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
             className="badge-float pointer-events-auto"
           >
-            <div className="glass-strong inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[10px] sm:text-xs uppercase tracking-[0.28em] text-white/95 shadow-[0_0_30px_rgba(192,132,252,0.25)]">
+            <div className="glass-strong inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[15px] sm:text-sm uppercase tracking-[0.28em] text-white/95 shadow-[0_0_30px_rgba(192,132,252,0.25)]">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
@@ -415,7 +415,7 @@ function Hero() {
           {HERO_SKILLS.map((s) => (
             <div key={s.t} className="glass rounded-2xl px-3 py-2.5 flex items-center gap-2 min-w-0">
               <s.Icon className="h-4 w-4 shrink-0 text-[var(--neon)]" />
-              <span className="text-[10px] sm:text-xs text-white/90 truncate font-medium">{s.t}</span>
+              <span className="text-[15px] sm:text-sm text-white/90 truncate font-medium">{s.t}</span>
             </div>
           ))}
         </div>
@@ -497,7 +497,7 @@ function FloatingSkill({
         <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/30 shrink-0">
           <Icon className="h-3.5 w-3.5 text-white" />
         </span>
-        <span className="text-[11px] font-medium text-white/95 whitespace-nowrap">{label}</span>
+        <span className="text-[14px] font-medium text-white/95 whitespace-nowrap">{label}</span>
       </div>
     </motion.div>
   );
@@ -625,7 +625,7 @@ function About() {
             </h2>
           </Reveal>
           <Reveal delay={0.16}>
-            <div className="mt-6 flex items-center gap-4 text-xs uppercase tracking-[0.32em] text-[var(--muted-foreground)]">
+            <div className="mt-6 flex items-center gap-4 text-sm uppercase tracking-[0.32em] text-[var(--muted-foreground)]">
               <span className="h-px w-10 bg-[var(--neon)]/60" />
               A frontend studio of one · Karachi → Worldwide
             </div>
@@ -795,11 +795,11 @@ function About() {
                   <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: "radial-gradient(240px circle at 30% 0%, rgba(192,132,252,0.18), transparent 60%)" }} />
                   <div className="relative">
                     <div className="mb-4 inline-flex items-center gap-2">
-                      <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/25 text-[10px] font-bold tracking-wider text-white">{p.tag}</span>
+                      <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/25 text-[15px] font-bold tracking-wider text-white">{p.tag}</span>
                       <p.Icon size={16} className="text-[var(--neon)]" />
                     </div>
                     <h4 className="text-white text-base font-semibold mb-2">{p.title}</h4>
-                    <p className="text-[13px] text-[var(--muted-foreground)] leading-relaxed">{p.desc}</p>
+                    <p className="text-[15px] text-[var(--muted-foreground)] leading-relaxed">{p.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -807,7 +807,7 @@ function About() {
 
             {/* Workflow rail */}
             <div className="mt-14">
-              <div className="mb-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
+              <div className="mb-6 flex items-center gap-3 text-[15px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
                 <Layers size={12} className="text-[var(--neon)]" />
                 My Workflow
                 <span className="ml-2 h-px flex-1 bg-white/10" />
@@ -827,10 +827,10 @@ function About() {
                       <span className="relative grid h-6 w-6 place-items-center rounded-full bg-[var(--background)] border border-[var(--neon)]/50">
                         <span className="h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_8px_var(--neon)]" />
                       </span>
-                      <span className="font-display text-xs tracking-[0.3em] text-[var(--neon)]">{w.n}</span>
+                      <span className="font-display text-sm tracking-[0.3em] text-[var(--neon)]">{w.n}</span>
                     </div>
                     <h5 className="text-white text-base font-semibold mb-1.5">{w.t}</h5>
-                    <p className="text-[13px] text-[var(--muted-foreground)] leading-relaxed max-w-[28ch]">{w.d}</p>
+                    <p className="text-[15px] text-[var(--muted-foreground)] leading-relaxed max-w-[28ch]">{w.d}</p>
                   </motion.div>
                 ))}
               </div>
@@ -952,7 +952,7 @@ function Skills() {
                     <div className="font-display text-2xl font-extrabold text-gradient">{s.pct}%</div>
                   </div>
                   <h3 className="text-base sm:text-lg font-semibold text-white mb-2 truncate">{s.name}</h3>
-                  <p className="text-xs sm:text-sm text-[var(--muted-foreground)] leading-relaxed mb-5">{s.desc}</p>
+                  <p className="text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed mb-5">{s.desc}</p>
                   <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
                     <motion.div
                       initial={{ width: 0 }}
@@ -975,11 +975,11 @@ function Skills() {
             <div className="relative">
               <div className="flex items-center gap-3 mb-5">
                 <span className="h-px w-8 bg-[var(--neon)]" />
-                <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">Full Stack</span>
+                <span className="text-[15px] sm:text-sm uppercase tracking-[0.25em] text-[var(--muted-foreground)]">Full Stack</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {TECH.map((t) => (
-                  <span key={t} className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white/[0.04] px-3 py-1.5 text-[11px] sm:text-xs text-white/90 hover:bg-white/[0.08] hover:border-[var(--neon)]/50 transition-all">
+                  <span key={t} className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white/[0.04] px-3 py-1.5 text-[14px] sm:text-sm text-white/90 hover:bg-white/[0.08] hover:border-[var(--neon)]/50 transition-all">
                     <span className="h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_8px_var(--neon)]" />
                     {t}
                   </span>
@@ -1060,7 +1060,7 @@ function ProcessFloatDecor() {
         animate={{ y: [0, -12, 0] }}
         transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: -3 }}
       >
-        <div className="glass rounded-lg px-3 py-2.5 font-mono text-[10px] leading-relaxed text-white/60">
+        <div className="glass rounded-lg px-3 py-2.5 font-mono text-[15px] leading-relaxed text-white/60">
           <div><span className="text-[var(--pink)]">const</span> <span className="text-[var(--cyan)]">design</span> = ()=&gt;</div>
           <div className="pl-3"><span className="text-[var(--neon)]">craft</span>(<span className="text-white/40">'∞'</span>);</div>
         </div>
@@ -1262,7 +1262,7 @@ function Projects() {
                 animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
               >
-                <div className="text-[11px] uppercase tracking-[0.28em] text-white/70">Result</div>
+                <div className="text-[14px] uppercase tracking-[0.28em] text-white/70">Result</div>
                 <div className="font-display text-xl text-white leading-tight">{p.metric}</div>
               </motion.div>
               <div className="absolute top-6 left-6 rounded-full glass px-4 py-2 text-[12px] uppercase tracking-[0.24em] text-white/85">
@@ -1323,7 +1323,7 @@ function Projects() {
                       className={`absolute left-0 top-0 h-full w-[2px] bg-gradient-to-b from-[var(--neon)] via-[var(--pink)] to-[var(--cyan)] transition-transform duration-500 origin-top ${isActive ? "scale-y-100" : "scale-y-0"}`}
                     />
                     <div className="relative flex items-center gap-4">
-                      <span className={`font-display text-[13px] tracking-[0.28em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
+                      <span className={`font-display text-[15px] tracking-[0.28em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-xl transition-all duration-500 ${isActive ? "scale-110 bg-gradient-to-br from-[var(--primary)]/50 to-[var(--pink)]/35" : "bg-white/[0.04]"}`}>
@@ -1333,7 +1333,7 @@ function Projects() {
                         <span className={`block truncate text-[16px] font-semibold transition-colors ${isActive ? "text-white" : "text-white/75"}`}>
                           {item.name}
                         </span>
-                        <span className="block truncate text-[13px] text-[var(--muted-foreground)]">{item.label}</span>
+                        <span className="block truncate text-[15px] text-[var(--muted-foreground)]">{item.label}</span>
                       </span>
                       <ArrowUpRight
                         size={17}
@@ -1421,7 +1421,7 @@ function Why() {
                 } as React.CSSProperties} aria-hidden />
                 <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[var(--primary)]/30 blur-3xl" aria-hidden />
                 <div className="relative">
-                  <div className="mb-4 text-[10px] uppercase tracking-[0.32em] text-[var(--neon)]">
+                  <div className="mb-4 text-[15px] uppercase tracking-[0.32em] text-[var(--neon)]">
                     Principle · 0{active + 1} / 0{WHY.length}
                   </div>
                   <motion.div
@@ -1473,7 +1473,7 @@ function Why() {
                       } as React.CSSProperties} aria-hidden />
                     )}
                     <div className="relative flex items-center gap-4 p-4 sm:p-5">
-                      <span className={`font-display text-xs tracking-[0.3em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
+                      <span className={`font-display text-sm tracking-[0.3em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
                         0{i + 1}
                       </span>
                       <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-2xl transition-all duration-500 ${isActive ? "bg-gradient-to-br from-[var(--primary)]/50 to-[var(--pink)]/35 scale-110" : "bg-white/[0.04]"}`}>
@@ -1526,7 +1526,7 @@ function Testimonials() {
                   <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--pink)] text-sm font-semibold text-white">{t.initials}</div>
                   <div className="min-w-0">
                     <div className="text-sm font-semibold text-white truncate">{t.name}</div>
-                    <div className="text-xs text-[var(--muted-foreground)] truncate">{t.role}</div>
+                    <div className="text-sm text-[var(--muted-foreground)] truncate">{t.role}</div>
                   </div>
                 </div>
               </div>
@@ -1622,7 +1622,7 @@ function Contact() {
               <div className="relative">
                 <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
                   <div className="min-w-0">
-                    <div className="mb-2 text-[13px] uppercase tracking-[0.3em] text-[var(--neon)]">Project Brief</div>
+                    <div className="mb-2 text-[15px] uppercase tracking-[0.3em] text-[var(--neon)]">Project Brief</div>
                     <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight">Start the conversation.</h3>
                   </div>
                   <span className="hidden sm:inline-flex shrink-0 items-center gap-2 rounded-full glass px-4 py-2 text-[12px] uppercase tracking-[0.24em] text-white/90">
@@ -1742,7 +1742,7 @@ function Footer() {
                 </h3>
               </div>
               <div className="flex flex-col items-start md:items-end gap-4">
-                <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-[10px] uppercase tracking-[0.28em] text-white/90">
+                <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-[15px] uppercase tracking-[0.28em] text-white/90">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
                     <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
@@ -1760,7 +1760,7 @@ function Footer() {
           <div className="relative grid gap-10 lg:gap-12 md:grid-cols-2 lg:grid-cols-3">
             {/* About */}
             <div className="min-w-0">
-              <div className="mb-4 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Studio</div>
+              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Studio</div>
               <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
                 A frontend studio of one, crafting premium websites and interfaces for founders,
                 agencies, and brands worldwide. Karachi → Everywhere.
@@ -1769,7 +1769,7 @@ function Footer() {
 
             {/* Nav */}
             <div className="min-w-0">
-              <div className="mb-4 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
+              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
               <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
                 {nav.map(([l, h]) => (
                   <li key={l}>
@@ -1784,7 +1784,7 @@ function Footer() {
 
             {/* Contact — ONLY LinkedIn + Email */}
             <div className="min-w-0">
-              <div className="mb-4 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Connect</div>
+              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Connect</div>
               <div className="space-y-2.5">
                 <a
                   href="mailto:hooria.webdesigns@gmail.com"
@@ -1793,7 +1793,7 @@ function Footer() {
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--primary)]/45 to-[var(--pink)]/30">
                     <Mail size={15} className="text-white" />
                   </span>
-                  <span className="min-w-0 flex-1 text-[13px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
+                  <span className="min-w-0 flex-1 text-[15px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
                     hooria.webdesigns@gmail.com
                   </span>
                 </a>
@@ -1806,7 +1806,7 @@ function Footer() {
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--cyan)]/40 to-[var(--primary)]/30">
                     <Linkedin size={15} className="text-white" />
                   </span>
-                  <span className="min-w-0 flex-1 text-[13px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
+                  <span className="min-w-0 flex-1 text-[15px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
                     LinkedIn Profile
                   </span>
                 </a>
@@ -1817,7 +1817,7 @@ function Footer() {
           {/* Bottom bar */}
           <div className="relative mt-12 pt-6">
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--neon)]/50 to-transparent" aria-hidden />
-            <div className="grid gap-3 sm:grid-cols-3 items-center text-[11px] sm:text-xs text-[var(--muted-foreground)]">
+            <div className="grid gap-3 sm:grid-cols-3 items-center text-[14px] sm:text-sm text-[var(--muted-foreground)]">
               <div className="text-center sm:text-left">© 2026 Hooria Azam. All Rights Reserved.</div>
               <div className="text-center">Designed &amp; Developed with Passion.</div>
               <div className="flex sm:justify-end justify-center">
