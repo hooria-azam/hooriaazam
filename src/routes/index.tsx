@@ -55,7 +55,7 @@ function Nav() {
   }, []);
   const links: [string, string][] = [
     ["About", "#about"], ["Services", "#services"], ["Skills", "#skills"],
-    ["Work", "#projects"], ["Pricing", "#pricing"], ["Contact", "#contact"],
+    ["Work", "#projects"], ["Contact", "#contact"],
   ];
   return (
     <motion.nav
@@ -119,7 +119,7 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
 
 function SectionTag({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-6 inline-flex items-center gap-3 text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
+    <div className="mb-6 inline-flex items-center gap-3 text-[15px] sm:text-sm uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
       <span className="h-px w-8 bg-[var(--neon)]" />
       {children}
     </div>
@@ -167,7 +167,6 @@ function Hero() {
   const sArrowRot = useSpring(arrowRot, { stiffness: 180, damping: 20, mass: 0.4 });
 
   const { scrollY } = useScroll();
-  const heroOpacity = useTransform(scrollY, [0, 700], [1, 0]);
   const heroY = useTransform(scrollY, [0, 700], [0, 80]);
 
   // Idle scan / hover lock via RAF, with shortest-path normalization
@@ -249,7 +248,7 @@ function Hero() {
     <motion.section
       ref={sectionRef}
       id="hero"
-      style={{ opacity: heroOpacity, y: heroY }}
+      style={{ y: heroY }}
       className="relative isolate w-full overflow-hidden"
     >
       {/* Hard-clamped hero canvas — everything below is confined to 97vh */}
@@ -361,7 +360,7 @@ function Hero() {
             transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
             className="badge-float pointer-events-auto"
           >
-            <div className="glass-strong inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[10px] sm:text-xs uppercase tracking-[0.28em] text-white/95 shadow-[0_0_30px_rgba(192,132,252,0.25)]">
+            <div className="glass-strong inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[15px] sm:text-sm uppercase tracking-[0.28em] text-white/95 shadow-[0_0_30px_rgba(192,132,252,0.25)]">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
@@ -376,7 +375,7 @@ function Hero() {
             transition={{ duration: 1.2, delay: 0.15, ease: [0.2, 0.8, 0.2, 1] }}
             className="mt-4 sm:mt-5 signature-glow"
           >
-            <div className="font-display italic text-lg sm:text-2xl md:text-3xl tracking-[0.04em] shimmer-text">
+            <div className="font-display italic font-semibold text-xl sm:text-[1.75rem] md:text-4xl tracking-[0.04em] shimmer-text">
               Hooria Azam
             </div>
           </motion.div>
@@ -416,7 +415,7 @@ function Hero() {
           {HERO_SKILLS.map((s) => (
             <div key={s.t} className="glass rounded-2xl px-3 py-2.5 flex items-center gap-2 min-w-0">
               <s.Icon className="h-4 w-4 shrink-0 text-[var(--neon)]" />
-              <span className="text-[10px] sm:text-xs text-white/90 truncate font-medium">{s.t}</span>
+              <span className="text-[15px] sm:text-sm text-white/90 truncate font-medium">{s.t}</span>
             </div>
           ))}
         </div>
@@ -426,15 +425,20 @@ function Hero() {
 }
 
 function Particles({ count = 24 }: { count?: number }) {
+  // Deterministic pseudo-random so SSR and client markup match exactly.
+  const rand = (n: number) => {
+    const s = Math.sin(n * 12.9898) * 43758.5453;
+    return s - Math.floor(s);
+  };
   const particles = useRef(
     Array.from({ length: count }, (_, i) => ({
       id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      d: 6 + Math.random() * 12,
-      delay: Math.random() * 8,
-      size: 1 + Math.random() * 2.5,
-      o: 0.3 + Math.random() * 0.5,
+      x: rand(i + 1) * 100,
+      y: rand(i + 2.3) * 100,
+      d: 6 + rand(i + 3.7) * 12,
+      delay: rand(i + 4.1) * 8,
+      size: 1 + rand(i + 5.9) * 2.5,
+      o: 0.3 + rand(i + 6.4) * 0.5,
     })),
   ).current;
   return (
@@ -498,7 +502,7 @@ function FloatingSkill({
         <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/30 shrink-0">
           <Icon className="h-3.5 w-3.5 text-white" />
         </span>
-        <span className="text-[11px] font-medium text-white/95 whitespace-nowrap">{label}</span>
+        <span className="text-[14px] font-medium text-white/95 whitespace-nowrap">{label}</span>
       </div>
     </motion.div>
   );
@@ -529,179 +533,6 @@ function MagneticButton({
     </motion.a>
   );
 }
-
-/* ───────── PRICING — luxury redesign ───────── */
-type Plan = { name: string; price: number; blurb: string; features: readonly string[]; cta: string; featured?: boolean };
-const PLANS: readonly Plan[] = [
-  {
-    name: "Starter",
-    price: 750,
-    blurb: "Perfect for individuals and small projects that need a polished web presence.",
-    features: ["Up to 5 pages", "Custom responsive design", "WordPress or static build", "Basic SEO setup", "1 round of revisions", "2-week delivery"],
-    cta: "Start Small",
-  },
-  {
-    name: "Professional",
-    price: 1850,
-    blurb: "Most chosen — for serious brands ready to stand out with cinematic polish.",
-    features: ["Up to 12 pages", "Custom UI/UX system", "Premium animations & interactions", "WooCommerce integration", "Full SEO + performance pass", "3 rounds of revisions", "Priority delivery"],
-    cta: "Go Professional",
-    featured: true,
-  },
-  {
-    name: "Premium",
-    price: 3500,
-    blurb: "For agencies, founders, and brands building flagship experiences end-to-end.",
-    features: ["Unlimited pages", "Bespoke design system", "Advanced motion choreography", "Full e-commerce architecture", "Multi-round design sprints", "Post-launch support (30 days)", "Dedicated direct line"],
-    cta: "Go Premium",
-  },
-] as const;
-
-function AnimatedPrice({ value }: { value: number }) {
-  const mv = useMotionValue(0);
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    const controls = mv.on("change", (v) => setDisplay(Math.round(v)));
-    const anim = { current: 0 };
-    let raf = 0;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / 1400);
-      const eased = 1 - Math.pow(1 - t, 3);
-      mv.set(value * eased);
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => { cancelAnimationFrame(raf); controls(); anim.current = 0; };
-  }, [mv, value]);
-  return <span>${display.toLocaleString()}</span>;
-}
-
-function PricingCard({ p, i }: { p: Plan; i: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0); // 0..100
-  const my = useMotionValue(0);
-  const rx = useSpring(useTransform(my, [0, 100], [4, -4]), { stiffness: 150, damping: 18 });
-  const ry = useSpring(useTransform(mx, [0, 100], [-4, 4]), { stiffness: 150, damping: 18 });
-  const [hover, setHover] = useState(false);
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.9, delay: i * 0.12, ease: [0.2, 0.8, 0.2, 1] }}
-      className={p.featured ? "lg:-mt-6 lg:mb-6" : ""}
-    >
-      <motion.div
-        ref={ref}
-        onMouseMove={(e) => {
-          const r = ref.current!.getBoundingClientRect();
-          mx.set(((e.clientX - r.left) / r.width) * 100);
-          my.set(((e.clientY - r.top) / r.height) * 100);
-        }}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => { setHover(false); mx.set(50); my.set(50); }}
-        style={{ rotateX: rx, rotateY: ry, transformPerspective: 1200 }}
-        className={`group relative h-full overflow-hidden rounded-3xl p-7 sm:p-9 transition-all duration-500
-          ${p.featured
-            ? "glass-strong ring-1 ring-[var(--neon)]/40 shadow-[0_30px_80px_-20px_rgba(192,132,252,0.55)] lg:scale-[1.04]"
-            : "glass hover:-translate-y-1"
-          }`}
-      >
-        {/* cursor-tracking spotlight */}
-        <motion.div
-          className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{
-            background: useTransform(
-              [mx, my] as any,
-              ([x, y]: any) => `radial-gradient(400px circle at ${x}% ${y}%, rgba(232,121,249,0.22), transparent 60%)`,
-            ),
-          }}
-        />
-        {/* animated border on featured */}
-        {p.featured && (
-          <div className="pointer-events-none absolute inset-0 rounded-3xl"
-            style={{
-              padding: 1,
-              background: "linear-gradient(135deg, rgba(192,132,252,0.7), rgba(34,211,238,0.4), rgba(232,121,249,0.7))",
-              WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude",
-            }}
-          />
-        )}
-
-        <div className="relative">
-          {p.featured && (
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] font-bold text-black shimmer-text"
-              style={{ background: "linear-gradient(90deg,#c084fc,#e879f9,#22d3ee)", color: "#0b0712" }}>
-              ✦ Most Popular
-            </div>
-          )}
-          <h3 className="text-xl sm:text-2xl font-semibold text-white">{p.name}</h3>
-          <p className="mt-2 text-sm text-[var(--muted-foreground)] leading-relaxed min-h-[3rem]">{p.blurb}</p>
-
-          <div className="mt-6 flex items-baseline gap-2">
-            <span className="font-display text-5xl sm:text-6xl font-extrabold text-gradient leading-none">
-              {hover || p.featured ? <AnimatedPrice value={p.price} /> : <span>${p.price.toLocaleString()}</span>}
-            </span>
-            <span className="text-xs text-[var(--muted-foreground)] uppercase tracking-wider">/ project</span>
-          </div>
-
-          <div className="my-7 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-
-          <ul className="space-y-3 mb-8">
-            {p.features.map((f, idx) => (
-              <motion.li
-                key={f}
-                initial={{ opacity: 0, x: -8 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.15 + idx * 0.06 }}
-                className="flex items-start gap-3 text-sm text-white/85"
-              >
-                <span className="mt-1 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[var(--neon)] to-[var(--cyan)] text-[10px] text-black font-bold">✓</span>
-                <span>{f}</span>
-              </motion.li>
-            ))}
-          </ul>
-
-          <a href="#contact" className={p.featured ? "btn-primary w-full" : "btn-ghost w-full"}>
-            {p.cta}
-          </a>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-function Pricing() {
-  return (
-    <section id="pricing" className="relative py-24 md:py-32 overflow-hidden">
-      <div className="absolute -top-20 left-1/4 h-80 w-80 rounded-full bg-[var(--primary)]/15 blur-3xl float-y" aria-hidden />
-      <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-[var(--cyan)]/12 blur-3xl float-y" style={{ animationDelay: "-4s" }} aria-hidden />
-      <div className="container-x relative">
-        <div className="mb-14 sm:mb-20 text-center">
-          <Reveal className="flex justify-center"><SectionTag>Investment</SectionTag></Reveal>
-          <Reveal delay={0.1}>
-            <h2 className="leading-[1.05]">Pricing that matches<br /><span className="text-gradient">ambition.</span></h2>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <p className="mt-6 max-w-2xl mx-auto text-base sm:text-lg text-[var(--muted-foreground)]">
-              Choose the engagement that best fits your goals. Every project is crafted with strategy,
-              design excellence, and attention to detail.
-            </p>
-          </Reveal>
-        </div>
-
-        <div className="grid gap-6 lg:gap-7 md:grid-cols-2 lg:grid-cols-3 items-stretch">
-          {PLANS.map((p, i) => <PricingCard key={p.name} p={p} i={i} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 
 /* ───────── ABOUT — floating 3D glass card with holographic layers ───────── */
 function AboutCounter({ to, suffix = "" }: { to: number; suffix?: string }) {
@@ -741,18 +572,13 @@ function About() {
   const blobY2 = useTransform(scrollYProgress, [0, 1], [40, -70]);
   const blobY3 = useTransform(scrollYProgress, [0, 1], [-20, 60]);
 
-  const stats = [
-    { Icon: Award, value: 5, suffix: "+", label: "Years Experience" },
-    { Icon: Rocket, value: 150, suffix: "+", label: "Projects Shipped" },
-    { Icon: Target, value: 60, suffix: "+", label: "Happy Clients" },
-    { Icon: Zap, value: 99, suffix: "%", label: "On-Time Delivery" },
-  ];
+
+
 
   const pillars = [
     { tag: "UI", Icon: Palette, title: "Interface Design", desc: "Considered systems, fluid spacing, premium typography." },
     { tag: "FE", Icon: Code2, title: "Frontend Engineering", desc: "Semantic, accessible, GPU-friendly motion at 60fps." },
-    { tag: "WP", Icon: Globe, title: "WordPress & Woo", desc: "Custom themes, Elementor Pro, scalable commerce." },
-    { tag: "MX", Icon: Wand2, title: "Micro-interactions", desc: "Spring physics & cinematic detail that delights." },
+    { tag: "WP", Icon: Globe, title: "WordPress & WooCommerce", desc: "Custom themes, Elementor Pro, scalable commerce." },
   ];
 
   const workflow = [
@@ -804,7 +630,7 @@ function About() {
             </h2>
           </Reveal>
           <Reveal delay={0.16}>
-            <div className="mt-6 flex items-center gap-4 text-xs uppercase tracking-[0.32em] text-[var(--muted-foreground)]">
+            <div className="mt-6 flex items-center gap-4 text-sm uppercase tracking-[0.32em] text-[var(--muted-foreground)]">
               <span className="h-px w-10 bg-[var(--neon)]/60" />
               A frontend studio of one · Karachi → Worldwide
             </div>
@@ -813,12 +639,8 @@ function About() {
 
         {/* 3D Layered composition */}
         <div className="relative">
-          {/* Back plate — huge signature wordmark */}
-          <div aria-hidden className="absolute -top-10 left-1/2 -translate-x-1/2 w-[120%] pointer-events-none select-none opacity-[0.06]">
-            <div className="font-display text-[clamp(6rem,18vw,20rem)] leading-[0.8] tracking-tighter text-white text-center whitespace-nowrap">
-              HOORIA·AZAM
-            </div>
-          </div>
+
+
 
           <motion.div
             ref={cardRef}
@@ -851,33 +673,20 @@ function About() {
               style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(600px circle at ${x} ${y}, rgba(232,121,249,0.18), transparent 60%)`) }}
             />
 
-            {/* Corner luxury glyphs */}
-            <div className="absolute top-6 right-6 flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-              <Sparkle size={12} className="text-[var(--neon)]" />
-              Est. 2020
-            </div>
-
             <div className="relative grid gap-12 lg:gap-16 lg:grid-cols-[1.15fr_1fr] items-start">
               {/* LEFT — editorial copy */}
               <div className="min-w-0">
-                <div className="mb-8 font-display italic text-lg text-white/90">
-                  Hooria Azam
-                  <span className="ml-3 text-[10px] not-italic uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-                    Frontend · WordPress · UI
-                  </span>
-                </div>
-
                 <h3 className="font-display text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.08] text-white mb-6">
                   Frontend developer <span className="text-white/50">&</span><br />
                   WordPress specialist crafting<br />
                   <span className="text-gradient">premium digital experiences.</span>
                 </h3>
 
-                <p className="text-base sm:text-lg text-[var(--muted-foreground)] leading-relaxed mb-4 max-w-[52ch]">
+                <p className="text-[17px] sm:text-xl text-[var(--muted-foreground)] leading-relaxed mb-5 max-w-[52ch]">
                   I architect interfaces that strike the balance between beautiful and functional —
                   thoughtful design, clean code, and meticulous detail that elevates every interaction.
                 </p>
-                <p className="text-sm sm:text-base text-[var(--muted-foreground)]/85 leading-relaxed mb-8 max-w-[52ch]">
+                <p className="text-[15px] sm:text-[17px] text-[var(--muted-foreground)]/85 leading-relaxed mb-8 max-w-[52ch]">
                   Over <strong className="text-white">5+ years</strong>, I've partnered with founders, agencies,
                   and brands to ship websites that feel premium, load fast, and convert.
                 </p>
@@ -888,54 +697,86 @@ function About() {
                 </div>
               </div>
 
-              {/* RIGHT — stat pillars */}
+              {/* RIGHT — four uniquely-treated statistics */}
               <div className="grid grid-cols-2 gap-4 sm:gap-5">
-                {stats.map((s, i) => (
-                  <motion.div
-                    key={s.label}
-                    initial={{ opacity: 0, y: 24, filter: "blur(6px)" }}
-                    whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    viewport={{ once: true, margin: "-60px" }}
-                    transition={{ delay: 0.15 + i * 0.08, duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
-                    className="group relative overflow-hidden rounded-2xl p-5 sm:p-6"
-                    style={{
-                      background: "linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015))",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                    }}
-                  >
-                    <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-[var(--neon)] via-[var(--pink)] to-[var(--cyan)] opacity-70 group-hover:opacity-100 transition-opacity" />
-                    <div className="absolute -top-14 -right-14 h-32 w-32 rounded-full bg-[var(--primary)]/25 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="relative">
-                      <s.Icon className="mb-4 h-5 w-5 text-[var(--neon)]" size={20} />
-                      <div className="font-display text-[clamp(2.25rem,4vw,3.25rem)] font-semibold text-white leading-none tracking-tight">
-                        <AboutCounter to={s.value} suffix={s.suffix} />
-                      </div>
-                      <div className="mt-3 text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">
-                        {s.label}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Feature badges — moved below the columns, full-width responsive grid */}
-            <div className="mt-10 sm:mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              {["150+ Projects Shipped","Pixel-perfect Builds","Performance-first","Motion Choreography","WordPress Architect","Conversion-focused"].map((c, i) => (
+                {/* 01 — Years: outlined numeral inside a slow-spinning ring */}
                 <motion.div
-                  key={c}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.1 + i * 0.05, duration: 0.5 }}
-                  className="group relative glass rounded-2xl px-3 py-3 text-center hover:-translate-y-0.5 transition-transform"
+                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7 }}
+                  className="group relative overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.02] p-5 sm:p-6"
                 >
-                  <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "linear-gradient(135deg, rgba(192,132,252,0.14), rgba(34,211,238,0.10))" }} />
-                  <span className="relative text-[10.5px] sm:text-[11px] font-medium uppercase tracking-[0.14em] text-white/85 group-hover:text-white transition-colors">
-                    {c}
-                  </span>
+                  <div aria-hidden className="absolute -right-10 -top-10 h-32 w-32 rounded-full border border-dashed border-[var(--neon)]/30 spin-slow" />
+                  <Award size={20} className="mb-4 text-[var(--neon)]" />
+                  <div
+                    className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] leading-none tracking-tight text-transparent transition-all duration-500 group-hover:text-white"
+                    style={{ WebkitTextStroke: "1.5px rgba(192,132,252,0.9)" }}
+                  >
+                    <AboutCounter to={5} suffix="+" />
+                  </div>
+                  <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">Years Experience</div>
                 </motion.div>
-              ))}
+
+                {/* 02 — Projects: solid gradient plate with grid texture */}
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.08 }}
+                  className="group relative overflow-hidden rounded-[26px] p-5 sm:p-6 transition-transform duration-500 hover:-translate-y-1"
+                  style={{ background: "linear-gradient(150deg, rgba(124,58,237,0.55), rgba(232,121,249,0.30))", border: "1px solid rgba(255,255,255,0.14)" }}
+                >
+                  <div aria-hidden className="absolute inset-0 grid-bg opacity-50" />
+                  <div className="relative">
+                    <Rocket size={20} className="mb-4 text-white" />
+                    <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
+                      <AboutCounter to={150} suffix="+" />
+                    </div>
+                    <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-white/80">Projects Shipped</div>
+                  </div>
+                </motion.div>
+
+                {/* 03 — Clients: layered stacked cards */}
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.16 }}
+                  className="group relative rounded-[26px]"
+                >
+                  <span aria-hidden className="absolute inset-x-3 -top-2 h-10 rounded-[22px] border border-white/10 bg-white/[0.03] transition-all duration-500 group-hover:-top-3" />
+                  <div className="relative overflow-hidden rounded-[26px] glass-strong p-5 sm:p-6">
+                    <div aria-hidden className="absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-[var(--cyan)]/25 blur-2xl" />
+                    <div className="relative">
+                      <div className="mb-4 flex -space-x-2">
+                        {["#c084fc", "#e879f9", "#22d3ee"].map((c) => (
+                          <span key={c} className="h-5 w-5 rounded-full border border-white/25" style={{ background: c }} />
+                        ))}
+                      </div>
+                      <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
+                        <AboutCounter to={60} suffix="+" />
+                      </div>
+                      <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">Happy Clients</div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* 04 — Delivery: progress arc treatment */}
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.24 }}
+                  className="group relative overflow-hidden rounded-[26px] border border-[var(--cyan)]/25 bg-[radial-gradient(120%_90%_at_100%_0%,rgba(34,211,238,0.18),transparent_60%)] p-5 sm:p-6"
+                >
+                  <Zap size={20} className="mb-4 text-[var(--cyan)]" />
+                  <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
+                    <AboutCounter to={99} suffix="%" />
+                  </div>
+                  <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">On-Time Delivery</div>
+                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+                    <motion.div
+                      initial={{ width: 0 }} whileInView={{ width: "99%" }} viewport={{ once: true }}
+                      transition={{ duration: 1.6, ease: [0.2, 0.8, 0.2, 1] }}
+                      className="h-full rounded-full bg-gradient-to-r from-[var(--cyan)] to-[var(--neon)] shadow-[0_0_16px_rgba(34,211,238,0.6)]"
+                    />
+                  </div>
+                </motion.div>
+              </div>
+
             </div>
 
             {/* Divider */}
@@ -955,11 +796,11 @@ function About() {
                   <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: "radial-gradient(240px circle at 30% 0%, rgba(192,132,252,0.18), transparent 60%)" }} />
                   <div className="relative">
                     <div className="mb-4 inline-flex items-center gap-2">
-                      <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/25 text-[10px] font-bold tracking-wider text-white">{p.tag}</span>
+                      <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/25 text-[15px] font-bold tracking-wider text-white">{p.tag}</span>
                       <p.Icon size={16} className="text-[var(--neon)]" />
                     </div>
                     <h4 className="text-white text-base font-semibold mb-2">{p.title}</h4>
-                    <p className="text-[13px] text-[var(--muted-foreground)] leading-relaxed">{p.desc}</p>
+                    <p className="text-[15px] text-[var(--muted-foreground)] leading-relaxed">{p.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -967,7 +808,7 @@ function About() {
 
             {/* Workflow rail */}
             <div className="mt-14">
-              <div className="mb-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
+              <div className="mb-6 flex items-center gap-3 text-[15px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
                 <Layers size={12} className="text-[var(--neon)]" />
                 My Workflow
                 <span className="ml-2 h-px flex-1 bg-white/10" />
@@ -987,10 +828,10 @@ function About() {
                       <span className="relative grid h-6 w-6 place-items-center rounded-full bg-[var(--background)] border border-[var(--neon)]/50">
                         <span className="h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_8px_var(--neon)]" />
                       </span>
-                      <span className="font-display text-xs tracking-[0.3em] text-[var(--neon)]">{w.n}</span>
+                      <span className="font-display text-sm tracking-[0.3em] text-[var(--neon)]">{w.n}</span>
                     </div>
                     <h5 className="text-white text-base font-semibold mb-1.5">{w.t}</h5>
-                    <p className="text-[13px] text-[var(--muted-foreground)] leading-relaxed max-w-[28ch]">{w.d}</p>
+                    <p className="text-[15px] text-[var(--muted-foreground)] leading-relaxed max-w-[28ch]">{w.d}</p>
                   </motion.div>
                 ))}
               </div>
@@ -1004,12 +845,12 @@ function About() {
 
 /* ───────── Services ───────── */
 const SERVICES = [
-  { icon: "⚡", title: "Frontend Development", desc: "Clean, semantic, and performant code using HTML5, CSS3, and JavaScript. I build interfaces that move fast, scale elegantly, and feel genuinely alive.", featured: true },
+  { icon: "◇", title: "Frontend Development", desc: "Clean, semantic, and performant code using HTML5, CSS3, and JavaScript. I build interfaces that move fast, scale elegantly, and feel genuinely alive.", featured: true },
   { icon: "✦", title: "UI/UX Design", desc: "Interfaces designed to solve real problems beautifully. Wireframes turned into visual systems users actually enjoy." },
   { icon: "◆", title: "WordPress Development", desc: "Custom WordPress builds using Elementor Pro, WooCommerce, and tailored CSS. Flexible, manageable, built right." },
-  { icon: "🛒", title: "WooCommerce Stores", desc: "E-commerce experiences that convert. Clean product layouts, optimized checkout, performance-first architecture." },
-  { icon: "📱", title: "Responsive Design", desc: "Pixel-perfect on every device. Mobile-first, fluid, carefully tested across screen sizes and browsers." },
-  { icon: "✨", title: "Website Redesign", desc: "Modernize outdated sites while keeping what works. A fresh identity with improved UX and performance." },
+  { icon: "◆", title: "WooCommerce Stores", desc: "E-commerce experiences that convert. Clean product layouts, optimized checkout, performance-first architecture." },
+  { icon: "▭", title: "Responsive Design", desc: "Pixel-perfect on every device. Mobile-first, fluid, carefully tested across screen sizes and browsers." },
+  { icon: "✧", title: "Website Redesign", desc: "Modernize outdated sites while keeping what works. A fresh identity with improved UX and performance." },
 ];
 
 function Services() {
@@ -1080,7 +921,7 @@ const SKILLS = [
   { name: "WooCommerce", pct: 85, icon: "▤", desc: "Stores, checkout flows, product templates, conversions." },
   { name: "Responsive Design", pct: 98, icon: "▢", desc: "Mobile-first layouts that adapt across every viewport." },
 ] as const;
-const TECH = ["HTML5","CSS3","JavaScript","WordPress","Elementor Pro","WooCommerce","Figma","Adobe XD","GSAP","CSS Animations","Git","Sass/SCSS","Bootstrap","Flexbox","CSS Grid","SEO Basics"];
+const TECH = ["HTML5","CSS3","JavaScript","WordPress","Elementor Pro","WooCommerce","Figma","CSS Animations","Bootstrap","Responsive Design","SEO Basics"];
 
 function Skills() {
   return (
@@ -1112,7 +953,7 @@ function Skills() {
                     <div className="font-display text-2xl font-extrabold text-gradient">{s.pct}%</div>
                   </div>
                   <h3 className="text-base sm:text-lg font-semibold text-white mb-2 truncate">{s.name}</h3>
-                  <p className="text-xs sm:text-sm text-[var(--muted-foreground)] leading-relaxed mb-5">{s.desc}</p>
+                  <p className="text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed mb-5">{s.desc}</p>
                   <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
                     <motion.div
                       initial={{ width: 0 }}
@@ -1135,11 +976,11 @@ function Skills() {
             <div className="relative">
               <div className="flex items-center gap-3 mb-5">
                 <span className="h-px w-8 bg-[var(--neon)]" />
-                <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">Full Stack</span>
+                <span className="text-[15px] sm:text-sm uppercase tracking-[0.25em] text-[var(--muted-foreground)]">Full Stack</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {TECH.map((t) => (
-                  <span key={t} className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white/[0.04] px-3 py-1.5 text-[11px] sm:text-xs text-white/90 hover:bg-white/[0.08] hover:border-[var(--neon)]/50 transition-all">
+                  <span key={t} className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white/[0.04] px-3 py-1.5 text-[14px] sm:text-sm text-white/90 hover:bg-white/[0.08] hover:border-[var(--neon)]/50 transition-all">
                     <span className="h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_8px_var(--neon)]" />
                     {t}
                   </span>
@@ -1220,7 +1061,7 @@ function ProcessFloatDecor() {
         animate={{ y: [0, -12, 0] }}
         transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: -3 }}
       >
-        <div className="glass rounded-lg px-3 py-2.5 font-mono text-[10px] leading-relaxed text-white/60">
+        <div className="glass rounded-lg px-3 py-2.5 font-mono text-[15px] leading-relaxed text-white/60">
           <div><span className="text-[var(--pink)]">const</span> <span className="text-[var(--cyan)]">design</span> = ()=&gt;</div>
           <div className="pl-3"><span className="text-[var(--neon)]">craft</span>(<span className="text-white/40">'∞'</span>);</div>
         </div>
@@ -1339,219 +1180,190 @@ function Process() {
 
 /* ───────── PROJECTS — cinematic case-study redesign ───────── */
 const PROJECTS = [
-  { glyph: "🛒", label: "WooCommerce · WordPress", name: "Luxury Brand E-Commerce Store", desc: "A full-featured WooCommerce store with custom product pages, optimized checkout, and a premium identity that lifted conversions by 38%.", tags: ["WordPress","WooCommerce","Elementor","Custom CSS"], grad: "linear-gradient(135deg,rgba(124,58,237,0.6),rgba(232,121,249,0.4))", large: true, metric: "+38% Conv." },
+  { glyph: "◆", label: "WooCommerce · WordPress", name: "Luxury Brand E-Commerce Store", desc: "A full-featured WooCommerce store with custom product pages, optimized checkout, and a premium identity that lifted conversions by 38%.", tags: ["WordPress","WooCommerce","Elementor","Custom CSS"], grad: "linear-gradient(135deg,rgba(124,58,237,0.6),rgba(232,121,249,0.4))", large: true, metric: "+38% Conv." },
   { glyph: "✦", label: "UI/UX · Frontend", name: "SaaS Dashboard Redesign", desc: "A full visual overhaul — cleaner hierarchy, modern components, reduced user drop-off by 52%.", tags: ["Figma","HTML/CSS","JS"], grad: "linear-gradient(135deg,rgba(34,211,238,0.4),rgba(124,58,237,0.4))", metric: "-52% Drop-off" },
-  { glyph: "🔷", label: "Landing Page · Frontend", name: "Animated Product Launch", desc: "High-converting launch page with scroll-triggered animations, spotlight effects, and fully responsive design.", tags: ["HTML5","CSS3","GSAP"], grad: "linear-gradient(135deg,rgba(232,121,249,0.4),rgba(34,211,238,0.3))", metric: "Cinematic" },
-  { glyph: "🌐", label: "WordPress · Brand", name: "Corporate Website Rebuild", desc: "Full WordPress rebuild with custom Elementor templates, optimized performance, brand-focused design across 20+ pages.", tags: ["WordPress","Elementor Pro","SEO"], grad: "linear-gradient(135deg,rgba(124,58,237,0.5),rgba(34,211,238,0.3))", metric: "20+ Pages" },
+  { glyph: "◈", label: "Landing Page · Frontend", name: "Animated Product Launch", desc: "High-converting launch page with scroll-triggered animations, spotlight effects, and fully responsive design.", tags: ["HTML5","CSS3","GSAP"], grad: "linear-gradient(135deg,rgba(232,121,249,0.4),rgba(34,211,238,0.3))", metric: "Cinematic" },
+  { glyph: "◎", label: "WordPress · Brand", name: "Corporate Website Rebuild", desc: "Full WordPress rebuild with custom Elementor templates, optimized performance, brand-focused design across 20+ pages.", tags: ["WordPress","Elementor Pro","SEO"], grad: "linear-gradient(135deg,rgba(124,58,237,0.5),rgba(34,211,238,0.3))", metric: "20+ Pages" },
   { glyph: "⬡", label: "UI Design · Frontend", name: "Agency Portfolio Website", desc: "Dark luxury aesthetic with cinematic scroll animations, glassmorphism UI components, and fully responsive layouts.", tags: ["HTML/CSS","JavaScript","Animations"], grad: "linear-gradient(135deg,rgba(232,121,249,0.5),rgba(124,58,237,0.3))", metric: "Awwwards-feel" },
 ];
 
 function Projects() {
   const [active, setActive] = useState(0);
-  const featured = PROJECTS[0];
-  const rest = PROJECTS.slice(1);
+  const p = PROJECTS[active];
+  const stageRef = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const rx = useSpring(useTransform(my, [0, 1], [5, -5]), { stiffness: 120, damping: 20 });
+  const ry = useSpring(useTransform(mx, [0, 1], [-7, 7]), { stiffness: 120, damping: 20 });
 
   return (
     <section id="projects" className="relative py-24 md:py-32 overflow-hidden">
-      {/* Ambient */}
       <div className="absolute inset-0 -z-10" aria-hidden style={{
         background:
           "radial-gradient(900px 500px at 85% 5%, rgba(124,58,237,0.18), transparent 60%)," +
           "radial-gradient(700px 400px at 10% 90%, rgba(34,211,238,0.10), transparent 60%)",
       }} />
-      <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-[var(--pink)]/12 blur-3xl float-y" aria-hidden />
 
       <div className="container-x relative">
-        <div className="mb-14 sm:mb-16 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 sm:gap-6">
+        {/* Editorial header */}
+        <div className="mb-12 sm:mb-16 grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
           <div className="min-w-0">
-            <Reveal><SectionTag>Featured Work · 2020–2026</SectionTag></Reveal>
+            <Reveal className="flex"><SectionTag>Selected Work · 2020–2026</SectionTag></Reveal>
             <Reveal delay={0.1}>
-              <h2 className="leading-[1.05]">Projects that<br /><span className="text-gradient">speak louder.</span></h2>
+              <h2 className="mt-5 leading-[1.02]">
+                Projects that<br /><span className="text-gradient">speak louder.</span>
+              </h2>
             </Reveal>
           </div>
-          <Reveal delay={0.2} className="shrink-0">
-            <a href="#contact" className="btn-ghost !py-2.5 !px-4 sm:!py-3 sm:!px-6 text-xs sm:text-sm whitespace-nowrap">All Projects →</a>
+          <Reveal delay={0.2}>
+            <p className="max-w-xs text-[15px] leading-relaxed text-[var(--muted-foreground)] md:text-right">
+              Five case studies in commerce, product and brand — hover the index to explore.
+            </p>
           </Reveal>
         </div>
 
-        {/* Featured hero project — cinematic full-width */}
-        <Reveal>
-          <FeaturedProjectCard p={featured} />
-        </Reveal>
+        {/* Showcase — stage + index */}
+        <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-10 items-start">
+          {/* STAGE */}
+          <motion.div
+            ref={stageRef}
+            onMouseMove={(e) => {
+              const r = stageRef.current!.getBoundingClientRect();
+              mx.set((e.clientX - r.left) / r.width);
+              my.set((e.clientY - r.top) / r.height);
+            }}
+            onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
+            style={{ rotateX: rx, rotateY: ry, transformPerspective: 1800 }}
+            className="relative overflow-hidden rounded-[32px] glass-strong lg:sticky lg:top-28"
+          >
+            <div className="pointer-events-none absolute inset-0 z-20 rounded-[32px]" style={{
+              padding: 1,
+              background: "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.2), rgba(232,121,249,0.55))",
+              WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+            } as React.CSSProperties} aria-hidden />
 
-        {/* Navigation strip */}
-        <div className="mt-14 sm:mt-16 mb-6 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-            <span className="h-px w-8 bg-[var(--neon)]" />
-            More case studies
-          </div>
-          <div className="flex items-center gap-1.5">
-            {rest.map((_, i) => (
-              <button
-                key={i}
-                onMouseEnter={() => setActive(i)}
-                onClick={() => setActive(i)}
-                aria-label={`Project ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-500 ${active === i ? "w-8 bg-[var(--neon)] shadow-[0_0_10px_var(--neon)]" : "w-3 bg-white/20 hover:bg-white/40"}`}
-              />
-            ))}
-          </div>
-        </div>
+            <div className="relative h-64 sm:h-80 lg:h-[26rem] overflow-hidden">
+              <motion.div
+                key={p.name}
+                initial={{ opacity: 0, scale: 1.06 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
+                className="absolute inset-0"
+                style={{ background: p.grad }}
+              >
+                <div className="absolute inset-0 grid-bg opacity-40" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_25%,rgba(2,2,7,0.6)_100%)]" />
+                <div className="absolute inset-0 grid place-items-center text-[7rem] sm:text-[9rem] opacity-30">{p.glyph}</div>
+              </motion.div>
 
-        {/* Rest — asymmetric 3D card layout */}
-        <div className="grid gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {rest.map((p, i) => (
-            <Reveal key={p.name} delay={i * 0.06} className={i === 0 ? "lg:col-span-2" : ""}>
-              <ProjectCard {...p} large={i === 0} highlight={active === i} />
-            </Reveal>
-          ))}
+              <motion.div
+                className="absolute bottom-6 right-6 rounded-2xl glass-strong px-4 py-3"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <div className="text-[14px] uppercase tracking-[0.28em] text-white/70">Result</div>
+                <div className="font-display text-xl text-white leading-tight">{p.metric}</div>
+              </motion.div>
+              <div className="absolute top-6 left-6 rounded-full glass px-4 py-2 text-[12px] uppercase tracking-[0.24em] text-white/85">
+                {p.label}
+              </div>
+            </div>
+
+            <motion.div
+              key={`${p.name}-body`}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
+              className="relative p-6 sm:p-8"
+            >
+              <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight mb-3">{p.name}</h3>
+              <p className="text-[15px] sm:text-base text-[var(--muted-foreground)] leading-relaxed max-w-[56ch]" style={{ marginBottom: 20 }}>
+                {p.desc}
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                {p.tags.map((t) => (
+                  <span key={t} className="rounded-full border border-[var(--border)] bg-white/[0.04] px-3 py-1.5 text-[12px] uppercase tracking-wider text-[var(--muted-foreground)]">{t}</span>
+                ))}
+                <a href="#contact" className="ml-auto inline-flex items-center gap-1.5 text-[14px] text-white/80 hover:text-[var(--neon)] transition-colors">
+                  Discuss a similar project <ArrowUpRight size={15} />
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* INDEX */}
+          <div className="min-w-0">
+            <div className="mb-4 flex items-center gap-3 text-[12px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
+              <span className="h-px w-8 bg-[var(--neon)]" />
+              Case index
+              <span className="ml-auto font-display text-white/70">
+                {String(active + 1).padStart(2, "0")} / {String(PROJECTS.length).padStart(2, "0")}
+              </span>
+            </div>
+
+            <div className="flex flex-col">
+              {PROJECTS.map((item, i) => {
+                const isActive = i === active;
+                return (
+                  <motion.button
+                    key={item.name}
+                    type="button"
+                    initial={{ opacity: 0, x: 24 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-60px" }}
+                    transition={{ delay: 0.05 * i, duration: 0.55, ease: [0.2, 0.8, 0.2, 1] }}
+                    onMouseEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    onClick={() => setActive(i)}
+                    className={`group relative w-full max-w-full overflow-hidden border-b border-white/10 px-3 sm:px-4 py-5 text-left transition-colors duration-500 ${isActive ? "bg-white/[0.05]" : "hover:bg-white/[0.025]"}`}
+                  >
+                    <span
+                      aria-hidden
+                      className={`absolute left-0 top-0 h-full w-[2px] bg-gradient-to-b from-[var(--neon)] via-[var(--pink)] to-[var(--cyan)] transition-transform duration-500 origin-top ${isActive ? "scale-y-100" : "scale-y-0"}`}
+                    />
+                    <div className="relative flex items-center gap-4">
+                      <span className={`font-display text-[15px] tracking-[0.28em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-xl transition-all duration-500 ${isActive ? "scale-110 bg-gradient-to-br from-[var(--primary)]/50 to-[var(--pink)]/35" : "bg-white/[0.04]"}`}>
+                        {item.glyph}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className={`block truncate text-[16px] font-semibold transition-colors ${isActive ? "text-white" : "text-white/75"}`}>
+                          {item.name}
+                        </span>
+                        <span className="block truncate text-[15px] text-[var(--muted-foreground)]">{item.label}</span>
+                      </span>
+                      <ArrowUpRight
+                        size={17}
+                        className={`shrink-0 transition-all duration-500 ${isActive ? "text-[var(--neon)] translate-x-0 opacity-100" : "text-white/25 -translate-x-2 opacity-0"}`}
+                      />
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            <div className="mt-8">
+              <a href="#contact" className="btn-ghost !py-3 !px-6 text-sm w-full sm:w-auto">Start your project <ArrowUpRight size={16} /></a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function FeaturedProjectCard({ p }: { p: typeof PROJECTS[number] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [4, -4]), { stiffness: 120, damping: 20 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-6, 6]), { stiffness: 120, damping: 20 });
-  const lx = useTransform(mx, (v) => `${v * 100}%`);
-  const ly = useTransform(my, (v) => `${v * 100}%`);
-
-  return (
-    <motion.article
-      ref={ref}
-      onMouseMove={(e) => {
-        const r = ref.current!.getBoundingClientRect();
-        mx.set((e.clientX - r.left) / r.width);
-        my.set((e.clientY - r.top) / r.height);
-      }}
-      onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-      style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600 }}
-      className="group relative overflow-hidden rounded-[32px] glass-strong"
-    >
-      {/* Gradient hairline */}
-      <div className="pointer-events-none absolute inset-0 rounded-[32px]" style={{
-        padding: 1,
-        background: "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.2), rgba(232,121,249,0.55))",
-        WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-        WebkitMaskComposite: "xor",
-        maskComposite: "exclude",
-      } as React.CSSProperties} aria-hidden />
-
-      {/* Cursor spotlight */}
-      <motion.div className="pointer-events-none absolute inset-0" style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(500px circle at ${x} ${y}, rgba(232,121,249,0.14), transparent 60%)`) }} />
-
-      <div className="relative grid lg:grid-cols-[1.15fr_1fr] gap-0">
-        {/* Image / visual */}
-        <div className="relative h-72 sm:h-96 lg:h-[30rem] overflow-hidden" style={{ background: p.grad }}>
-          <div className="absolute inset-0 grid-bg opacity-40" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(2,2,7,0.55)_100%)]" />
-          {/* Floating layered discs */}
-          <motion.div
-            className="absolute top-8 left-8 h-24 w-24 rounded-2xl glass-strong grid place-items-center text-4xl"
-            animate={{ y: [0, -10, 0], rotate: [-4, 2, -4] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          >
-            {p.glyph}
-          </motion.div>
-          <motion.div
-            className="absolute bottom-10 right-8 h-16 w-32 rounded-2xl glass-strong px-4 py-3"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="text-[9px] uppercase tracking-[0.3em] text-white/70">Result</div>
-            <div className="font-display text-lg text-white leading-tight">{p.metric}</div>
-          </motion.div>
-          {/* Centerpiece huge glyph */}
-          <div className="absolute inset-0 grid place-items-center text-[8rem] sm:text-[10rem] opacity-30 blur-[1px] group-hover:scale-110 transition-transform duration-[900ms]">{p.glyph}</div>
-        </div>
-
-        {/* Content */}
-        <div className="relative p-8 sm:p-10 lg:p-12 flex flex-col">
-          <div className="mb-3 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[var(--cyan)]">
-            <span className="grid h-5 w-5 place-items-center rounded-full glass text-white text-[10px] font-bold">01</span>
-            Featured Case Study
-          </div>
-          <div className="mb-2 text-[10px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">{p.label}</div>
-          <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl text-white leading-tight mb-4">{p.name}</h3>
-          <p className="text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed max-w-[52ch]" style={{ marginBottom: 20 }}>
-            {p.desc}
-          </p>
-          <div className="flex flex-wrap gap-2 mb-8">
-            {p.tags.map((t) => (
-              <span key={t} className="rounded-full border border-[var(--border)] bg-white/[0.04] px-3 py-1 text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">{t}</span>
-            ))}
-          </div>
-          <div className="mt-auto flex items-center gap-4">
-            <a href="#contact" className="btn-primary !py-3 !px-6 text-sm">View Case Study <ArrowUpRight size={16} /></a>
-            <a href="#contact" className="text-xs text-white/70 hover:text-[var(--neon)] transition-colors">Discuss a similar project →</a>
-          </div>
-        </div>
-      </div>
-    </motion.article>
-  );
-}
-
-function ProjectCard({ glyph, label, name, desc, tags, grad, large, metric, highlight }: typeof PROJECTS[number] & { highlight?: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [5, -5]), { stiffness: 150, damping: 18 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-6, 6]), { stiffness: 150, damping: 18 });
-  return (
-    <motion.article
-      ref={ref}
-      onMouseMove={(e) => {
-        const r = ref.current!.getBoundingClientRect();
-        mx.set((e.clientX - r.left) / r.width);
-        my.set((e.clientY - r.top) / r.height);
-      }}
-      onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-      style={{ rotateX: rx, rotateY: ry, transformPerspective: 1200 }}
-      className={`glass group relative flex h-full flex-col overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_-20px_rgba(192,132,252,0.5)] ${highlight ? "ring-1 ring-[var(--neon)]/50 shadow-[0_20px_60px_-20px_rgba(192,132,252,0.5)]" : ""}`}
-    >
-      <div className={`relative overflow-hidden ${large ? "h-56 sm:h-64" : "h-44 sm:h-48"}`} style={{ background: grad }}>
-        <div className="absolute inset-0 grid-bg opacity-40" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(2,2,7,0.7)_100%)]" />
-        {/* Layered floating card */}
-        <motion.div
-          className="absolute top-4 left-4 glass-strong rounded-xl px-3 py-2 text-[9px] uppercase tracking-[0.28em] text-white/80"
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        >
-          {metric}
-        </motion.div>
-        <div className="absolute inset-0 grid place-items-center text-5xl sm:text-6xl drop-shadow-[0_0_30px_rgba(192,132,252,0.6)] transition-transform duration-[900ms] group-hover:scale-125">{glyph}</div>
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[var(--background)]/85 to-transparent" />
-        <div className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-white/95 text-black opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
-          <ArrowUpRight size={14} />
-        </div>
-      </div>
-      <div className="flex flex-1 flex-col p-6">
-        <div className="mb-2 text-[10px] uppercase tracking-[0.2em] text-[var(--cyan)]">{label}</div>
-        <h3 className="mb-3 text-base sm:text-lg font-semibold text-white">{name}</h3>
-        <p className="text-[13px] text-[var(--muted-foreground)] leading-relaxed" style={{ marginBottom: 20 }}>{desc}</p>
-        <div className="mt-auto flex flex-wrap gap-1.5">
-          {tags.slice(0, 3).map((t) => (
-            <span key={t} className="rounded-full border border-[var(--border)] bg-white/[0.04] px-2.5 py-0.5 text-[9.5px] uppercase tracking-wider text-[var(--muted-foreground)]">{t}</span>
-          ))}
-        </div>
-      </div>
-    </motion.article>
-  );
-}
-
 /* ───────── Why Me ───────── */
 const WHY = [
-  ["🎯","Purpose-Driven Design","Every decision is grounded in user behavior and business goals. I design for results, not aesthetics alone."],
-  ["⚡","Speed Without Compromise","Fast delivery, clean code, optimized performance. I move efficiently without cutting craftsmanship."],
-  ["🤝","Clear Communication","Transparent timelines, regular updates, honest feedback. You always know where your project stands."],
-  ["📐","Pixel-Perfect Precision","I obsess over the details — spacing, rhythm, timing — the things that separate good from exceptional."],
-  ["🔮","Modern Practices","Always current with web trends, CSS techniques, WordPress updates. Built for today, ready for tomorrow."],
-  ["🌱","Long-Term Thinking","I build for scale. Clean architecture, readable code, flexible layouts that grow with your business."],
+  ["◉","Purpose-Driven Design","Every decision is grounded in user behavior and business goals. I design for results, not aesthetics alone."],
+  ["◇","Speed Without Compromise","Fast delivery, clean code, optimized performance. I move efficiently without cutting craftsmanship."],
+  ["◍","Clear Communication","Transparent timelines, regular updates, honest feedback. You always know where your project stands."],
+  ["◫","Pixel-Perfect Precision","I obsess over the details — spacing, rhythm, timing — the things that separate good from exceptional."],
+  ["◈","Modern Practices","Always current with web trends, CSS techniques, WordPress updates. Built for today, ready for tomorrow."],
+  ["❖","Long-Term Thinking","I build for scale. Clean architecture, readable code, flexible layouts that grow with your business."],
 ] as const;
 
 function Why() {
@@ -1610,7 +1422,7 @@ function Why() {
                 } as React.CSSProperties} aria-hidden />
                 <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[var(--primary)]/30 blur-3xl" aria-hidden />
                 <div className="relative">
-                  <div className="mb-4 text-[10px] uppercase tracking-[0.32em] text-[var(--neon)]">
+                  <div className="mb-4 text-[15px] uppercase tracking-[0.32em] text-[var(--neon)]">
                     Principle · 0{active + 1} / 0{WHY.length}
                   </div>
                   <motion.div
@@ -1648,9 +1460,9 @@ function Why() {
                     transition={{ delay: 0.1 + i * 0.06, duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
                     onMouseEnter={() => setActive(i)}
                     onFocus={() => setActive(i)}
-                    className={`group relative w-full text-left overflow-hidden rounded-2xl transition-all duration-500
-                      ${isActive ? "glass-strong lg:translate-x-4" : "glass hover:lg:translate-x-2"}`}
-                    style={{ marginLeft: `${i % 2 === 0 ? 0 : 24}px` }}
+                    className={`group relative w-full max-w-full text-left overflow-hidden rounded-2xl transition-all duration-500
+                      ${isActive ? "glass-strong lg:translate-x-4" : "glass lg:hover:translate-x-2"}
+                      ${i % 2 === 1 ? "lg:ml-6" : ""}`}
                   >
                     {isActive && (
                       <span className="pointer-events-none absolute inset-0 rounded-2xl" style={{
@@ -1662,7 +1474,7 @@ function Why() {
                       } as React.CSSProperties} aria-hidden />
                     )}
                     <div className="relative flex items-center gap-4 p-4 sm:p-5">
-                      <span className={`font-display text-xs tracking-[0.3em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
+                      <span className={`font-display text-sm tracking-[0.3em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
                         0{i + 1}
                       </span>
                       <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-2xl transition-all duration-500 ${isActive ? "bg-gradient-to-br from-[var(--primary)]/50 to-[var(--pink)]/35 scale-110" : "bg-white/[0.04]"}`}>
@@ -1715,7 +1527,7 @@ function Testimonials() {
                   <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--pink)] text-sm font-semibold text-white">{t.initials}</div>
                   <div className="min-w-0">
                     <div className="text-sm font-semibold text-white truncate">{t.name}</div>
-                    <div className="text-xs text-[var(--muted-foreground)] truncate">{t.role}</div>
+                    <div className="text-sm text-[var(--muted-foreground)] truncate">{t.role}</div>
                   </div>
                 </div>
               </div>
@@ -1784,70 +1596,8 @@ function Contact() {
           </Reveal>
         </div>
 
-        <div className="grid gap-6 lg:gap-8 lg:grid-cols-[1fr_1.15fr] items-start max-w-6xl mx-auto">
-          {/* LEFT — contact info floating card */}
+        <div className="mx-auto w-full max-w-3xl">
           <Reveal>
-            <div className="relative glass-strong rounded-[28px] p-7 sm:p-9 overflow-hidden">
-              <div className="pointer-events-none absolute inset-0 rounded-[28px]" style={{
-                padding: 1,
-                background: "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.2), rgba(232,121,249,0.55))",
-                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude",
-              } as React.CSSProperties} aria-hidden />
-              <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[var(--primary)]/30 blur-3xl" aria-hidden />
-
-              <div className="relative">
-                <div className="mb-2 text-[10px] uppercase tracking-[0.3em] text-[var(--neon)]">Direct Line</div>
-                <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight mb-6">
-                  Prefer to<br />reach out directly?
-                </h3>
-
-                <div className="space-y-3">
-                  <a
-                    href="mailto:hooria.webdesigns@gmail.com"
-                    className="group flex items-center gap-4 rounded-2xl p-4 glass hover:-translate-y-0.5 hover:border-[var(--neon)]/50 hover:shadow-[0_10px_30px_-10px_rgba(192,132,252,0.5)] transition-all duration-500"
-                  >
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--primary)]/45 to-[var(--pink)]/30">
-                      <Mail size={18} className="text-white" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">Email</div>
-                      <div className="text-sm text-white/95 truncate group-hover:text-[var(--neon)] transition-colors">hooria.webdesigns@gmail.com</div>
-                    </div>
-                    <ArrowUpRight size={14} className="text-white/40 group-hover:text-[var(--neon)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
-                  </a>
-
-                  <a
-                    href="https://www.linkedin.com/in/hooria-azam-web-developer/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center gap-4 rounded-2xl p-4 glass hover:-translate-y-0.5 hover:border-[var(--neon)]/50 hover:shadow-[0_10px_30px_-10px_rgba(192,132,252,0.5)] transition-all duration-500"
-                  >
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--cyan)]/40 to-[var(--primary)]/30">
-                      <Linkedin size={18} className="text-white" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">LinkedIn</div>
-                      <div className="text-sm text-white/95 truncate group-hover:text-[var(--neon)] transition-colors">/in/hooria-azam-web-developer</div>
-                    </div>
-                    <ArrowUpRight size={14} className="text-white/40 group-hover:text-[var(--neon)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
-                  </a>
-                </div>
-
-                <div className="mt-8 flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
-                  </span>
-                  Available · Replies in &lt; 24h
-                </div>
-              </div>
-            </div>
-          </Reveal>
-
-          {/* RIGHT — form card with 3D tilt */}
-          <Reveal delay={0.15}>
             <motion.div
               ref={cardRef}
               onMouseMove={(e) => {
@@ -1856,15 +1606,35 @@ function Contact() {
                 my.set((e.clientY - r.top) / r.height);
               }}
               onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-              style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600 }}
-              className="relative glass-strong rounded-[28px] p-7 sm:p-9 overflow-hidden"
+              style={{ rotateX: rx, rotateY: ry, transformPerspective: 1800 }}
+              className="relative glass-strong rounded-[32px] p-6 sm:p-10 md:p-12 overflow-hidden"
             >
-              <motion.div className="pointer-events-none absolute inset-0" style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(500px circle at ${x} ${y}, rgba(232,121,249,0.16), transparent 60%)`) }} />
-              <div className="absolute -top-24 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-[var(--primary)]/25 blur-3xl" aria-hidden />
+              {/* animated gradient hairline */}
+              <div className="pointer-events-none absolute inset-0 rounded-[32px]" style={{
+                padding: 1,
+                background: "linear-gradient(135deg, rgba(192,132,252,0.6), rgba(34,211,238,0.25), rgba(232,121,249,0.6))",
+                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+              } as React.CSSProperties} aria-hidden />
+              <motion.div className="pointer-events-none absolute inset-0" style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(560px circle at ${x} ${y}, rgba(232,121,249,0.16), transparent 60%)`) }} />
+              <div className="absolute -top-28 left-1/2 h-60 w-60 -translate-x-1/2 rounded-full bg-[var(--primary)]/25 blur-3xl" aria-hidden />
 
               <div className="relative">
-                <div className="mb-2 text-[10px] uppercase tracking-[0.3em] text-[var(--neon)]">Project Brief</div>
-                <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight mb-6">Tell me about your project.</h3>
+                <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+                  <div className="min-w-0">
+                    <div className="mb-2 text-[15px] uppercase tracking-[0.3em] text-[var(--neon)]">Project Brief</div>
+                    <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight">Start the conversation.</h3>
+                  </div>
+                  <span className="hidden sm:inline-flex shrink-0 items-center gap-2 rounded-full glass px-4 py-2 text-[12px] uppercase tracking-[0.24em] text-white/90">
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
+                    </span>
+                    Replies in &lt; 24h
+                  </span>
+                </div>
+
                 <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field placeholder="Your name" />
@@ -1880,6 +1650,7 @@ function Contact() {
             </motion.div>
           </Reveal>
         </div>
+
       </div>
     </section>
   );
@@ -1908,7 +1679,7 @@ function Footer() {
   const nav: [string, string][] = [
     ["Home", "#hero"], ["About", "#about"], ["Services", "#services"],
     ["Skills", "#skills"], ["Process", "#process"], ["Projects", "#projects"],
-    ["Pricing", "#pricing"], ["Contact", "#contact"],
+    ["Contact", "#contact"],
   ];
 
   return (
@@ -1966,13 +1737,13 @@ function Footer() {
             <div className="grid gap-6 md:grid-cols-[1.2fr_1fr] items-end">
               <div className="min-w-0">
                 <div className="mb-4"><Logo variant="full" tone="gradient" /></div>
-                <h3 className="font-display text-[clamp(1.75rem,4.5vw,3.75rem)] italic text-white leading-[1.05]">
+                <h3 className="font-display text-[clamp(1.3125rem,3.9vw,3.3125rem)] italic text-white leading-[1.08]">
                   Let's craft <span className="text-gradient not-italic">something</span><br />
                   worth remembering.
                 </h3>
               </div>
               <div className="flex flex-col items-start md:items-end gap-4">
-                <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-[10px] uppercase tracking-[0.28em] text-white/90">
+                <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-[15px] uppercase tracking-[0.28em] text-white/90">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
                     <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
@@ -1990,7 +1761,7 @@ function Footer() {
           <div className="relative grid gap-10 lg:gap-12 md:grid-cols-2 lg:grid-cols-3">
             {/* About */}
             <div className="min-w-0">
-              <div className="mb-4 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Studio</div>
+              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Studio</div>
               <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
                 A frontend studio of one, crafting premium websites and interfaces for founders,
                 agencies, and brands worldwide. Karachi → Everywhere.
@@ -1999,7 +1770,7 @@ function Footer() {
 
             {/* Nav */}
             <div className="min-w-0">
-              <div className="mb-4 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
+              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
               <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
                 {nav.map(([l, h]) => (
                   <li key={l}>
@@ -2014,7 +1785,7 @@ function Footer() {
 
             {/* Contact — ONLY LinkedIn + Email */}
             <div className="min-w-0">
-              <div className="mb-4 text-[10px] uppercase tracking-[0.28em] text-[var(--neon)]">Connect</div>
+              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Connect</div>
               <div className="space-y-2.5">
                 <a
                   href="mailto:hooria.webdesigns@gmail.com"
@@ -2023,7 +1794,7 @@ function Footer() {
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--primary)]/45 to-[var(--pink)]/30">
                     <Mail size={15} className="text-white" />
                   </span>
-                  <span className="min-w-0 flex-1 text-[13px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
+                  <span className="min-w-0 flex-1 text-[15px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
                     hooria.webdesigns@gmail.com
                   </span>
                 </a>
@@ -2036,7 +1807,7 @@ function Footer() {
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--cyan)]/40 to-[var(--primary)]/30">
                     <Linkedin size={15} className="text-white" />
                   </span>
-                  <span className="min-w-0 flex-1 text-[13px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
+                  <span className="min-w-0 flex-1 text-[15px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
                     LinkedIn Profile
                   </span>
                 </a>
@@ -2047,7 +1818,7 @@ function Footer() {
           {/* Bottom bar */}
           <div className="relative mt-12 pt-6">
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--neon)]/50 to-transparent" aria-hidden />
-            <div className="grid gap-3 sm:grid-cols-3 items-center text-[11px] sm:text-xs text-[var(--muted-foreground)]">
+            <div className="grid gap-3 sm:grid-cols-3 items-center text-[14px] sm:text-sm text-[var(--muted-foreground)]">
               <div className="text-center sm:text-left">© 2026 Hooria Azam. All Rights Reserved.</div>
               <div className="text-center">Designed &amp; Developed with Passion.</div>
               <div className="flex sm:justify-end justify-center">
@@ -2083,7 +1854,6 @@ function Portfolio() {
       <Skills />
       <Process />
       <Projects />
-      <Pricing />
 
       <Why />
       <Testimonials />
