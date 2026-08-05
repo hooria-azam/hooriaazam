@@ -1628,70 +1628,8 @@ function Contact() {
           </Reveal>
         </div>
 
-        <div className="grid gap-6 lg:gap-8 lg:grid-cols-[1fr_1.15fr] items-start max-w-6xl mx-auto">
-          {/* LEFT — contact info floating card */}
+        <div className="mx-auto w-full max-w-3xl">
           <Reveal>
-            <div className="relative glass-strong rounded-[28px] p-7 sm:p-9 overflow-hidden">
-              <div className="pointer-events-none absolute inset-0 rounded-[28px]" style={{
-                padding: 1,
-                background: "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.2), rgba(232,121,249,0.55))",
-                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude",
-              } as React.CSSProperties} aria-hidden />
-              <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-[var(--primary)]/30 blur-3xl" aria-hidden />
-
-              <div className="relative">
-                <div className="mb-2 text-[10px] uppercase tracking-[0.3em] text-[var(--neon)]">Direct Line</div>
-                <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight mb-6">
-                  Prefer to<br />reach out directly?
-                </h3>
-
-                <div className="space-y-3">
-                  <a
-                    href="mailto:hooria.webdesigns@gmail.com"
-                    className="group flex items-center gap-4 rounded-2xl p-4 glass hover:-translate-y-0.5 hover:border-[var(--neon)]/50 hover:shadow-[0_10px_30px_-10px_rgba(192,132,252,0.5)] transition-all duration-500"
-                  >
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--primary)]/45 to-[var(--pink)]/30">
-                      <Mail size={18} className="text-white" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">Email</div>
-                      <div className="text-sm text-white/95 truncate group-hover:text-[var(--neon)] transition-colors">hooria.webdesigns@gmail.com</div>
-                    </div>
-                    <ArrowUpRight size={14} className="text-white/40 group-hover:text-[var(--neon)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
-                  </a>
-
-                  <a
-                    href="https://www.linkedin.com/in/hooria-azam-web-developer/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center gap-4 rounded-2xl p-4 glass hover:-translate-y-0.5 hover:border-[var(--neon)]/50 hover:shadow-[0_10px_30px_-10px_rgba(192,132,252,0.5)] transition-all duration-500"
-                  >
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--cyan)]/40 to-[var(--primary)]/30">
-                      <Linkedin size={18} className="text-white" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">LinkedIn</div>
-                      <div className="text-sm text-white/95 truncate group-hover:text-[var(--neon)] transition-colors">/in/hooria-azam-web-developer</div>
-                    </div>
-                    <ArrowUpRight size={14} className="text-white/40 group-hover:text-[var(--neon)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
-                  </a>
-                </div>
-
-                <div className="mt-8 flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
-                  </span>
-                  Available · Replies in &lt; 24h
-                </div>
-              </div>
-            </div>
-          </Reveal>
-
-          {/* RIGHT — form card with 3D tilt */}
-          <Reveal delay={0.15}>
             <motion.div
               ref={cardRef}
               onMouseMove={(e) => {
@@ -1700,15 +1638,35 @@ function Contact() {
                 my.set((e.clientY - r.top) / r.height);
               }}
               onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-              style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600 }}
-              className="relative glass-strong rounded-[28px] p-7 sm:p-9 overflow-hidden"
+              style={{ rotateX: rx, rotateY: ry, transformPerspective: 1800 }}
+              className="relative glass-strong rounded-[32px] p-6 sm:p-10 md:p-12 overflow-hidden"
             >
-              <motion.div className="pointer-events-none absolute inset-0" style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(500px circle at ${x} ${y}, rgba(232,121,249,0.16), transparent 60%)`) }} />
-              <div className="absolute -top-24 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-[var(--primary)]/25 blur-3xl" aria-hidden />
+              {/* animated gradient hairline */}
+              <div className="pointer-events-none absolute inset-0 rounded-[32px]" style={{
+                padding: 1,
+                background: "linear-gradient(135deg, rgba(192,132,252,0.6), rgba(34,211,238,0.25), rgba(232,121,249,0.6))",
+                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+              } as React.CSSProperties} aria-hidden />
+              <motion.div className="pointer-events-none absolute inset-0" style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(560px circle at ${x} ${y}, rgba(232,121,249,0.16), transparent 60%)`) }} />
+              <div className="absolute -top-28 left-1/2 h-60 w-60 -translate-x-1/2 rounded-full bg-[var(--primary)]/25 blur-3xl" aria-hidden />
 
               <div className="relative">
-                <div className="mb-2 text-[10px] uppercase tracking-[0.3em] text-[var(--neon)]">Project Brief</div>
-                <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight mb-6">Tell me about your project.</h3>
+                <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+                  <div className="min-w-0">
+                    <div className="mb-2 text-[13px] uppercase tracking-[0.3em] text-[var(--neon)]">Project Brief</div>
+                    <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight">Start the conversation.</h3>
+                  </div>
+                  <span className="hidden sm:inline-flex shrink-0 items-center gap-2 rounded-full glass px-4 py-2 text-[12px] uppercase tracking-[0.24em] text-white/90">
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
+                    </span>
+                    Replies in &lt; 24h
+                  </span>
+                </div>
+
                 <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field placeholder="Your name" />
@@ -1724,6 +1682,7 @@ function Contact() {
             </motion.div>
           </Reveal>
         </div>
+
       </div>
     </section>
   );
