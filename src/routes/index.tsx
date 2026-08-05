@@ -639,12 +639,8 @@ function About() {
 
         {/* 3D Layered composition */}
         <div className="relative">
-          {/* Back plate — huge signature wordmark */}
-          <div aria-hidden className="absolute -top-10 left-1/2 -translate-x-1/2 w-[120%] pointer-events-none select-none opacity-[0.06]">
-            <div className="font-display text-[clamp(6rem,18vw,20rem)] leading-[0.8] tracking-tighter text-white text-center whitespace-nowrap">
-              HOORIA·AZAM
-            </div>
-          </div>
+
+
 
           <motion.div
             ref={cardRef}
