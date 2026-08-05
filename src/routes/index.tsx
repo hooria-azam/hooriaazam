@@ -1188,199 +1188,170 @@ const PROJECTS = [
 
 function Projects() {
   const [active, setActive] = useState(0);
-  const featured = PROJECTS[0];
-  const rest = PROJECTS.slice(1);
+  const p = PROJECTS[active];
+  const stageRef = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const rx = useSpring(useTransform(my, [0, 1], [5, -5]), { stiffness: 120, damping: 20 });
+  const ry = useSpring(useTransform(mx, [0, 1], [-7, 7]), { stiffness: 120, damping: 20 });
 
   return (
     <section id="projects" className="relative py-24 md:py-32 overflow-hidden">
-      {/* Ambient */}
       <div className="absolute inset-0 -z-10" aria-hidden style={{
         background:
           "radial-gradient(900px 500px at 85% 5%, rgba(124,58,237,0.18), transparent 60%)," +
           "radial-gradient(700px 400px at 10% 90%, rgba(34,211,238,0.10), transparent 60%)",
       }} />
-      <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-[var(--pink)]/12 blur-3xl float-y" aria-hidden />
 
       <div className="container-x relative">
-        <div className="mb-14 sm:mb-16 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 sm:gap-6">
+        {/* Editorial header */}
+        <div className="mb-12 sm:mb-16 grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
           <div className="min-w-0">
-            <Reveal><SectionTag>Featured Work · 2020–2026</SectionTag></Reveal>
+            <Reveal className="flex"><SectionTag>Selected Work · 2020–2026</SectionTag></Reveal>
             <Reveal delay={0.1}>
-              <h2 className="leading-[1.05]">Projects that<br /><span className="text-gradient">speak louder.</span></h2>
+              <h2 className="mt-5 leading-[1.02]">
+                Projects that<br /><span className="text-gradient">speak louder.</span>
+              </h2>
             </Reveal>
           </div>
-          <Reveal delay={0.2} className="shrink-0">
-            <a href="#contact" className="btn-ghost !py-2.5 !px-4 sm:!py-3 sm:!px-6 text-xs sm:text-sm whitespace-nowrap">All Projects →</a>
+          <Reveal delay={0.2}>
+            <p className="max-w-xs text-[15px] leading-relaxed text-[var(--muted-foreground)] md:text-right">
+              Five case studies in commerce, product and brand — hover the index to explore.
+            </p>
           </Reveal>
         </div>
 
-        {/* Featured hero project — cinematic full-width */}
-        <Reveal>
-          <FeaturedProjectCard p={featured} />
-        </Reveal>
+        {/* Showcase — stage + index */}
+        <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-10 items-start">
+          {/* STAGE */}
+          <motion.div
+            ref={stageRef}
+            onMouseMove={(e) => {
+              const r = stageRef.current!.getBoundingClientRect();
+              mx.set((e.clientX - r.left) / r.width);
+              my.set((e.clientY - r.top) / r.height);
+            }}
+            onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
+            style={{ rotateX: rx, rotateY: ry, transformPerspective: 1800 }}
+            className="relative overflow-hidden rounded-[32px] glass-strong lg:sticky lg:top-28"
+          >
+            <div className="pointer-events-none absolute inset-0 z-20 rounded-[32px]" style={{
+              padding: 1,
+              background: "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.2), rgba(232,121,249,0.55))",
+              WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+            } as React.CSSProperties} aria-hidden />
 
-        {/* Navigation strip */}
-        <div className="mt-14 sm:mt-16 mb-6 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-            <span className="h-px w-8 bg-[var(--neon)]" />
-            More case studies
-          </div>
-          <div className="flex items-center gap-1.5">
-            {rest.map((_, i) => (
-              <button
-                key={i}
-                onMouseEnter={() => setActive(i)}
-                onClick={() => setActive(i)}
-                aria-label={`Project ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-500 ${active === i ? "w-8 bg-[var(--neon)] shadow-[0_0_10px_var(--neon)]" : "w-3 bg-white/20 hover:bg-white/40"}`}
-              />
-            ))}
-          </div>
-        </div>
+            <div className="relative h-64 sm:h-80 lg:h-[26rem] overflow-hidden">
+              <motion.div
+                key={p.name}
+                initial={{ opacity: 0, scale: 1.06 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
+                className="absolute inset-0"
+                style={{ background: p.grad }}
+              >
+                <div className="absolute inset-0 grid-bg opacity-40" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_25%,rgba(2,2,7,0.6)_100%)]" />
+                <div className="absolute inset-0 grid place-items-center text-[7rem] sm:text-[9rem] opacity-30">{p.glyph}</div>
+              </motion.div>
 
-        {/* Rest — asymmetric 3D card layout */}
-        <div className="grid gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {rest.map((p, i) => (
-            <Reveal key={p.name} delay={i * 0.06} className={i === 0 ? "lg:col-span-2" : ""}>
-              <ProjectCard {...p} large={i === 0} highlight={active === i} />
-            </Reveal>
-          ))}
+              <motion.div
+                className="absolute bottom-6 right-6 rounded-2xl glass-strong px-4 py-3"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <div className="text-[11px] uppercase tracking-[0.28em] text-white/70">Result</div>
+                <div className="font-display text-xl text-white leading-tight">{p.metric}</div>
+              </motion.div>
+              <div className="absolute top-6 left-6 rounded-full glass px-4 py-2 text-[12px] uppercase tracking-[0.24em] text-white/85">
+                {p.label}
+              </div>
+            </div>
+
+            <motion.div
+              key={`${p.name}-body`}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
+              className="relative p-6 sm:p-8"
+            >
+              <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight mb-3">{p.name}</h3>
+              <p className="text-[15px] sm:text-base text-[var(--muted-foreground)] leading-relaxed max-w-[56ch]" style={{ marginBottom: 20 }}>
+                {p.desc}
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                {p.tags.map((t) => (
+                  <span key={t} className="rounded-full border border-[var(--border)] bg-white/[0.04] px-3 py-1.5 text-[12px] uppercase tracking-wider text-[var(--muted-foreground)]">{t}</span>
+                ))}
+                <a href="#contact" className="ml-auto inline-flex items-center gap-1.5 text-[14px] text-white/80 hover:text-[var(--neon)] transition-colors">
+                  Discuss a similar project <ArrowUpRight size={15} />
+                </a>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* INDEX */}
+          <div className="min-w-0">
+            <div className="mb-4 flex items-center gap-3 text-[12px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
+              <span className="h-px w-8 bg-[var(--neon)]" />
+              Case index
+              <span className="ml-auto font-display text-white/70">
+                {String(active + 1).padStart(2, "0")} / {String(PROJECTS.length).padStart(2, "0")}
+              </span>
+            </div>
+
+            <div className="flex flex-col">
+              {PROJECTS.map((item, i) => {
+                const isActive = i === active;
+                return (
+                  <motion.button
+                    key={item.name}
+                    type="button"
+                    initial={{ opacity: 0, x: 24 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-60px" }}
+                    transition={{ delay: 0.05 * i, duration: 0.55, ease: [0.2, 0.8, 0.2, 1] }}
+                    onMouseEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    onClick={() => setActive(i)}
+                    className={`group relative w-full max-w-full overflow-hidden border-b border-white/10 px-3 sm:px-4 py-5 text-left transition-colors duration-500 ${isActive ? "bg-white/[0.05]" : "hover:bg-white/[0.025]"}`}
+                  >
+                    <span
+                      aria-hidden
+                      className={`absolute left-0 top-0 h-full w-[2px] bg-gradient-to-b from-[var(--neon)] via-[var(--pink)] to-[var(--cyan)] transition-transform duration-500 origin-top ${isActive ? "scale-y-100" : "scale-y-0"}`}
+                    />
+                    <div className="relative flex items-center gap-4">
+                      <span className={`font-display text-[13px] tracking-[0.28em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl text-xl transition-all duration-500 ${isActive ? "scale-110 bg-gradient-to-br from-[var(--primary)]/50 to-[var(--pink)]/35" : "bg-white/[0.04]"}`}>
+                        {item.glyph}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className={`block truncate text-[16px] font-semibold transition-colors ${isActive ? "text-white" : "text-white/75"}`}>
+                          {item.name}
+                        </span>
+                        <span className="block truncate text-[13px] text-[var(--muted-foreground)]">{item.label}</span>
+                      </span>
+                      <ArrowUpRight
+                        size={17}
+                        className={`shrink-0 transition-all duration-500 ${isActive ? "text-[var(--neon)] translate-x-0 opacity-100" : "text-white/25 -translate-x-2 opacity-0"}`}
+                      />
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            <div className="mt-8">
+              <a href="#contact" className="btn-ghost !py-3 !px-6 text-sm w-full sm:w-auto">Start your project <ArrowUpRight size={16} /></a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function FeaturedProjectCard({ p }: { p: typeof PROJECTS[number] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [4, -4]), { stiffness: 120, damping: 20 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-6, 6]), { stiffness: 120, damping: 20 });
-  const lx = useTransform(mx, (v) => `${v * 100}%`);
-  const ly = useTransform(my, (v) => `${v * 100}%`);
-
-  return (
-    <motion.article
-      ref={ref}
-      onMouseMove={(e) => {
-        const r = ref.current!.getBoundingClientRect();
-        mx.set((e.clientX - r.left) / r.width);
-        my.set((e.clientY - r.top) / r.height);
-      }}
-      onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-      style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600 }}
-      className="group relative overflow-hidden rounded-[32px] glass-strong"
-    >
-      {/* Gradient hairline */}
-      <div className="pointer-events-none absolute inset-0 rounded-[32px]" style={{
-        padding: 1,
-        background: "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.2), rgba(232,121,249,0.55))",
-        WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-        WebkitMaskComposite: "xor",
-        maskComposite: "exclude",
-      } as React.CSSProperties} aria-hidden />
-
-      {/* Cursor spotlight */}
-      <motion.div className="pointer-events-none absolute inset-0" style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(500px circle at ${x} ${y}, rgba(232,121,249,0.14), transparent 60%)`) }} />
-
-      <div className="relative grid lg:grid-cols-[1.15fr_1fr] gap-0">
-        {/* Image / visual */}
-        <div className="relative h-72 sm:h-96 lg:h-[30rem] overflow-hidden" style={{ background: p.grad }}>
-          <div className="absolute inset-0 grid-bg opacity-40" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(2,2,7,0.55)_100%)]" />
-          {/* Floating layered discs */}
-          <motion.div
-            className="absolute top-8 left-8 h-24 w-24 rounded-2xl glass-strong grid place-items-center text-4xl"
-            animate={{ y: [0, -10, 0], rotate: [-4, 2, -4] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          >
-            {p.glyph}
-          </motion.div>
-          <motion.div
-            className="absolute bottom-10 right-8 h-16 w-32 rounded-2xl glass-strong px-4 py-3"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="text-[9px] uppercase tracking-[0.3em] text-white/70">Result</div>
-            <div className="font-display text-lg text-white leading-tight">{p.metric}</div>
-          </motion.div>
-          {/* Centerpiece huge glyph */}
-          <div className="absolute inset-0 grid place-items-center text-[8rem] sm:text-[10rem] opacity-30 blur-[1px] group-hover:scale-110 transition-transform duration-[900ms]">{p.glyph}</div>
-        </div>
-
-        {/* Content */}
-        <div className="relative p-8 sm:p-10 lg:p-12 flex flex-col">
-          <div className="mb-3 inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-[var(--cyan)]">
-            <span className="grid h-5 w-5 place-items-center rounded-full glass text-white text-[10px] font-bold">01</span>
-            Featured Case Study
-          </div>
-          <div className="mb-2 text-[10px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">{p.label}</div>
-          <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl text-white leading-tight mb-4">{p.name}</h3>
-          <p className="text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed max-w-[52ch]" style={{ marginBottom: 20 }}>
-            {p.desc}
-          </p>
-          <div className="flex flex-wrap gap-2 mb-8">
-            {p.tags.map((t) => (
-              <span key={t} className="rounded-full border border-[var(--border)] bg-white/[0.04] px-3 py-1 text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">{t}</span>
-            ))}
-          </div>
-          <div className="mt-auto flex items-center gap-4">
-            <a href="#contact" className="btn-primary !py-3 !px-6 text-sm">View Case Study <ArrowUpRight size={16} /></a>
-            <a href="#contact" className="text-xs text-white/70 hover:text-[var(--neon)] transition-colors">Discuss a similar project →</a>
-          </div>
-        </div>
-      </div>
-    </motion.article>
-  );
-}
-
-function ProjectCard({ glyph, label, name, desc, tags, grad, large, metric, highlight }: typeof PROJECTS[number] & { highlight?: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [5, -5]), { stiffness: 150, damping: 18 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-6, 6]), { stiffness: 150, damping: 18 });
-  return (
-    <motion.article
-      ref={ref}
-      onMouseMove={(e) => {
-        const r = ref.current!.getBoundingClientRect();
-        mx.set((e.clientX - r.left) / r.width);
-        my.set((e.clientY - r.top) / r.height);
-      }}
-      onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-      style={{ rotateX: rx, rotateY: ry, transformPerspective: 1200 }}
-      className={`glass group relative flex h-full flex-col overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_-20px_rgba(192,132,252,0.5)] ${highlight ? "ring-1 ring-[var(--neon)]/50 shadow-[0_20px_60px_-20px_rgba(192,132,252,0.5)]" : ""}`}
-    >
-      <div className={`relative overflow-hidden ${large ? "h-56 sm:h-64" : "h-44 sm:h-48"}`} style={{ background: grad }}>
-        <div className="absolute inset-0 grid-bg opacity-40" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(2,2,7,0.7)_100%)]" />
-        {/* Layered floating card */}
-        <motion.div
-          className="absolute top-4 left-4 glass-strong rounded-xl px-3 py-2 text-[9px] uppercase tracking-[0.28em] text-white/80"
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        >
-          {metric}
-        </motion.div>
-        <div className="absolute inset-0 grid place-items-center text-5xl sm:text-6xl drop-shadow-[0_0_30px_rgba(192,132,252,0.6)] transition-transform duration-[900ms] group-hover:scale-125">{glyph}</div>
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[var(--background)]/85 to-transparent" />
-        <div className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-white/95 text-black opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
-          <ArrowUpRight size={14} />
-        </div>
-      </div>
-      <div className="flex flex-1 flex-col p-6">
-        <div className="mb-2 text-[10px] uppercase tracking-[0.2em] text-[var(--cyan)]">{label}</div>
-        <h3 className="mb-3 text-base sm:text-lg font-semibold text-white">{name}</h3>
-        <p className="text-[13px] text-[var(--muted-foreground)] leading-relaxed" style={{ marginBottom: 20 }}>{desc}</p>
-        <div className="mt-auto flex flex-wrap gap-1.5">
-          {tags.slice(0, 3).map((t) => (
-            <span key={t} className="rounded-full border border-[var(--border)] bg-white/[0.04] px-2.5 py-0.5 text-[9.5px] uppercase tracking-wider text-[var(--muted-foreground)]">{t}</span>
-          ))}
-        </div>
-      </div>
-    </motion.article>
   );
 }
 
