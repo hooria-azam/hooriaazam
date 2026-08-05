@@ -700,35 +700,86 @@ function About() {
                 </div>
               </div>
 
-              {/* RIGHT — stat pillars */}
+              {/* RIGHT — four uniquely-treated statistics */}
               <div className="grid grid-cols-2 gap-4 sm:gap-5">
-                {stats.map((s, i) => (
-                  <motion.div
-                    key={s.label}
-                    initial={{ opacity: 0, y: 24, filter: "blur(6px)" }}
-                    whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    viewport={{ once: true, margin: "-60px" }}
-                    transition={{ delay: 0.15 + i * 0.08, duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
-                    className="group relative overflow-hidden rounded-2xl p-5 sm:p-6"
-                    style={{
-                      background: "linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015))",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                    }}
+                {/* 01 — Years: outlined numeral inside a slow-spinning ring */}
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7 }}
+                  className="group relative overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.02] p-5 sm:p-6"
+                >
+                  <div aria-hidden className="absolute -right-10 -top-10 h-32 w-32 rounded-full border border-dashed border-[var(--neon)]/30 spin-slow" />
+                  <Award size={20} className="mb-4 text-[var(--neon)]" />
+                  <div
+                    className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] leading-none tracking-tight text-transparent transition-all duration-500 group-hover:text-white"
+                    style={{ WebkitTextStroke: "1.5px rgba(192,132,252,0.9)" }}
                   >
-                    <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-[var(--neon)] via-[var(--pink)] to-[var(--cyan)] opacity-70 group-hover:opacity-100 transition-opacity" />
-                    <div className="absolute -top-14 -right-14 h-32 w-32 rounded-full bg-[var(--primary)]/25 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="relative">
-                      <s.Icon className="mb-4 h-5 w-5 text-[var(--neon)]" size={20} />
-                      <div className="font-display text-[clamp(2.25rem,4vw,3.25rem)] font-semibold text-white leading-none tracking-tight">
-                        <AboutCounter to={s.value} suffix={s.suffix} />
-                      </div>
-                      <div className="mt-3 text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">
-                        {s.label}
-                      </div>
+                    <AboutCounter to={5} suffix="+" />
+                  </div>
+                  <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">Years Experience</div>
+                </motion.div>
+
+                {/* 02 — Projects: solid gradient plate with grid texture */}
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.08 }}
+                  className="group relative overflow-hidden rounded-[26px] p-5 sm:p-6 transition-transform duration-500 hover:-translate-y-1"
+                  style={{ background: "linear-gradient(150deg, rgba(124,58,237,0.55), rgba(232,121,249,0.30))", border: "1px solid rgba(255,255,255,0.14)" }}
+                >
+                  <div aria-hidden className="absolute inset-0 grid-bg opacity-50" />
+                  <div className="relative">
+                    <Rocket size={20} className="mb-4 text-white" />
+                    <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
+                      <AboutCounter to={150} suffix="+" />
                     </div>
-                  </motion.div>
-                ))}
+                    <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-white/80">Projects Shipped</div>
+                  </div>
+                </motion.div>
+
+                {/* 03 — Clients: layered stacked cards */}
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.16 }}
+                  className="group relative rounded-[26px]"
+                >
+                  <span aria-hidden className="absolute inset-x-3 -top-2 h-10 rounded-[22px] border border-white/10 bg-white/[0.03] transition-all duration-500 group-hover:-top-3" />
+                  <div className="relative overflow-hidden rounded-[26px] glass-strong p-5 sm:p-6">
+                    <div aria-hidden className="absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-[var(--cyan)]/25 blur-2xl" />
+                    <div className="relative">
+                      <div className="mb-4 flex -space-x-2">
+                        {["#c084fc", "#e879f9", "#22d3ee"].map((c) => (
+                          <span key={c} className="h-5 w-5 rounded-full border border-white/25" style={{ background: c }} />
+                        ))}
+                      </div>
+                      <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
+                        <AboutCounter to={60} suffix="+" />
+                      </div>
+                      <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">Happy Clients</div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* 04 — Delivery: progress arc treatment */}
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.24 }}
+                  className="group relative overflow-hidden rounded-[26px] border border-[var(--cyan)]/25 bg-[radial-gradient(120%_90%_at_100%_0%,rgba(34,211,238,0.18),transparent_60%)] p-5 sm:p-6"
+                >
+                  <Zap size={20} className="mb-4 text-[var(--cyan)]" />
+                  <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
+                    <AboutCounter to={99} suffix="%" />
+                  </div>
+                  <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">On-Time Delivery</div>
+                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+                    <motion.div
+                      initial={{ width: 0 }} whileInView={{ width: "99%" }} viewport={{ once: true }}
+                      transition={{ duration: 1.6, ease: [0.2, 0.8, 0.2, 1] }}
+                      className="h-full rounded-full bg-gradient-to-r from-[var(--cyan)] to-[var(--neon)] shadow-[0_0_16px_rgba(34,211,238,0.6)]"
+                    />
+                  </div>
+                </motion.div>
               </div>
+
             </div>
 
             {/* Divider */}
