@@ -425,15 +425,20 @@ function Hero() {
 }
 
 function Particles({ count = 24 }: { count?: number }) {
+  // Deterministic pseudo-random so SSR and client markup match exactly.
+  const rand = (n: number) => {
+    const s = Math.sin(n * 12.9898) * 43758.5453;
+    return s - Math.floor(s);
+  };
   const particles = useRef(
     Array.from({ length: count }, (_, i) => ({
       id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      d: 6 + Math.random() * 12,
-      delay: Math.random() * 8,
-      size: 1 + Math.random() * 2.5,
-      o: 0.3 + Math.random() * 0.5,
+      x: rand(i + 1) * 100,
+      y: rand(i + 2.3) * 100,
+      d: 6 + rand(i + 3.7) * 12,
+      delay: rand(i + 4.1) * 8,
+      size: 1 + rand(i + 5.9) * 2.5,
+      o: 0.3 + rand(i + 6.4) * 0.5,
     })),
   ).current;
   return (
