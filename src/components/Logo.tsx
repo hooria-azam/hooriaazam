@@ -11,26 +11,20 @@ interface LogoProps {
 }
 
 /**
- * Hooria Azam — Editorial Seal
+ * Hooria Azam — "The Prism"
  *
- * Concept: a luxury magazine masthead. A serif italic "H" set inside a rotated
- * square seal with a hairline internal frame and a signature dot at the corner.
- * The full wordmark pairs a large Katros italic "Hooria" with a tiny, wide-tracked
- * "· AZAM ·" line — like a couture atelier logotype.
+ * Concept: light entering a prism and leaving as a spectrum — design (light),
+ * code (structure), craft (refraction). The mark is a hexagonal prism drawn in
+ * one continuous hairline, with an H/A ligature carved inside it: two pillars
+ * (the H) bridged by a rising diagonal that resolves into the apex of an A.
+ * A single refracted beam exits the right facet — the "output".
  */
 export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: string }>(
   ({ tone = "gradient", className }, ref) => {
-    const gid = "ha-seal-grad";
-    const gidText = "ha-seal-text";
-    const gidStroke = "ha-seal-stroke";
-    const outerFill =
-      tone === "light"
-        ? "#0a0a0f"
-        : tone === "dark"
-          ? "#ffffff"
-          : `url(#${gid})`;
-    const textFill =
-      tone === "light" ? "#f5f0e6" : tone === "dark" ? "#0a0a0f" : `url(#${gidText})`;
+    const g = "ha-prism-grad";
+    const gBeam = "ha-prism-beam";
+    const stroke =
+      tone === "light" ? "#0a0a0f" : tone === "dark" ? "#ffffff" : `url(#${g})`;
 
     return (
       <svg
@@ -39,59 +33,41 @@ export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: str
         xmlns="http://www.w3.org/2000/svg"
         className={className}
         aria-hidden
+        fill="none"
       >
         <defs>
-          <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id={g} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="#c084fc" />
-            <stop offset="55%" stopColor="#e879f9" />
+            <stop offset="52%" stopColor="#e879f9" />
             <stop offset="100%" stopColor="#22d3ee" />
           </linearGradient>
-          <linearGradient id={gidText} x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="100%" stopColor="#f5e6ff" />
-          </linearGradient>
-          <linearGradient id={gidStroke} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.35" />
+          <linearGradient id={gBeam} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#e879f9" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
           </linearGradient>
         </defs>
 
-        {/* Rotated diamond seal */}
-        <g transform="rotate(45 32 32)">
-          {/* Outer filled seal */}
-          <rect x="10" y="10" width="44" height="44" rx="6" fill={outerFill} />
-          {/* Inner hairline frame */}
-          <rect
-            x="14.5"
-            y="14.5"
-            width="35"
-            height="35"
-            rx="3"
-            fill="none"
-            stroke={`url(#${gidStroke})`}
-            strokeWidth="0.8"
-            opacity="0.7"
-          />
-        </g>
+        {/* Prism silhouette — hexagon, hairline */}
+        <path
+          d="M32 4.5 L54.5 17.5 V46.5 L32 59.5 L9.5 46.5 V17.5 Z"
+          stroke={stroke}
+          strokeWidth="2"
+          strokeLinejoin="round"
+          opacity="0.85"
+        />
 
-        {/* Serif italic "H" — set upright inside the diamond */}
-        <text
-          x="32"
-          y="41.5"
-          textAnchor="middle"
-          fontFamily='"Fraunces", "Times New Roman", serif'
-          fontStyle="italic"
-          fontWeight="500"
-          fontSize="30"
-          fill={textFill}
-          letterSpacing="-0.5"
-        >
-          H
-        </text>
+        {/* H/A ligature — two pillars + rising diagonal resolving into an apex */}
+        <path
+          d="M22 44 V22 M42 44 V22 M22 33.5 H42 M22 44 L32 20 L42 44"
+          stroke={stroke}
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
 
-        {/* Signature dot — luxury corner accent */}
-        <circle cx="52" cy="52" r="2.4" fill="#e879f9" />
-        <circle cx="52" cy="52" r="4.4" fill="none" stroke="#e879f9" strokeOpacity="0.35" strokeWidth="0.6" />
+        {/* Refracted beam exiting the right facet */}
+        <path d="M46 32 H62" stroke={`url(#${gBeam})`} strokeWidth="2.2" strokeLinecap="round" />
+        <circle cx="32" cy="20" r="2.1" fill="#e879f9" />
       </svg>
     );
   },
@@ -104,25 +80,21 @@ export function Logo({ variant = "full", tone = "gradient", className, title }: 
   }
 
   const wordColor = tone === "light" ? "text-[#0a0a0f]" : "text-white";
-  const dotColor = "text-[var(--neon)]";
 
   if (variant === "monogram") {
     return (
       <span
-        className={`inline-flex items-center gap-2 ${className ?? ""}`}
+        className={`inline-flex items-center gap-2.5 ${className ?? ""}`}
         aria-label={title ?? "Hooria Azam"}
       >
         <LogoMark tone={tone} className="h-8 w-8 shrink-0" />
-        <span
-          className={`font-display italic text-lg leading-none tracking-tight ${wordColor}`}
-        >
-          Hooria<span className={dotColor}>.</span>
+        <span className={`font-display text-xl leading-none tracking-tight font-semibold ${wordColor}`}>
+          Hooria<span className="text-[var(--neon)]">.</span>
         </span>
       </span>
     );
   }
 
-  // full — editorial masthead
   return (
     <span
       className={`inline-flex items-center gap-3 ${className ?? ""}`}
@@ -131,15 +103,12 @@ export function Logo({ variant = "full", tone = "gradient", className, title }: 
       <LogoMark tone={tone} className="h-9 w-9 shrink-0" />
       <span className="flex flex-col leading-none">
         <span
-          className={`font-display italic text-[19px] sm:text-[21px] font-medium tracking-[-0.01em] ${wordColor}`}
-          style={{ letterSpacing: "-0.01em" }}
+          className={`font-display text-[21px] sm:text-[23px] font-semibold tracking-[-0.01em] ${wordColor}`}
         >
-          Hooria<span className={dotColor}>.</span>
+          Hooria Azam
         </span>
-        <span className="mt-1.5 flex items-center gap-1.5 text-[8.5px] tracking-[0.4em] uppercase text-[var(--muted-foreground)]">
-          <span className="h-px w-3 bg-[var(--neon)]/60" />
-          Azam · Studio
-          <span className="h-px w-3 bg-[var(--neon)]/60" />
+        <span className="mt-1.5 text-[10px] tracking-[0.34em] uppercase text-[var(--muted-foreground)]">
+          Design · Code · Craft
         </span>
       </span>
     </span>
