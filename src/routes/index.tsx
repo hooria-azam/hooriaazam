@@ -1405,7 +1405,7 @@ function Why() {
             </Reveal>
             <Reveal delay={0.16}>
               <p className="mt-6 max-w-md text-base text-[var(--muted-foreground)] leading-relaxed">
-                Six reasons founders and studios choose me — beyond the pixel.
+                Five reasons founders and studios choose me — beyond the pixel.
                 Hover any principle to see how it shows up in the work.
               </p>
             </Reveal>
