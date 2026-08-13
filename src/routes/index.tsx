@@ -1732,41 +1732,17 @@ function Footer() {
             maskComposite: "exclude",
           }} aria-hidden />
 
-          {/* HERO ROW — giant editorial signature */}
-          <div className="relative mb-12 sm:mb-14 pb-10 sm:pb-12 border-b border-white/10">
-            <div className="grid gap-6 md:grid-cols-[1.2fr_1fr] items-end">
-              <div className="min-w-0">
-                <div className="mb-4"><Logo variant="full" tone="gradient" /></div>
-                <h3 className="font-display text-[clamp(1.3125rem,3.9vw,3.3125rem)] italic text-white leading-[1.08]">
-                  Let's craft <span className="text-gradient not-italic">something</span><br />
-                  worth remembering.
-                </h3>
-              </div>
-              <div className="flex flex-col items-start md:items-end gap-4">
-                <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-[15px] uppercase tracking-[0.28em] text-white/90">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]" />
-                  </span>
-                  Available for Freelance
-                </div>
-                <a href="#contact" className="btn-primary !py-3 !px-6 text-sm">
-                  Start a Project <ArrowUpRight size={16} />
-                </a>
-              </div>
-            </div>
-          </div>
-
           {/* CONTENT GRID */}
           <div className="relative grid gap-10 lg:gap-12 md:grid-cols-2 lg:grid-cols-3">
             {/* About */}
             <div className="min-w-0">
-              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Studio</div>
+              <div className="mb-5"><Logo variant="full" tone="gradient" /></div>
               <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
                 A frontend studio of one, crafting premium websites and interfaces for founders,
                 agencies, and brands worldwide. Karachi → Everywhere.
               </p>
             </div>
+
 
             {/* Nav */}
             <div className="min-w-0">
