@@ -1539,132 +1539,155 @@ function Testimonials() {
   );
 }
 
-/* ───────── Contact ───────── */
+/* ───────── Contact — editorial "open letter" composition ───────── */
+function LineField({ as, label, index, ...props }: any) {
+  const Cmp = as || "input";
+  return (
+    <label className="group relative block">
+      <span className="mb-2 flex items-center gap-2 text-[12px] uppercase tracking-[0.3em] text-white/45">
+        <span className="text-[var(--neon)]">{index}</span>
+        {label}
+      </span>
+      <Cmp
+        {...props}
+        className="peer w-full resize-none bg-transparent pb-3 text-[16px] text-white placeholder:text-white/25 outline-none"
+      />
+      <span aria-hidden className="block h-px w-full bg-white/12" />
+      <span
+        aria-hidden
+        className="absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-gradient-to-r from-[var(--neon)] via-[var(--pink)] to-[var(--cyan)] transition-transform duration-500 peer-focus:scale-x-100"
+      />
+    </label>
+  );
+}
+
 function Contact() {
   const [sent, setSent] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [4, -4]), { stiffness: 120, damping: 20 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-5, 5]), { stiffness: 120, damping: 20 });
-  const lx = useTransform(mx, (v) => `${v * 100}%`);
-  const ly = useTransform(my, (v) => `${v * 100}%`);
 
   return (
-    <section id="contact" className="relative py-24 md:py-32 overflow-hidden">
-      {/* Ambient lighting */}
-      <div className="absolute inset-0 -z-10" aria-hidden style={{
-        background:
-          "radial-gradient(900px 500px at 50% 100%, rgba(124,58,237,0.24), transparent 60%)," +
-          "radial-gradient(700px 400px at 10% 10%, rgba(232,121,249,0.12), transparent 60%)," +
-          "radial-gradient(700px 400px at 90% 20%, rgba(34,211,238,0.10), transparent 60%)",
-      }} />
-
-      {/* Floating decorative shapes */}
-      <motion.div
+    <section id="contact" className="relative py-20 md:py-32 overflow-hidden">
+      <div
+        className="absolute inset-0 -z-10"
         aria-hidden
-        className="absolute top-20 left-[6%] hidden md:block h-28 w-28 rounded-3xl glass-strong"
-        animate={{ y: [0, -16, 0], rotate: [-4, 4, -4] }}
-        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+        style={{
+          background:
+            "radial-gradient(1000px 520px at 50% 108%, rgba(124,58,237,0.22), transparent 62%)," +
+            "radial-gradient(620px 360px at 8% 6%, rgba(232,121,249,0.10), transparent 62%)",
+        }}
       />
       <motion.div
         aria-hidden
-        className="absolute bottom-24 right-[8%] hidden md:block h-20 w-20 rounded-full border border-[var(--neon)]/40"
-        animate={{ y: [0, 16, 0], scale: [1, 1.1, 1] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        className="pointer-events-none absolute right-[6%] top-24 hidden lg:block h-40 w-px bg-gradient-to-b from-transparent via-[var(--neon)]/40 to-transparent"
+        animate={{ opacity: [0.3, 1, 0.3], scaleY: [0.8, 1.15, 0.8] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
-      <motion.svg
-        aria-hidden
-        className="absolute top-1/3 right-[14%] hidden lg:block opacity-40"
-        width="32" height="32" viewBox="0 0 24 24" fill="none"
-        animate={{ y: [0, -18, 0], rotate: [0, 20, 0] }}
-        transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z" fill="#e879f9" opacity="0.6" />
-      </motion.svg>
 
       <div className="container-x relative">
-        <div className="mb-14 sm:mb-16 text-center">
-          <Reveal className="flex justify-center"><SectionTag>Get In Touch</SectionTag></Reveal>
-          <Reveal delay={0.1}>
-            <h2 className="leading-[1.05]">Let's build something<br /><span className="text-gradient">remarkable.</span></h2>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <p className="mt-6 max-w-xl mx-auto text-base text-[var(--muted-foreground)]">
-              Tell me about your project. I'll reply within one business day.
+        {/* Editorial masthead */}
+        <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+          <div className="min-w-0">
+            <Reveal><SectionTag>Get In Touch</SectionTag></Reveal>
+            <Reveal delay={0.08}>
+              <h2 className="leading-[1.02]">
+                Say hello,<br />
+                <span className="italic font-display text-white/45">and let's make</span><br />
+                <span className="text-gradient">it real.</span>
+              </h2>
+            </Reveal>
+          </div>
+          <Reveal delay={0.16} className="min-w-0">
+            <p className="max-w-sm text-[17px] leading-relaxed text-[var(--muted-foreground)] lg:text-right lg:ml-auto">
+              No forms-for-the-sake-of-forms. Four lines below, or reach me directly —
+              either way you get a considered reply within one business day.
             </p>
           </Reveal>
         </div>
 
-        <div className="mx-auto w-full max-w-3xl">
-          <Reveal>
-            <motion.div
-              ref={cardRef}
-              onMouseMove={(e) => {
-                const r = cardRef.current!.getBoundingClientRect();
-                mx.set((e.clientX - r.left) / r.width);
-                my.set((e.clientY - r.top) / r.height);
-              }}
-              onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-              style={{ rotateX: rx, rotateY: ry, transformPerspective: 1800 }}
-              className="relative glass-strong rounded-[32px] p-6 sm:p-10 md:p-12 overflow-hidden"
+        <div className="mt-10 h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
+
+        {/* Open letter */}
+        <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_0.62fr] lg:gap-16">
+          <Reveal className="min-w-0">
+            <form
+              className="grid gap-8"
+              onSubmit={(e) => { e.preventDefault(); setSent(true); }}
             >
-              {/* animated gradient hairline */}
-              <div className="pointer-events-none absolute inset-0 rounded-[32px]" style={{
-                padding: 1,
-                background: "linear-gradient(135deg, rgba(192,132,252,0.6), rgba(34,211,238,0.25), rgba(232,121,249,0.6))",
-                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                WebkitMaskComposite: "xor",
-                maskComposite: "exclude",
-              } as React.CSSProperties} aria-hidden />
-              <motion.div className="pointer-events-none absolute inset-0" style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(560px circle at ${x} ${y}, rgba(232,121,249,0.16), transparent 60%)`) }} />
-              <div className="absolute -top-28 left-1/2 h-60 w-60 -translate-x-1/2 rounded-full bg-[var(--primary)]/25 blur-3xl" aria-hidden />
-
-              <div className="relative">
-                <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
-                  <div className="min-w-0">
-                    <div className="mb-2 text-[15px] uppercase tracking-[0.3em] text-[var(--neon)]">Project Brief</div>
-                    <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight">Start the conversation.</h3>
-                  </div>
-                  <span className="hidden sm:inline-flex shrink-0 items-center gap-2 rounded-full glass px-4 py-2 text-[12px] uppercase tracking-[0.24em] text-white/90">
-                    <span className="relative flex h-2 w-2">
-                      <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
-                    </span>
-                    Replies in &lt; 24h
-                  </span>
-                </div>
-
-                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <Field placeholder="Your name" />
-                    <Field type="email" placeholder="Email address" />
-                  </div>
-                  <Field placeholder="Project type (e.g. WordPress site, Landing page, UI design…)" />
-                  <Field as="textarea" rows={5} placeholder="Tell me about your project…" />
-                  <button type="submit" className="btn-primary w-full !py-4" disabled={sent}>
-                    {sent ? "Message Sent ✓" : "Send Message"}
-                  </button>
-                </form>
+              <div className="grid gap-8 sm:grid-cols-2">
+                <LineField index="01" label="Your name" placeholder="Jane Doe" name="name" autoComplete="name" required />
+                <LineField index="02" label="Email" type="email" placeholder="you@company.com" name="email" autoComplete="email" required />
               </div>
-            </motion.div>
+              <LineField index="03" label="What you need" placeholder="WordPress site, landing page, UI design…" name="scope" />
+              <LineField index="04" label="The story" as="textarea" rows={3} placeholder="Tell me about the project, timeline and budget range…" name="message" />
+
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pt-2">
+                <button
+                  type="submit"
+                  disabled={sent}
+                  className="group inline-flex items-center gap-4 font-button text-[15px] uppercase tracking-[0.22em] text-white disabled:opacity-70"
+                >
+                  <span className="relative">
+                    {sent ? "Message sent" : "Send it over"}
+                    <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-100 bg-gradient-to-r from-[var(--neon)] to-[var(--cyan)] transition-transform duration-500 group-hover:scale-x-0" />
+                  </span>
+                  <span className="grid h-12 w-12 place-items-center rounded-full border border-white/15 transition-all duration-500 group-hover:border-transparent group-hover:bg-gradient-to-br group-hover:from-[var(--primary)] group-hover:to-[var(--pink)] group-hover:rotate-45">
+                    <ArrowUpRight size={18} />
+                  </span>
+                </button>
+                <span className="text-[14px] text-white/40">
+                  {sent ? "Thanks — I'll be in touch shortly." : "Usually replies in under 24 hours."}
+                </span>
+              </div>
+            </form>
+          </Reveal>
+
+          {/* Direct lines — quiet, typographic */}
+          <Reveal delay={0.12} className="min-w-0">
+            <div className="lg:pl-12 lg:border-l lg:border-white/10">
+              <div className="text-[12px] uppercase tracking-[0.3em] text-white/45">Or, directly</div>
+              <div className="mt-7 grid gap-7">
+                <a
+                  href="mailto:hooria.webdesigns@gmail.com"
+                  className="group block min-w-0"
+                >
+                  <span className="flex items-center gap-2 text-[13px] uppercase tracking-[0.24em] text-[var(--neon)]">
+                    <Mail size={14} /> Email
+                  </span>
+                  <span className="mt-2 block truncate text-[17px] text-white/90 transition-colors group-hover:text-[var(--neon)]">
+                    hooria.webdesigns@gmail.com
+                  </span>
+                  <span aria-hidden className="mt-3 block h-px w-full origin-left scale-x-0 bg-[var(--neon)]/60 transition-transform duration-500 group-hover:scale-x-100" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/hooria-azam-web-developer/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block min-w-0"
+                >
+                  <span className="flex items-center gap-2 text-[13px] uppercase tracking-[0.24em] text-[var(--cyan)]">
+                    <Linkedin size={14} /> LinkedIn
+                  </span>
+                  <span className="mt-2 block truncate text-[17px] text-white/90 transition-colors group-hover:text-[var(--cyan)]">
+                    /in/hooria-azam-web-developer
+                  </span>
+                  <span aria-hidden className="mt-3 block h-px w-full origin-left scale-x-0 bg-[var(--cyan)]/60 transition-transform duration-500 group-hover:scale-x-100" />
+                </a>
+              </div>
+
+              <div className="mt-10 flex items-center gap-3 text-[13px] uppercase tracking-[0.24em] text-white/60">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
+                </span>
+                Booking new projects
+              </div>
+            </div>
           </Reveal>
         </div>
-
       </div>
     </section>
   );
 }
 
-function Field({ as, ...props }: any) {
-  const Cmp = as || "input";
-  return (
-    <Cmp
-      {...props}
-      className="w-full rounded-2xl border border-[var(--border)] bg-white/[0.02] px-4 sm:px-5 py-3.5 sm:py-4 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] outline-none transition-all focus:border-[var(--neon)] focus:bg-white/[0.04] focus:shadow-[0_0_0_4px_rgba(192,132,252,0.12)]"
-    />
-  );
-}
 
 /* ───────── FOOTER — floating 3D glassmorphism card ───────── */
 function Footer() {
