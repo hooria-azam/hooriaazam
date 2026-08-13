@@ -11,20 +11,20 @@ interface LogoProps {
 }
 
 /**
- * Hooria Azam — "The Prism"
+ * Hooria Azam — "The Signature Frame"
  *
- * Concept: light entering a prism and leaving as a spectrum — design (light),
- * code (structure), craft (refraction). The mark is a hexagonal prism drawn in
- * one continuous hairline, with an H/A ligature carved inside it: two pillars
- * (the H) bridged by a rising diagonal that resolves into the apex of an A.
- * A single refracted beam exits the right facet — the "output".
+ * Concept: a designer's viewport (the rounded frame every interface is born in)
+ * holding a single continuous HA ligature — the H's right stem doubles as the
+ * A's left leg, so the initials are literally built from shared structure.
+ * A punctuation dot closes the mark like a signature. One weight, one silhouette:
+ * legible at 16px, monumental at 400px.
  */
 export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: string }>(
   ({ tone = "gradient", className }, ref) => {
-    const g = "ha-prism-grad";
-    const gBeam = "ha-prism-beam";
+    const g = "ha-sig-grad";
     const stroke =
       tone === "light" ? "#0a0a0f" : tone === "dark" ? "#ffffff" : `url(#${g})`;
+    const dot = tone === "light" ? "#0a0a0f" : "#e879f9";
 
     return (
       <svg
@@ -41,33 +41,38 @@ export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: str
             <stop offset="52%" stopColor="#e879f9" />
             <stop offset="100%" stopColor="#22d3ee" />
           </linearGradient>
-          <linearGradient id={gBeam} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#e879f9" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
-          </linearGradient>
         </defs>
 
-        {/* Prism silhouette — hexagon, hairline */}
-        <path
-          d="M32 4.5 L54.5 17.5 V46.5 L32 59.5 L9.5 46.5 V17.5 Z"
+        {/* Viewport frame */}
+        <rect
+          x="4.5"
+          y="4.5"
+          width="55"
+          height="55"
+          rx="16"
           stroke={stroke}
           strokeWidth="2"
-          strokeLinejoin="round"
-          opacity="0.85"
+          opacity="0.55"
         />
 
-        {/* H/A ligature — two pillars + rising diagonal resolving into an apex */}
+        {/* HA ligature — shared stem at x=32 */}
         <path
-          d="M22 44 V22 M42 44 V22 M22 33.5 H42 M22 44 L32 20 L42 44"
+          d="M19 44 V20 M19 32.5 H32 M32 44 V20"
           stroke={stroke}
-          strokeWidth="2.6"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M32 44 L40 20 L48 44 M34.7 32.5 H45.3"
+          stroke={stroke}
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
 
-        {/* Refracted beam exiting the right facet */}
-        <path d="M46 32 H62" stroke={`url(#${gBeam})`} strokeWidth="2.2" strokeLinecap="round" />
-        <circle cx="32" cy="20" r="2.1" fill="#e879f9" />
+        {/* Signature dot */}
+        <circle cx="53" cy="43" r="2.4" fill={dot} />
       </svg>
     );
   },
