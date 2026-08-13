@@ -1363,7 +1363,7 @@ const WHY = [
   ["◍","Clear Communication","Transparent timelines, regular updates, honest feedback. You always know where your project stands."],
   ["◫","Pixel-Perfect Precision","I obsess over the details — spacing, rhythm, timing — the things that separate good from exceptional."],
   ["◈","Modern Practices","Always current with web trends, CSS techniques, WordPress updates. Built for today, ready for tomorrow."],
-  ["❖","Long-Term Thinking","I build for scale. Clean architecture, readable code, flexible layouts that grow with your business."],
+  
 ] as const;
 
 function Why() {
