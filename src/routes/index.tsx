@@ -575,11 +575,8 @@ function About() {
 
 
 
-  const pillars = [
-    { tag: "UI", Icon: Palette, title: "Interface Design", desc: "Considered systems, fluid spacing, premium typography." },
-    { tag: "FE", Icon: Code2, title: "Frontend Engineering", desc: "Semantic, accessible, GPU-friendly motion at 60fps." },
-    { tag: "WP", Icon: Globe, title: "WordPress & WooCommerce", desc: "Custom themes, Elementor Pro, scalable commerce." },
-  ];
+
+
 
   const workflow = [
     { n: "01", t: "Discover", d: "Understand goals, audience, and the story to tell." },
@@ -589,7 +586,7 @@ function About() {
   ];
 
   return (
-    <section id="about" ref={secRef} className="relative py-28 md:py-40 overflow-hidden">
+    <section id="about" ref={secRef} className="relative py-16 sm:py-28 md:py-40 overflow-hidden">
       {/* Ambient stage */}
       <div className="absolute inset-0 -z-10" aria-hidden style={{
         background:
@@ -779,35 +776,9 @@ function About() {
 
             </div>
 
-            {/* Divider */}
-            <div className="relative my-12 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent" aria-hidden />
-
-            {/* Pillars — bento */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {pillars.map((p, i) => (
-                <motion.div
-                  key={p.title}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ delay: 0.1 + i * 0.08, duration: 0.7 }}
-                  className="group relative overflow-hidden rounded-2xl p-5 glass hover:-translate-y-1 transition-transform duration-500"
-                >
-                  <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: "radial-gradient(240px circle at 30% 0%, rgba(192,132,252,0.18), transparent 60%)" }} />
-                  <div className="relative">
-                    <div className="mb-4 inline-flex items-center gap-2">
-                      <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/25 text-[15px] font-bold tracking-wider text-white">{p.tag}</span>
-                      <p.Icon size={16} className="text-[var(--neon)]" />
-                    </div>
-                    <h4 className="text-white text-base font-semibold mb-2">{p.title}</h4>
-                    <p className="text-[15px] text-[var(--muted-foreground)] leading-relaxed">{p.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
             {/* Workflow rail */}
-            <div className="mt-14">
+            <div className="mt-12">
+
               <div className="mb-6 flex items-center gap-3 text-[15px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
                 <Layers size={12} className="text-[var(--neon)]" />
                 My Workflow
@@ -855,7 +826,7 @@ const SERVICES = [
 
 function Services() {
   return (
-    <section id="services" className="relative py-24 md:py-32">
+    <section id="services" className="relative py-16 sm:py-24 md:py-32">
       <div className="container-x">
         <div className="mb-12 sm:mb-16 grid items-end gap-6 md:gap-8 md:grid-cols-2">
           <div className="min-w-0">
@@ -914,18 +885,18 @@ function TiltCard({ children, featured }: { children: React.ReactNode; featured?
 
 /* ───────── SKILLS — premium glass redesign ───────── */
 const SKILLS = [
-  { name: "HTML5 & CSS3", pct: 97, icon: "◆", desc: "Semantic markup, modern layouts, fluid typography." },
-  { name: "JavaScript", pct: 88, icon: "⟨⟩", desc: "Vanilla JS, ES6+, DOM interactions, animation logic." },
-  { name: "WordPress & Elementor", pct: 95, icon: "◇", desc: "Custom themes, Elementor Pro, ACF, page-builder mastery." },
-  { name: "UI/UX Design", pct: 90, icon: "✦", desc: "Wireframes, prototypes, visual systems in Figma & XD." },
-  { name: "WooCommerce", pct: 85, icon: "▤", desc: "Stores, checkout flows, product templates, conversions." },
-  { name: "Responsive Design", pct: 98, icon: "▢", desc: "Mobile-first layouts that adapt across every viewport." },
+  { name: "HTML5 & CSS3", pct: 100, icon: "◆", desc: "Semantic markup, modern layouts, fluid typography." },
+  { name: "JavaScript", pct: 100, icon: "⟨⟩", desc: "Vanilla JS, ES6+, DOM interactions, animation logic." },
+  { name: "WordPress & Elementor", pct: 100, icon: "◇", desc: "Custom themes, Elementor Pro, ACF, page-builder mastery." },
+  { name: "UI/UX Design", pct: 100, icon: "✦", desc: "Wireframes, prototypes, visual systems in Figma & XD." },
+  { name: "WooCommerce", pct: 100, icon: "▤", desc: "Stores, checkout flows, product templates, conversions." },
+  { name: "Responsive Design", pct: 100, icon: "▢", desc: "Mobile-first layouts that adapt across every viewport." },
 ] as const;
 const TECH = ["HTML5","CSS3","JavaScript","WordPress","Elementor Pro","WooCommerce","Figma","CSS Animations","Bootstrap","Responsive Design","SEO Basics"];
 
 function Skills() {
   return (
-    <section id="skills" className="relative py-24 md:py-32 overflow-hidden">
+    <section id="skills" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
       {/* Floating ambient blobs */}
       <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-[var(--primary)]/15 blur-3xl float-y" aria-hidden />
       <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-[var(--cyan)]/15 blur-3xl float-y" style={{ animationDelay: "-3s" }} aria-hidden />
@@ -950,17 +921,27 @@ function Skills() {
                     <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-[var(--primary)]/40 to-[var(--cyan)]/20 text-xl font-bold text-white shrink-0">
                       {s.icon}
                     </div>
-                    <div className="font-display text-2xl font-extrabold text-gradient">{s.pct}%</div>
+                    <div className="font-display text-2xl font-extrabold text-gradient tabular-nums">
+                      <AboutCounter to={s.pct} suffix="%" />
+                    </div>
                   </div>
                   <h3 className="text-base sm:text-lg font-semibold text-white mb-2 truncate">{s.name}</h3>
                   <p className="text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed mb-5">{s.desc}</p>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <div className="relative h-1.5 overflow-hidden rounded-full bg-white/10">
                     <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${s.pct}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.4, ease: [0.2, 0.8, 0.2, 1], delay: 0.2 }}
+                      initial={{ width: "0%" }}
+                      whileInView={{ width: "100%" }}
+                      viewport={{ once: true, margin: "-60px" }}
+                      transition={{ duration: 1.5 + i * 0.12, ease: [0.16, 1, 0.3, 1], delay: 0.15 + i * 0.09 }}
                       className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] via-[var(--pink)] to-[var(--cyan)] shadow-[0_0_18px_rgba(192,132,252,0.7)]"
+                    />
+                    <motion.span
+                      aria-hidden
+                      className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/45 to-transparent"
+                      initial={{ x: "-4rem", opacity: 0 }}
+                      whileInView={{ x: ["-4rem", "100%"], opacity: [0, 1, 0] }}
+                      viewport={{ once: true, margin: "-60px" }}
+                      transition={{ duration: 1.6, delay: 0.5 + i * 0.09, ease: "easeInOut" }}
                     />
                   </div>
                 </div>
@@ -1003,108 +984,98 @@ const STEPS = [
 ] as const;
 
 function ProcessFloatDecor() {
-  // Floating premium decorative assets — wireframes, browser chrome, cursor,
-  // code brackets, grid, connection lines. Purely aesthetic; positioned so they
-  // never overlap the main timeline column and never break out of the section.
+  // Small, authentic craft artefacts — a code tag, a WP glyph, a Figma-ish node,
+  // a cursor, a colour chip. Deliberately tiny so they read as texture, never
+  // competing with the timeline content.
+  const bits: { c: string; el: React.ReactNode; d: number; r: number }[] = [
+    {
+      c: "left-[4%] top-[18%]",
+      d: 0,
+      r: -6,
+      el: (
+        <span className="glass rounded-lg px-2.5 py-1 font-mono text-[12px] text-[var(--cyan)]">&lt;div/&gt;</span>
+      ),
+    },
+    {
+      c: "right-[5%] top-[14%]",
+      d: 1.5,
+      r: 5,
+      el: (
+        <span className="glass grid h-9 w-9 place-items-center rounded-full text-[13px] font-semibold text-white/80">
+          WP
+        </span>
+      ),
+    },
+    {
+      c: "left-[7%] top-[52%]",
+      d: 3,
+      r: 4,
+      el: (
+        <span className="glass flex items-center gap-1.5 rounded-full px-2.5 py-1.5">
+          {["#c084fc", "#e879f9", "#22d3ee"].map((h) => (
+            <span key={h} className="h-2.5 w-2.5 rounded-full" style={{ background: h }} />
+          ))}
+        </span>
+      ),
+    },
+    {
+      c: "right-[6%] top-[48%]",
+      d: 2.2,
+      r: -5,
+      el: (
+        <span className="glass block w-24 rounded-lg p-2">
+          <span className="mb-1.5 block h-1 w-2/3 rounded bg-white/25" />
+          <span className="mb-1.5 block h-1 w-full rounded bg-white/12" />
+          <span className="block h-1 w-1/2 rounded bg-white/12" />
+        </span>
+      ),
+    },
+    {
+      c: "left-[10%] bottom-[12%]",
+      d: 4,
+      r: 6,
+      el: (
+        <span className="glass rounded-lg px-2.5 py-1 font-mono text-[12px] text-[var(--neon)]">figma → code</span>
+      ),
+    },
+    {
+      c: "right-[9%] bottom-[16%]",
+      d: 5,
+      r: -4,
+      el: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="drop-shadow-[0_0_10px_rgba(232,121,249,0.6)]">
+          <path d="M4 3 L20 12 L13 13.5 L10 20 Z" fill="#e879f9" stroke="#fff" strokeWidth="0.8" />
+        </svg>
+      ),
+    },
+  ];
+
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* subtle grid backdrop */}
-      <div className="absolute inset-0 grid-bg opacity-40" />
-
-      {/* Browser window — top right */}
-      <motion.div
-        className="absolute top-[8%] right-[6%] hidden md:block"
-        animate={{ y: [0, -14, 0], rotate: [-2, 1, -2] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="glass rounded-xl w-56 h-36 p-2 shadow-[0_20px_60px_-20px_rgba(192,132,252,0.4)]">
-          <div className="flex gap-1.5 mb-2">
-            <span className="h-2 w-2 rounded-full bg-[#ff6b6b]/70" />
-            <span className="h-2 w-2 rounded-full bg-[#feca57]/70" />
-            <span className="h-2 w-2 rounded-full bg-[#48dbfb]/70" />
-          </div>
-          <div className="space-y-1.5">
-            <div className="h-1.5 w-3/4 rounded bg-white/15" />
-            <div className="h-1.5 w-1/2 rounded bg-white/10" />
-            <div className="mt-3 grid grid-cols-3 gap-1.5">
-              <div className="h-6 rounded bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/20" />
-              <div className="h-6 rounded bg-white/5" />
-              <div className="h-6 rounded bg-white/5" />
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Wireframe card — bottom left */}
-      <motion.div
-        className="absolute bottom-[10%] left-[5%] hidden md:block"
-        animate={{ y: [0, 18, 0], rotate: [3, -1, 3] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="glass rounded-xl w-44 h-52 p-3">
-          <div className="h-16 w-full rounded-lg bg-gradient-to-br from-[var(--primary)]/25 to-[var(--cyan)]/15 mb-3" />
-          <div className="space-y-1.5">
-            <div className="h-1.5 w-full rounded bg-white/15" />
-            <div className="h-1.5 w-5/6 rounded bg-white/10" />
-            <div className="h-1.5 w-2/3 rounded bg-white/10" />
-          </div>
-          <div className="mt-4 flex gap-2">
-            <div className="h-5 w-14 rounded-full bg-gradient-to-r from-[var(--primary)]/50 to-[var(--pink)]/40" />
-            <div className="h-5 w-10 rounded-full bg-white/5 border border-white/10" />
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Code snippet — middle right */}
-      <motion.div
-        className="absolute top-[45%] right-[8%] hidden lg:block"
-        animate={{ y: [0, -12, 0] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: -3 }}
-      >
-        <div className="glass rounded-lg px-3 py-2.5 font-mono text-[15px] leading-relaxed text-white/60">
-          <div><span className="text-[var(--pink)]">const</span> <span className="text-[var(--cyan)]">design</span> = ()=&gt;</div>
-          <div className="pl-3"><span className="text-[var(--neon)]">craft</span>(<span className="text-white/40">'∞'</span>);</div>
-        </div>
-      </motion.div>
-
-      {/* Cursor icon — floats through */}
-      <motion.svg
-        className="absolute top-[30%] left-[42%] hidden lg:block drop-shadow-[0_0_10px_rgba(232,121,249,0.6)]"
-        width="22" height="22" viewBox="0 0 24 24" fill="none"
-        animate={{ x: [0, 30, -10, 0], y: [0, -20, 15, 0] }}
-        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <path d="M4 3 L20 12 L13 13.5 L10 20 Z" fill="#e879f9" stroke="#fff" strokeWidth="0.8" />
-      </motion.svg>
-
-      {/* Floating particles */}
+      <div className="absolute inset-0 grid-bg opacity-25" />
+      {bits.map((b, i) => (
+        <motion.div
+          key={i}
+          className={`absolute hidden lg:block ${b.c}`}
+          animate={{ y: [0, -14, 0], rotate: [b.r, b.r * -0.5, b.r] }}
+          transition={{ duration: 9 + i, repeat: Infinity, ease: "easeInOut", delay: b.d }}
+        >
+          {b.el}
+        </motion.div>
+      ))}
       {[
-        { l: "18%", t: "22%", d: 0 },
-        { l: "78%", t: "60%", d: 2 },
-        { l: "32%", t: "78%", d: 4 },
-        { l: "62%", t: "18%", d: 6 },
+        { l: "20%", t: "26%", d: 0 },
+        { l: "80%", t: "66%", d: 2 },
+        { l: "34%", t: "82%", d: 4 },
       ].map((p, i) => (
         <motion.span
-          key={i}
+          key={`p${i}`}
           className="absolute h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_12px_var(--neon)]"
           style={{ left: p.l, top: p.t }}
-          animate={{ y: [0, -20, 0], opacity: [0.4, 1, 0.4] }}
+          animate={{ y: [0, -18, 0], opacity: [0.3, 1, 0.3] }}
           transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut", delay: p.d }}
         />
       ))}
-
-      {/* Connection lines SVG */}
-      <svg className="absolute inset-0 h-full w-full opacity-30" aria-hidden>
-        <defs>
-          <linearGradient id="proc-line" x1="0" x2="1">
-            <stop offset="0%" stopColor="transparent" />
-            <stop offset="50%" stopColor="#c084fc" />
-            <stop offset="100%" stopColor="transparent" />
-          </linearGradient>
-        </defs>
-        <line x1="15%" y1="20%" x2="85%" y2="30%" stroke="url(#proc-line)" strokeWidth="1" strokeDasharray="3 6" />
-        <line x1="85%" y1="65%" x2="12%" y2="80%" stroke="url(#proc-line)" strokeWidth="1" strokeDasharray="3 6" />
-      </svg>
     </div>
   );
 }
@@ -1114,7 +1085,7 @@ function Process() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 70%", "end 30%"] });
   const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   return (
-    <section id="process" className="relative py-24 md:py-32 overflow-hidden">
+    <section id="process" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.08),transparent_70%)]" aria-hidden />
       <div className="absolute top-1/4 left-10 h-72 w-72 rounded-full bg-[var(--primary)]/10 blur-3xl float-y" aria-hidden />
       <div className="absolute bottom-1/4 right-10 h-72 w-72 rounded-full bg-[var(--cyan)]/10 blur-3xl float-y" style={{ animationDelay: "-4s" }} aria-hidden />
@@ -1129,48 +1100,52 @@ function Process() {
           </Reveal>
         </div>
 
-        <div ref={ref} className="relative max-w-3xl mx-auto">
-          {/* Timeline rail — always on the left */}
-          <div className="absolute left-5 top-0 h-full w-px bg-white/5" aria-hidden />
+        <div ref={ref} className="relative max-w-5xl mx-auto">
+          {/* Timeline rail — left on mobile, centered from md up */}
+          <div className="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-0 h-full w-px bg-white/5" aria-hidden />
           <motion.div
             style={{ height: lineHeight }}
-            className="absolute left-5 top-0 w-px bg-gradient-to-b from-[var(--primary)] via-[var(--pink)] to-[var(--cyan)] shadow-[0_0_16px_var(--neon)]"
+            className="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-0 w-px bg-gradient-to-b from-[var(--primary)] via-[var(--pink)] to-[var(--cyan)] shadow-[0_0_16px_var(--neon)]"
           />
 
-          <div className="space-y-8 sm:space-y-10">
-            {STEPS.map((s, i) => (
-              <Reveal key={s.n} delay={i * 0.05}>
-                <div className="relative pl-14">
-                  {/* Node dot */}
-                  <div className="absolute left-5 top-6 -translate-x-1/2">
-                    <div className="relative grid h-5 w-5 place-items-center rounded-full bg-[var(--neon)] shadow-[0_0_18px_var(--neon)] ring-4 ring-[var(--background)]">
-                      <div className="absolute inset-0 rounded-full bg-[var(--neon)] animate-ping opacity-60" />
-                    </div>
-                  </div>
-
-                  {/* Card — fully left-aligned */}
-                  <div className="glass-strong relative overflow-hidden rounded-3xl p-6 sm:p-8 text-left group hover:-translate-y-1 hover:shadow-[0_30px_80px_-30px_rgba(192,132,252,0.5)] transition-all duration-500">
-                    <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[var(--primary)]/25 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
-                      padding: 1,
-                      background: "linear-gradient(135deg, rgba(192,132,252,0.4), rgba(34,211,238,0.15), rgba(232,121,249,0.4))",
-                      WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude",
-                    } as React.CSSProperties} />
-
-                    <div className="relative">
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="font-display text-4xl sm:text-5xl font-extrabold text-gradient leading-none">{s.n}</span>
-                        <span className="text-2xl text-[var(--neon)]">{s.icon}</span>
+          <div className="space-y-8 sm:space-y-12">
+            {STEPS.map((s, i) => {
+              const right = i % 2 === 1;
+              return (
+                <Reveal key={s.n} delay={i * 0.05}>
+                  <div
+                    className="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12"
+                  >
+                    {/* Node dot */}
+                    <div className="absolute left-5 md:left-1/2 top-6 -translate-x-1/2 z-10">
+                      <div className="relative grid h-5 w-5 place-items-center rounded-full bg-[var(--neon)] shadow-[0_0_18px_var(--neon)] ring-4 ring-[var(--background)]">
+                        <div className="absolute inset-0 rounded-full bg-[var(--neon)] animate-ping opacity-60" />
                       </div>
-                      <h3 className="mb-3 text-lg sm:text-xl font-semibold text-white text-left">{s.title}</h3>
-                      <p className="text-sm text-[var(--muted-foreground)] leading-relaxed text-left max-w-[54ch]">{s.desc}</p>
+                    </div>
+
+                    <div className={`glass-strong relative overflow-hidden rounded-3xl p-6 sm:p-8 text-left group hover:-translate-y-1 hover:shadow-[0_30px_80px_-30px_rgba(192,132,252,0.5)] transition-all duration-500 ${right ? "md:col-start-2" : ""}`}>
+                      <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[var(--primary)]/25 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                      <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
+                        padding: 1,
+                        background: "linear-gradient(135deg, rgba(192,132,252,0.4), rgba(34,211,238,0.15), rgba(232,121,249,0.4))",
+                        WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                        WebkitMaskComposite: "xor",
+                        maskComposite: "exclude",
+                      } as React.CSSProperties} />
+
+                      <div className="relative">
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="font-display text-4xl sm:text-5xl font-extrabold text-gradient leading-none">{s.n}</span>
+                          <span className="text-2xl text-[var(--neon)]">{s.icon}</span>
+                        </div>
+                        <h3 className="mb-3 text-lg sm:text-xl font-semibold text-white text-left">{s.title}</h3>
+                        <p className="text-sm text-[var(--muted-foreground)] leading-relaxed text-left max-w-[54ch]">{s.desc}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -1197,7 +1172,7 @@ function Projects() {
   const ry = useSpring(useTransform(mx, [0, 1], [-7, 7]), { stiffness: 120, damping: 20 });
 
   return (
-    <section id="projects" className="relative py-24 md:py-32 overflow-hidden">
+    <section id="projects" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
       <div className="absolute inset-0 -z-10" aria-hidden style={{
         background:
           "radial-gradient(900px 500px at 85% 5%, rgba(124,58,237,0.18), transparent 60%)," +
@@ -1223,7 +1198,7 @@ function Projects() {
         </div>
 
         {/* Showcase — stage + index */}
-        <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-10 items-start">
+        <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-10 items-stretch">
           {/* STAGE */}
           <motion.div
             ref={stageRef}
@@ -1234,7 +1209,7 @@ function Projects() {
             }}
             onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
             style={{ rotateX: rx, rotateY: ry, transformPerspective: 1800 }}
-            className="relative overflow-hidden rounded-[32px] glass-strong lg:sticky lg:top-28"
+            className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-[32px] glass-strong"
           >
             <div className="pointer-events-none absolute inset-0 z-20 rounded-[32px]" style={{
               padding: 1,
@@ -1244,7 +1219,7 @@ function Projects() {
               maskComposite: "exclude",
             } as React.CSSProperties} aria-hidden />
 
-            <div className="relative h-64 sm:h-80 lg:h-[26rem] overflow-hidden">
+            <div className="relative h-64 shrink-0 sm:h-80 lg:h-[26rem] overflow-hidden">
               <motion.div
                 key={p.name}
                 initial={{ opacity: 0, scale: 1.06 }}
@@ -1276,7 +1251,7 @@ function Projects() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.05 }}
-              className="relative p-6 sm:p-8"
+              className="relative flex-1 p-6 sm:p-8"
             >
               <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight mb-3">{p.name}</h3>
               <p className="text-[15px] sm:text-base text-[var(--muted-foreground)] leading-relaxed max-w-[56ch]" style={{ marginBottom: 20 }}>
@@ -1294,7 +1269,7 @@ function Projects() {
           </motion.div>
 
           {/* INDEX */}
-          <div className="min-w-0">
+          <div className="flex h-full min-w-0 flex-col">
             <div className="mb-4 flex items-center gap-3 text-[12px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
               <span className="h-px w-8 bg-[var(--neon)]" />
               Case index
@@ -1303,7 +1278,7 @@ function Projects() {
               </span>
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-1 flex-col">
               {PROJECTS.map((item, i) => {
                 const isActive = i === active;
                 return (
@@ -1317,7 +1292,7 @@ function Projects() {
                     onMouseEnter={() => setActive(i)}
                     onFocus={() => setActive(i)}
                     onClick={() => setActive(i)}
-                    className={`group relative w-full max-w-full overflow-hidden border-b border-white/10 px-3 sm:px-4 py-5 text-left transition-colors duration-500 ${isActive ? "bg-white/[0.05]" : "hover:bg-white/[0.025]"}`}
+                    className={`group relative flex-1 w-full max-w-full overflow-hidden border-b border-white/10 px-3 sm:px-4 py-5 text-left transition-colors duration-500 ${isActive ? "bg-white/[0.05]" : "hover:bg-white/[0.025]"}`}
                   >
                     <span
                       aria-hidden
@@ -1346,7 +1321,7 @@ function Projects() {
               })}
             </div>
 
-            <div className="mt-8">
+            <div className="mt-6">
               <a href="#contact" className="btn-ghost !py-3 !px-6 text-sm w-full sm:w-auto">Start your project <ArrowUpRight size={16} /></a>
             </div>
           </div>
@@ -1370,7 +1345,7 @@ function Why() {
   const [active, setActive] = useState(0);
 
   return (
-    <section id="why" className="relative py-24 md:py-32 overflow-hidden">
+    <section id="why" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
       {/* Ambient */}
       <div className="absolute inset-0 -z-10" aria-hidden style={{
         background:
@@ -1511,7 +1486,7 @@ const TESTIS = [
 
 function Testimonials() {
   return (
-    <section id="testimonials" className="relative py-24 md:py-32">
+    <section id="testimonials" className="relative py-16 sm:py-24 md:py-32">
       <div className="container-x">
         <Reveal><SectionTag>Client Voices</SectionTag></Reveal>
         <Reveal delay={0.1}>
