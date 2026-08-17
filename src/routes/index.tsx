@@ -575,11 +575,8 @@ function About() {
 
 
 
-  const pillars = [
-    { tag: "UI", Icon: Palette, title: "Interface Design", desc: "Considered systems, fluid spacing, premium typography." },
-    { tag: "FE", Icon: Code2, title: "Frontend Engineering", desc: "Semantic, accessible, GPU-friendly motion at 60fps." },
-    { tag: "WP", Icon: Globe, title: "WordPress & WooCommerce", desc: "Custom themes, Elementor Pro, scalable commerce." },
-  ];
+
+
 
   const workflow = [
     { n: "01", t: "Discover", d: "Understand goals, audience, and the story to tell." },
