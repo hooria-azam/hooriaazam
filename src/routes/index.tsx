@@ -921,17 +921,27 @@ function Skills() {
                     <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-[var(--primary)]/40 to-[var(--cyan)]/20 text-xl font-bold text-white shrink-0">
                       {s.icon}
                     </div>
-                    <div className="font-display text-2xl font-extrabold text-gradient">{s.pct}%</div>
+                    <div className="font-display text-2xl font-extrabold text-gradient tabular-nums">
+                      <AboutCounter to={s.pct} suffix="%" />
+                    </div>
                   </div>
                   <h3 className="text-base sm:text-lg font-semibold text-white mb-2 truncate">{s.name}</h3>
                   <p className="text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed mb-5">{s.desc}</p>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <div className="relative h-1.5 overflow-hidden rounded-full bg-white/10">
                     <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${s.pct}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1.4, ease: [0.2, 0.8, 0.2, 1], delay: 0.2 }}
+                      initial={{ width: "0%" }}
+                      whileInView={{ width: "100%" }}
+                      viewport={{ once: true, margin: "-60px" }}
+                      transition={{ duration: 1.5 + i * 0.12, ease: [0.16, 1, 0.3, 1], delay: 0.15 + i * 0.09 }}
                       className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] via-[var(--pink)] to-[var(--cyan)] shadow-[0_0_18px_rgba(192,132,252,0.7)]"
+                    />
+                    <motion.span
+                      aria-hidden
+                      className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/45 to-transparent"
+                      initial={{ x: "-4rem", opacity: 0 }}
+                      whileInView={{ x: ["-4rem", "100%"], opacity: [0, 1, 0] }}
+                      viewport={{ once: true, margin: "-60px" }}
+                      transition={{ duration: 1.6, delay: 0.5 + i * 0.09, ease: "easeInOut" }}
                     />
                   </div>
                 </div>
