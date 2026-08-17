@@ -1114,7 +1114,7 @@ function Process() {
               return (
                 <Reveal key={s.n} delay={i * 0.05}>
                   <div
-                    className={`relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12 ${right ? "md:[&>*:first-child]:col-start-2" : ""}`}
+                    className="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12"
                   >
                     {/* Node dot */}
                     <div className="absolute left-5 md:left-1/2 top-6 -translate-x-1/2 z-10">
@@ -1123,7 +1123,7 @@ function Process() {
                       </div>
                     </div>
 
-                    <div className="glass-strong relative overflow-hidden rounded-3xl p-6 sm:p-8 text-left group hover:-translate-y-1 hover:shadow-[0_30px_80px_-30px_rgba(192,132,252,0.5)] transition-all duration-500">
+                    <div className={`glass-strong relative overflow-hidden rounded-3xl p-6 sm:p-8 text-left group hover:-translate-y-1 hover:shadow-[0_30px_80px_-30px_rgba(192,132,252,0.5)] transition-all duration-500 ${right ? "md:col-start-2" : ""}`}>
                       <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[var(--primary)]/25 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                       <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
                         padding: 1,
