@@ -984,108 +984,98 @@ const STEPS = [
 ] as const;
 
 function ProcessFloatDecor() {
-  // Floating premium decorative assets — wireframes, browser chrome, cursor,
-  // code brackets, grid, connection lines. Purely aesthetic; positioned so they
-  // never overlap the main timeline column and never break out of the section.
+  // Small, authentic craft artefacts — a code tag, a WP glyph, a Figma-ish node,
+  // a cursor, a colour chip. Deliberately tiny so they read as texture, never
+  // competing with the timeline content.
+  const bits: { c: string; el: React.ReactNode; d: number; r: number }[] = [
+    {
+      c: "left-[4%] top-[18%]",
+      d: 0,
+      r: -6,
+      el: (
+        <span className="glass rounded-lg px-2.5 py-1 font-mono text-[12px] text-[var(--cyan)]">&lt;div/&gt;</span>
+      ),
+    },
+    {
+      c: "right-[5%] top-[14%]",
+      d: 1.5,
+      r: 5,
+      el: (
+        <span className="glass grid h-9 w-9 place-items-center rounded-full text-[13px] font-semibold text-white/80">
+          WP
+        </span>
+      ),
+    },
+    {
+      c: "left-[7%] top-[52%]",
+      d: 3,
+      r: 4,
+      el: (
+        <span className="glass flex items-center gap-1.5 rounded-full px-2.5 py-1.5">
+          {["#c084fc", "#e879f9", "#22d3ee"].map((h) => (
+            <span key={h} className="h-2.5 w-2.5 rounded-full" style={{ background: h }} />
+          ))}
+        </span>
+      ),
+    },
+    {
+      c: "right-[6%] top-[48%]",
+      d: 2.2,
+      r: -5,
+      el: (
+        <span className="glass block w-24 rounded-lg p-2">
+          <span className="mb-1.5 block h-1 w-2/3 rounded bg-white/25" />
+          <span className="mb-1.5 block h-1 w-full rounded bg-white/12" />
+          <span className="block h-1 w-1/2 rounded bg-white/12" />
+        </span>
+      ),
+    },
+    {
+      c: "left-[10%] bottom-[12%]",
+      d: 4,
+      r: 6,
+      el: (
+        <span className="glass rounded-lg px-2.5 py-1 font-mono text-[12px] text-[var(--neon)]">figma → code</span>
+      ),
+    },
+    {
+      c: "right-[9%] bottom-[16%]",
+      d: 5,
+      r: -4,
+      el: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="drop-shadow-[0_0_10px_rgba(232,121,249,0.6)]">
+          <path d="M4 3 L20 12 L13 13.5 L10 20 Z" fill="#e879f9" stroke="#fff" strokeWidth="0.8" />
+        </svg>
+      ),
+    },
+  ];
+
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* subtle grid backdrop */}
-      <div className="absolute inset-0 grid-bg opacity-40" />
-
-      {/* Browser window — top right */}
-      <motion.div
-        className="absolute top-[8%] right-[6%] hidden md:block"
-        animate={{ y: [0, -14, 0], rotate: [-2, 1, -2] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="glass rounded-xl w-56 h-36 p-2 shadow-[0_20px_60px_-20px_rgba(192,132,252,0.4)]">
-          <div className="flex gap-1.5 mb-2">
-            <span className="h-2 w-2 rounded-full bg-[#ff6b6b]/70" />
-            <span className="h-2 w-2 rounded-full bg-[#feca57]/70" />
-            <span className="h-2 w-2 rounded-full bg-[#48dbfb]/70" />
-          </div>
-          <div className="space-y-1.5">
-            <div className="h-1.5 w-3/4 rounded bg-white/15" />
-            <div className="h-1.5 w-1/2 rounded bg-white/10" />
-            <div className="mt-3 grid grid-cols-3 gap-1.5">
-              <div className="h-6 rounded bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/20" />
-              <div className="h-6 rounded bg-white/5" />
-              <div className="h-6 rounded bg-white/5" />
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Wireframe card — bottom left */}
-      <motion.div
-        className="absolute bottom-[10%] left-[5%] hidden md:block"
-        animate={{ y: [0, 18, 0], rotate: [3, -1, 3] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="glass rounded-xl w-44 h-52 p-3">
-          <div className="h-16 w-full rounded-lg bg-gradient-to-br from-[var(--primary)]/25 to-[var(--cyan)]/15 mb-3" />
-          <div className="space-y-1.5">
-            <div className="h-1.5 w-full rounded bg-white/15" />
-            <div className="h-1.5 w-5/6 rounded bg-white/10" />
-            <div className="h-1.5 w-2/3 rounded bg-white/10" />
-          </div>
-          <div className="mt-4 flex gap-2">
-            <div className="h-5 w-14 rounded-full bg-gradient-to-r from-[var(--primary)]/50 to-[var(--pink)]/40" />
-            <div className="h-5 w-10 rounded-full bg-white/5 border border-white/10" />
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Code snippet — middle right */}
-      <motion.div
-        className="absolute top-[45%] right-[8%] hidden lg:block"
-        animate={{ y: [0, -12, 0] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: -3 }}
-      >
-        <div className="glass rounded-lg px-3 py-2.5 font-mono text-[15px] leading-relaxed text-white/60">
-          <div><span className="text-[var(--pink)]">const</span> <span className="text-[var(--cyan)]">design</span> = ()=&gt;</div>
-          <div className="pl-3"><span className="text-[var(--neon)]">craft</span>(<span className="text-white/40">'∞'</span>);</div>
-        </div>
-      </motion.div>
-
-      {/* Cursor icon — floats through */}
-      <motion.svg
-        className="absolute top-[30%] left-[42%] hidden lg:block drop-shadow-[0_0_10px_rgba(232,121,249,0.6)]"
-        width="22" height="22" viewBox="0 0 24 24" fill="none"
-        animate={{ x: [0, 30, -10, 0], y: [0, -20, 15, 0] }}
-        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <path d="M4 3 L20 12 L13 13.5 L10 20 Z" fill="#e879f9" stroke="#fff" strokeWidth="0.8" />
-      </motion.svg>
-
-      {/* Floating particles */}
+      <div className="absolute inset-0 grid-bg opacity-25" />
+      {bits.map((b, i) => (
+        <motion.div
+          key={i}
+          className={`absolute hidden lg:block ${b.c}`}
+          animate={{ y: [0, -14, 0], rotate: [b.r, b.r * -0.5, b.r] }}
+          transition={{ duration: 9 + i, repeat: Infinity, ease: "easeInOut", delay: b.d }}
+        >
+          {b.el}
+        </motion.div>
+      ))}
       {[
-        { l: "18%", t: "22%", d: 0 },
-        { l: "78%", t: "60%", d: 2 },
-        { l: "32%", t: "78%", d: 4 },
-        { l: "62%", t: "18%", d: 6 },
+        { l: "20%", t: "26%", d: 0 },
+        { l: "80%", t: "66%", d: 2 },
+        { l: "34%", t: "82%", d: 4 },
       ].map((p, i) => (
         <motion.span
-          key={i}
+          key={`p${i}`}
           className="absolute h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_12px_var(--neon)]"
           style={{ left: p.l, top: p.t }}
-          animate={{ y: [0, -20, 0], opacity: [0.4, 1, 0.4] }}
+          animate={{ y: [0, -18, 0], opacity: [0.3, 1, 0.3] }}
           transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut", delay: p.d }}
         />
       ))}
-
-      {/* Connection lines SVG */}
-      <svg className="absolute inset-0 h-full w-full opacity-30" aria-hidden>
-        <defs>
-          <linearGradient id="proc-line" x1="0" x2="1">
-            <stop offset="0%" stopColor="transparent" />
-            <stop offset="50%" stopColor="#c084fc" />
-            <stop offset="100%" stopColor="transparent" />
-          </linearGradient>
-        </defs>
-        <line x1="15%" y1="20%" x2="85%" y2="30%" stroke="url(#proc-line)" strokeWidth="1" strokeDasharray="3 6" />
-        <line x1="85%" y1="65%" x2="12%" y2="80%" stroke="url(#proc-line)" strokeWidth="1" strokeDasharray="3 6" />
-      </svg>
     </div>
   );
 }
