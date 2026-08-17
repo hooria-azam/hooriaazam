@@ -1198,7 +1198,7 @@ function Projects() {
         </div>
 
         {/* Showcase — stage + index */}
-        <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-10 items-start">
+        <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-10 items-stretch">
           {/* STAGE */}
           <motion.div
             ref={stageRef}
@@ -1209,7 +1209,7 @@ function Projects() {
             }}
             onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
             style={{ rotateX: rx, rotateY: ry, transformPerspective: 1800 }}
-            className="relative overflow-hidden rounded-[32px] glass-strong lg:sticky lg:top-28"
+            className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-[32px] glass-strong"
           >
             <div className="pointer-events-none absolute inset-0 z-20 rounded-[32px]" style={{
               padding: 1,
@@ -1219,7 +1219,7 @@ function Projects() {
               maskComposite: "exclude",
             } as React.CSSProperties} aria-hidden />
 
-            <div className="relative h-64 sm:h-80 lg:h-[26rem] overflow-hidden">
+            <div className="relative h-64 shrink-0 sm:h-80 lg:h-[26rem] overflow-hidden">
               <motion.div
                 key={p.name}
                 initial={{ opacity: 0, scale: 1.06 }}
@@ -1251,7 +1251,7 @@ function Projects() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.05 }}
-              className="relative p-6 sm:p-8"
+              className="relative flex-1 p-6 sm:p-8"
             >
               <h3 className="font-display text-2xl sm:text-3xl text-white leading-tight mb-3">{p.name}</h3>
               <p className="text-[15px] sm:text-base text-[var(--muted-foreground)] leading-relaxed max-w-[56ch]" style={{ marginBottom: 20 }}>
@@ -1269,7 +1269,7 @@ function Projects() {
           </motion.div>
 
           {/* INDEX */}
-          <div className="min-w-0">
+          <div className="flex h-full min-w-0 flex-col">
             <div className="mb-4 flex items-center gap-3 text-[12px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
               <span className="h-px w-8 bg-[var(--neon)]" />
               Case index
@@ -1278,7 +1278,7 @@ function Projects() {
               </span>
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-1 flex-col">
               {PROJECTS.map((item, i) => {
                 const isActive = i === active;
                 return (
@@ -1321,7 +1321,7 @@ function Projects() {
               })}
             </div>
 
-            <div className="mt-8">
+            <div className="mt-6">
               <a href="#contact" className="btn-ghost !py-3 !px-6 text-sm w-full sm:w-auto">Start your project <ArrowUpRight size={16} /></a>
             </div>
           </div>
