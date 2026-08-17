@@ -885,12 +885,12 @@ function TiltCard({ children, featured }: { children: React.ReactNode; featured?
 
 /* ───────── SKILLS — premium glass redesign ───────── */
 const SKILLS = [
-  { name: "HTML5 & CSS3", pct: 97, icon: "◆", desc: "Semantic markup, modern layouts, fluid typography." },
-  { name: "JavaScript", pct: 88, icon: "⟨⟩", desc: "Vanilla JS, ES6+, DOM interactions, animation logic." },
-  { name: "WordPress & Elementor", pct: 95, icon: "◇", desc: "Custom themes, Elementor Pro, ACF, page-builder mastery." },
-  { name: "UI/UX Design", pct: 90, icon: "✦", desc: "Wireframes, prototypes, visual systems in Figma & XD." },
-  { name: "WooCommerce", pct: 85, icon: "▤", desc: "Stores, checkout flows, product templates, conversions." },
-  { name: "Responsive Design", pct: 98, icon: "▢", desc: "Mobile-first layouts that adapt across every viewport." },
+  { name: "HTML5 & CSS3", pct: 100, icon: "◆", desc: "Semantic markup, modern layouts, fluid typography." },
+  { name: "JavaScript", pct: 100, icon: "⟨⟩", desc: "Vanilla JS, ES6+, DOM interactions, animation logic." },
+  { name: "WordPress & Elementor", pct: 100, icon: "◇", desc: "Custom themes, Elementor Pro, ACF, page-builder mastery." },
+  { name: "UI/UX Design", pct: 100, icon: "✦", desc: "Wireframes, prototypes, visual systems in Figma & XD." },
+  { name: "WooCommerce", pct: 100, icon: "▤", desc: "Stores, checkout flows, product templates, conversions." },
+  { name: "Responsive Design", pct: 100, icon: "▢", desc: "Mobile-first layouts that adapt across every viewport." },
 ] as const;
 const TECH = ["HTML5","CSS3","JavaScript","WordPress","Elementor Pro","WooCommerce","Figma","CSS Animations","Bootstrap","Responsive Design","SEO Basics"];
 
