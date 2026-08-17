@@ -11,17 +11,17 @@ interface LogoProps {
 }
 
 /**
- * Hooria Azam — "The Signature Frame"
+ * Hooria Azam — "Orbit H"
  *
- * Concept: a designer's viewport (the rounded frame every interface is born in)
- * holding a single continuous HA ligature — the H's right stem doubles as the
- * A's left leg, so the initials are literally built from shared structure.
- * A punctuation dot closes the mark like a signature. One weight, one silhouette:
- * legible at 16px, monumental at 400px.
+ * Concept: the H is drawn with two deliberately different weights — a solid
+ * stem (code: structural, engineered) and a hairline stem (design: light,
+ * considered) — joined by a single crossbar. An open orbit arc sweeps around
+ * them and terminates in a signature dot, the mark of a finished piece.
+ * No frames, no arrows, no clip-art: one idea, one gesture.
  */
 export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: string }>(
   ({ tone = "gradient", className }, ref) => {
-    const g = "ha-sig-grad";
+    const g = "ha-orbit-grad";
     const stroke =
       tone === "light" ? "#0a0a0f" : tone === "dark" ? "#ffffff" : `url(#${g})`;
     const dot = tone === "light" ? "#0a0a0f" : "#e879f9";
@@ -36,43 +36,31 @@ export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: str
         fill="none"
       >
         <defs>
-          <linearGradient id={g} x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id={g} x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#c084fc" />
-            <stop offset="52%" stopColor="#e879f9" />
+            <stop offset="50%" stopColor="#e879f9" />
             <stop offset="100%" stopColor="#22d3ee" />
           </linearGradient>
         </defs>
 
-        {/* Viewport frame */}
-        <rect
-          x="4.5"
-          y="4.5"
-          width="55"
-          height="55"
-          rx="16"
+        {/* Orbit — open arc, sweeping clockwise from lower-left to upper-right */}
+        <path
+          d="M15.5 47.8 A21 21 0 1 1 50.5 44.2"
           stroke={stroke}
           strokeWidth="2"
-          opacity="0.55"
+          strokeLinecap="round"
+          opacity="0.62"
         />
 
-        {/* HA ligature — shared stem at x=32 */}
-        <path
-          d="M19 44 V20 M19 32.5 H32 M32 44 V20"
-          stroke={stroke}
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M32 44 L40 20 L48 44 M34.7 32.5 H45.3"
-          stroke={stroke}
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        {/* H — solid stem (engineering) */}
+        <path d="M23 19 V45" stroke={stroke} strokeWidth="4.6" strokeLinecap="round" />
+        {/* H — crossbar */}
+        <path d="M23 32 H41" stroke={stroke} strokeWidth="2.6" strokeLinecap="round" />
+        {/* H — hairline stem (design), extended as a subtle ascender */}
+        <path d="M41 16 V45" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" />
 
-        {/* Signature dot */}
-        <circle cx="53" cy="43" r="2.4" fill={dot} />
+        {/* Signature dot at the orbit terminus */}
+        <circle cx="50.5" cy="44.2" r="3" fill={dot} />
       </svg>
     );
   },
