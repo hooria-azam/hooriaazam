@@ -1100,48 +1100,52 @@ function Process() {
           </Reveal>
         </div>
 
-        <div ref={ref} className="relative max-w-3xl mx-auto">
-          {/* Timeline rail — always on the left */}
-          <div className="absolute left-5 top-0 h-full w-px bg-white/5" aria-hidden />
+        <div ref={ref} className="relative max-w-5xl mx-auto">
+          {/* Timeline rail — left on mobile, centered from md up */}
+          <div className="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-0 h-full w-px bg-white/5" aria-hidden />
           <motion.div
             style={{ height: lineHeight }}
-            className="absolute left-5 top-0 w-px bg-gradient-to-b from-[var(--primary)] via-[var(--pink)] to-[var(--cyan)] shadow-[0_0_16px_var(--neon)]"
+            className="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-0 w-px bg-gradient-to-b from-[var(--primary)] via-[var(--pink)] to-[var(--cyan)] shadow-[0_0_16px_var(--neon)]"
           />
 
-          <div className="space-y-8 sm:space-y-10">
-            {STEPS.map((s, i) => (
-              <Reveal key={s.n} delay={i * 0.05}>
-                <div className="relative pl-14">
-                  {/* Node dot */}
-                  <div className="absolute left-5 top-6 -translate-x-1/2">
-                    <div className="relative grid h-5 w-5 place-items-center rounded-full bg-[var(--neon)] shadow-[0_0_18px_var(--neon)] ring-4 ring-[var(--background)]">
-                      <div className="absolute inset-0 rounded-full bg-[var(--neon)] animate-ping opacity-60" />
-                    </div>
-                  </div>
-
-                  {/* Card — fully left-aligned */}
-                  <div className="glass-strong relative overflow-hidden rounded-3xl p-6 sm:p-8 text-left group hover:-translate-y-1 hover:shadow-[0_30px_80px_-30px_rgba(192,132,252,0.5)] transition-all duration-500">
-                    <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[var(--primary)]/25 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
-                      padding: 1,
-                      background: "linear-gradient(135deg, rgba(192,132,252,0.4), rgba(34,211,238,0.15), rgba(232,121,249,0.4))",
-                      WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude",
-                    } as React.CSSProperties} />
-
-                    <div className="relative">
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="font-display text-4xl sm:text-5xl font-extrabold text-gradient leading-none">{s.n}</span>
-                        <span className="text-2xl text-[var(--neon)]">{s.icon}</span>
+          <div className="space-y-8 sm:space-y-12">
+            {STEPS.map((s, i) => {
+              const right = i % 2 === 1;
+              return (
+                <Reveal key={s.n} delay={i * 0.05}>
+                  <div
+                    className={`relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12 ${right ? "md:[&>*:first-child]:col-start-2" : ""}`}
+                  >
+                    {/* Node dot */}
+                    <div className="absolute left-5 md:left-1/2 top-6 -translate-x-1/2 z-10">
+                      <div className="relative grid h-5 w-5 place-items-center rounded-full bg-[var(--neon)] shadow-[0_0_18px_var(--neon)] ring-4 ring-[var(--background)]">
+                        <div className="absolute inset-0 rounded-full bg-[var(--neon)] animate-ping opacity-60" />
                       </div>
-                      <h3 className="mb-3 text-lg sm:text-xl font-semibold text-white text-left">{s.title}</h3>
-                      <p className="text-sm text-[var(--muted-foreground)] leading-relaxed text-left max-w-[54ch]">{s.desc}</p>
+                    </div>
+
+                    <div className="glass-strong relative overflow-hidden rounded-3xl p-6 sm:p-8 text-left group hover:-translate-y-1 hover:shadow-[0_30px_80px_-30px_rgba(192,132,252,0.5)] transition-all duration-500">
+                      <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[var(--primary)]/25 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                      <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
+                        padding: 1,
+                        background: "linear-gradient(135deg, rgba(192,132,252,0.4), rgba(34,211,238,0.15), rgba(232,121,249,0.4))",
+                        WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                        WebkitMaskComposite: "xor",
+                        maskComposite: "exclude",
+                      } as React.CSSProperties} />
+
+                      <div className="relative">
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="font-display text-4xl sm:text-5xl font-extrabold text-gradient leading-none">{s.n}</span>
+                          <span className="text-2xl text-[var(--neon)]">{s.icon}</span>
+                        </div>
+                        <h3 className="mb-3 text-lg sm:text-xl font-semibold text-white text-left">{s.title}</h3>
+                        <p className="text-sm text-[var(--muted-foreground)] leading-relaxed text-left max-w-[54ch]">{s.desc}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </div>
