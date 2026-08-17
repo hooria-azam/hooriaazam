@@ -586,7 +586,7 @@ function About() {
   ];
 
   return (
-    <section id="about" ref={secRef} className="relative py-28 md:py-40 overflow-hidden">
+    <section id="about" ref={secRef} className="relative py-16 sm:py-28 md:py-40 overflow-hidden">
       {/* Ambient stage */}
       <div className="absolute inset-0 -z-10" aria-hidden style={{
         background:
@@ -826,7 +826,7 @@ const SERVICES = [
 
 function Services() {
   return (
-    <section id="services" className="relative py-24 md:py-32">
+    <section id="services" className="relative py-16 sm:py-24 md:py-32">
       <div className="container-x">
         <div className="mb-12 sm:mb-16 grid items-end gap-6 md:gap-8 md:grid-cols-2">
           <div className="min-w-0">
@@ -896,7 +896,7 @@ const TECH = ["HTML5","CSS3","JavaScript","WordPress","Elementor Pro","WooCommer
 
 function Skills() {
   return (
-    <section id="skills" className="relative py-24 md:py-32 overflow-hidden">
+    <section id="skills" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
       {/* Floating ambient blobs */}
       <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-[var(--primary)]/15 blur-3xl float-y" aria-hidden />
       <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-[var(--cyan)]/15 blur-3xl float-y" style={{ animationDelay: "-3s" }} aria-hidden />
@@ -1085,7 +1085,7 @@ function Process() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 70%", "end 30%"] });
   const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   return (
-    <section id="process" className="relative py-24 md:py-32 overflow-hidden">
+    <section id="process" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.08),transparent_70%)]" aria-hidden />
       <div className="absolute top-1/4 left-10 h-72 w-72 rounded-full bg-[var(--primary)]/10 blur-3xl float-y" aria-hidden />
       <div className="absolute bottom-1/4 right-10 h-72 w-72 rounded-full bg-[var(--cyan)]/10 blur-3xl float-y" style={{ animationDelay: "-4s" }} aria-hidden />
@@ -1172,7 +1172,7 @@ function Projects() {
   const ry = useSpring(useTransform(mx, [0, 1], [-7, 7]), { stiffness: 120, damping: 20 });
 
   return (
-    <section id="projects" className="relative py-24 md:py-32 overflow-hidden">
+    <section id="projects" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
       <div className="absolute inset-0 -z-10" aria-hidden style={{
         background:
           "radial-gradient(900px 500px at 85% 5%, rgba(124,58,237,0.18), transparent 60%)," +
@@ -1292,7 +1292,7 @@ function Projects() {
                     onMouseEnter={() => setActive(i)}
                     onFocus={() => setActive(i)}
                     onClick={() => setActive(i)}
-                    className={`group relative w-full max-w-full overflow-hidden border-b border-white/10 px-3 sm:px-4 py-5 text-left transition-colors duration-500 ${isActive ? "bg-white/[0.05]" : "hover:bg-white/[0.025]"}`}
+                    className={`group relative flex-1 w-full max-w-full overflow-hidden border-b border-white/10 px-3 sm:px-4 py-5 text-left transition-colors duration-500 ${isActive ? "bg-white/[0.05]" : "hover:bg-white/[0.025]"}`}
                   >
                     <span
                       aria-hidden
@@ -1345,7 +1345,7 @@ function Why() {
   const [active, setActive] = useState(0);
 
   return (
-    <section id="why" className="relative py-24 md:py-32 overflow-hidden">
+    <section id="why" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
       {/* Ambient */}
       <div className="absolute inset-0 -z-10" aria-hidden style={{
         background:
@@ -1486,7 +1486,7 @@ const TESTIS = [
 
 function Testimonials() {
   return (
-    <section id="testimonials" className="relative py-24 md:py-32">
+    <section id="testimonials" className="relative py-16 sm:py-24 md:py-32">
       <div className="container-x">
         <Reveal><SectionTag>Client Voices</SectionTag></Reveal>
         <Reveal delay={0.1}>
