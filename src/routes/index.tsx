@@ -776,35 +776,9 @@ function About() {
 
             </div>
 
-            {/* Divider */}
-            <div className="relative my-12 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent" aria-hidden />
-
-            {/* Pillars — bento */}
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {pillars.map((p, i) => (
-                <motion.div
-                  key={p.title}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ delay: 0.1 + i * 0.08, duration: 0.7 }}
-                  className="group relative overflow-hidden rounded-2xl p-5 glass hover:-translate-y-1 transition-transform duration-500"
-                >
-                  <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: "radial-gradient(240px circle at 30% 0%, rgba(192,132,252,0.18), transparent 60%)" }} />
-                  <div className="relative">
-                    <div className="mb-4 inline-flex items-center gap-2">
-                      <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/25 text-[15px] font-bold tracking-wider text-white">{p.tag}</span>
-                      <p.Icon size={16} className="text-[var(--neon)]" />
-                    </div>
-                    <h4 className="text-white text-base font-semibold mb-2">{p.title}</h4>
-                    <p className="text-[15px] text-[var(--muted-foreground)] leading-relaxed">{p.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
             {/* Workflow rail */}
-            <div className="mt-14">
+            <div className="mt-12">
+
               <div className="mb-6 flex items-center gap-3 text-[15px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
                 <Layers size={12} className="text-[var(--neon)]" />
                 My Workflow
