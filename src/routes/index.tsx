@@ -1514,149 +1514,207 @@ function Testimonials() {
   );
 }
 
-/* ───────── Contact — editorial "open letter" composition ───────── */
-function LineField({ as, label, index, ...props }: any) {
+/* ───────── Contact — 3D floating glass console ───────── */
+function Field3D({ as, label, index, ...props }: any) {
   const Cmp = as || "input";
   return (
-    <label className="group relative block">
+    <label className="group relative block" style={{ transform: "translateZ(28px)" }}>
       <span className="mb-2 flex items-center gap-2 text-[12px] uppercase tracking-[0.3em] text-white/45">
         <span className="text-[var(--neon)]">{index}</span>
         {label}
       </span>
-      <Cmp
-        {...props}
-        className="peer w-full resize-none bg-transparent pb-3 text-[16px] text-white placeholder:text-white/25 outline-none"
-      />
-      <span aria-hidden className="block h-px w-full bg-white/12" />
-      <span
-        aria-hidden
-        className="absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-gradient-to-r from-[var(--neon)] via-[var(--pink)] to-[var(--cyan)] transition-transform duration-500 peer-focus:scale-x-100"
-      />
+      <div className="relative rounded-2xl border border-white/10 bg-white/[0.035] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_40px_-24px_rgba(0,0,0,0.9)] transition-all duration-500 focus-within:border-[var(--neon)]/50 focus-within:bg-white/[0.06] focus-within:shadow-[0_0_0_1px_rgba(192,132,252,0.25),0_26px_60px_-28px_rgba(192,132,252,0.55)]">
+        <Cmp
+          {...props}
+          className="peer w-full resize-none rounded-2xl bg-transparent px-4 py-3.5 text-[16px] text-white placeholder:text-white/25 outline-none"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-4 bottom-0 h-px origin-left scale-x-0 bg-gradient-to-r from-[var(--neon)] via-[var(--pink)] to-[var(--cyan)] transition-transform duration-500 peer-focus:scale-x-100"
+        />
+      </div>
     </label>
+  );
+}
+
+function ContactOrb({ className, delay = 0, size = 90 }: { className?: string; delay?: number; size?: number }) {
+  return (
+    <motion.div
+      aria-hidden
+      className={`pointer-events-none absolute hidden md:block rounded-full ${className ?? ""}`}
+      style={{
+        width: size,
+        height: size,
+        background:
+          "radial-gradient(circle at 32% 28%, rgba(255,255,255,0.85), rgba(192,132,252,0.55) 34%, rgba(124,58,237,0.18) 62%, transparent 72%)",
+        boxShadow: "0 30px 60px -30px rgba(124,58,237,0.8), inset 0 -8px 24px rgba(0,0,0,0.5)",
+        filter: "blur(0.3px)",
+      }}
+      animate={{ y: [0, -18, 0], rotate: [0, 12, 0] }}
+      transition={{ duration: 12, delay, repeat: Infinity, ease: "easeInOut" }}
+    />
   );
 }
 
 function Contact() {
   const [sent, setSent] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const srx = useSpring(useTransform(my, [0, 1], [7, -7]), { stiffness: 120, damping: 18 });
+  const sry = useSpring(useTransform(mx, [0, 1], [-9, 9]), { stiffness: 120, damping: 18 });
+  const glowX = useTransform(mx, (v) => `${v * 100}%`);
+  const glowY = useTransform(my, (v) => `${v * 100}%`);
+
+  const onMove = (e: React.MouseEvent) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    mx.set((e.clientX - r.left) / r.width);
+    my.set((e.clientY - r.top) / r.height);
+  };
+  const onLeave = () => { mx.set(0.5); my.set(0.5); };
 
   return (
-    <section id="contact" className="relative py-20 md:py-32 overflow-hidden">
+    <section id="contact" className="relative py-16 md:py-32 overflow-hidden">
       <div
         className="absolute inset-0 -z-10"
         aria-hidden
         style={{
           background:
-            "radial-gradient(1000px 520px at 50% 108%, rgba(124,58,237,0.22), transparent 62%)," +
-            "radial-gradient(620px 360px at 8% 6%, rgba(232,121,249,0.10), transparent 62%)",
+            "radial-gradient(1100px 560px at 50% 110%, rgba(124,58,237,0.24), transparent 62%)," +
+            "radial-gradient(680px 380px at 10% 4%, rgba(232,121,249,0.12), transparent 62%)",
         }}
       />
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute right-[6%] top-24 hidden lg:block h-40 w-px bg-gradient-to-b from-transparent via-[var(--neon)]/40 to-transparent"
-        animate={{ opacity: [0.3, 1, 0.3], scaleY: [0.8, 1.15, 0.8] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
+
+      <ContactOrb className="left-[4%] top-[18%]" size={110} />
+      <ContactOrb className="right-[5%] top-[30%]" size={64} delay={2.5} />
+      <ContactOrb className="left-[10%] bottom-[10%]" size={48} delay={4.5} />
 
       <div className="container-x relative">
-        {/* Editorial masthead */}
-        <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-          <div className="min-w-0">
-            <Reveal><SectionTag>Get In Touch</SectionTag></Reveal>
-            <Reveal delay={0.08}>
-              <h2 className="leading-[1.02]">
-                Say hello,<br />
-                <span className="italic font-display text-white/45">and let's make</span><br />
-                <span className="text-gradient">it real.</span>
-              </h2>
-            </Reveal>
-          </div>
-          <Reveal delay={0.16} className="min-w-0">
-            <p className="max-w-sm text-[17px] leading-relaxed text-[var(--muted-foreground)] lg:text-right lg:ml-auto">
-              No forms-for-the-sake-of-forms. Four lines below, or reach me directly —
-              either way you get a considered reply within one business day.
+        <div className="mx-auto max-w-2xl text-center">
+          <Reveal><div className="flex justify-center"><SectionTag>Get In Touch</SectionTag></div></Reveal>
+          <Reveal delay={0.08}>
+            <h2 className="leading-[1.04]">
+              Say hello, <span className="text-gradient">and let&apos;s make it real.</span>
+            </h2>
+          </Reveal>
+          <Reveal delay={0.16}>
+            <p className="mx-auto mt-5 max-w-xl text-[17px] leading-relaxed text-[var(--muted-foreground)]">
+              Four lines below, or reach me directly — either way you get a considered
+              reply within one business day.
             </p>
           </Reveal>
         </div>
 
-        <div className="mt-10 h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
-
-        {/* Open letter */}
-        <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_0.62fr] lg:gap-16">
-          <Reveal className="min-w-0">
-            <form
-              className="grid gap-8"
-              onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+        {/* 3D console */}
+        <div className="mt-12 md:mt-16 [perspective:1600px]">
+          <Reveal>
+            <motion.div
+              ref={cardRef}
+              onMouseMove={onMove}
+              onMouseLeave={onLeave}
+              style={{ rotateX: srx, rotateY: sry, transformStyle: "preserve-3d" }}
+              className="relative mx-auto w-full max-w-4xl rounded-[32px] border border-white/12 bg-gradient-to-br from-white/[0.09] to-white/[0.02] p-6 sm:p-10 md:p-14 backdrop-blur-2xl shadow-[0_60px_120px_-50px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.14)]"
             >
-              <div className="grid gap-8 sm:grid-cols-2">
-                <LineField index="01" label="Your name" placeholder="Jane Doe" name="name" autoComplete="name" required />
-                <LineField index="02" label="Email" type="email" placeholder="you@company.com" name="email" autoComplete="email" required />
-              </div>
-              <LineField index="03" label="What you need" placeholder="WordPress site, landing page, UI design…" name="scope" />
-              <LineField index="04" label="The story" as="textarea" rows={3} placeholder="Tell me about the project, timeline and budget range…" name="message" />
+              {/* cursor glow */}
+              <motion.div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 rounded-[32px] opacity-70"
+                style={{
+                  background: useTransform(
+                    [glowX, glowY],
+                    ([x, y]) =>
+                      `radial-gradient(420px 300px at ${x} ${y}, rgba(192,132,252,0.16), transparent 70%)`,
+                  ),
+                }}
+              />
+              {/* edge highlight */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 rounded-[32px]"
+                style={{ boxShadow: "inset 0 -30px 60px -40px rgba(232,121,249,0.5)" }}
+              />
 
-              <div className="flex flex-wrap items-center gap-x-8 gap-y-4 pt-2">
-                <button
-                  type="submit"
-                  disabled={sent}
-                  className="group inline-flex items-center gap-4 font-button text-[15px] uppercase tracking-[0.22em] text-white disabled:opacity-70"
+              <form
+                className="relative grid gap-6"
+                style={{ transformStyle: "preserve-3d" }}
+                onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+              >
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <Field3D index="01" label="Your name" placeholder="Jane Doe" name="name" autoComplete="name" required />
+                  <Field3D index="02" label="Email" type="email" placeholder="you@company.com" name="email" autoComplete="email" required />
+                </div>
+                <Field3D index="03" label="What you need" placeholder="WordPress site, landing page, UI design…" name="scope" />
+                <Field3D index="04" label="The story" as="textarea" rows={4} placeholder="Tell me about the project, timeline and budget range…" name="message" />
+
+                <div
+                  className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 pt-2"
+                  style={{ transform: "translateZ(46px)" }}
                 >
-                  <span className="relative">
-                    {sent ? "Message sent" : "Send it over"}
-                    <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-100 bg-gradient-to-r from-[var(--neon)] to-[var(--cyan)] transition-transform duration-500 group-hover:scale-x-0" />
+                  <button
+                    type="submit"
+                    disabled={sent}
+                    className="group inline-flex items-center gap-4 font-button text-[15px] uppercase tracking-[0.22em] text-white disabled:opacity-70"
+                  >
+                    <span className="relative">
+                      {sent ? "Message sent" : "Send it over"}
+                      <span className="absolute -bottom-1 left-0 h-px w-full origin-left bg-gradient-to-r from-[var(--neon)] to-[var(--cyan)] transition-transform duration-500 group-hover:scale-x-0" />
+                    </span>
+                    <span className="grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-white/[0.04] shadow-[0_18px_36px_-18px_rgba(192,132,252,0.8)] transition-all duration-500 group-hover:border-transparent group-hover:bg-gradient-to-br group-hover:from-[var(--primary)] group-hover:to-[var(--pink)] group-hover:rotate-45">
+                      <ArrowUpRight size={18} />
+                    </span>
+                  </button>
+                  <span className="text-[14px] text-white/45">
+                    {sent ? "Thanks — I'll be in touch shortly." : "Usually replies in under 24 hours."}
                   </span>
-                  <span className="grid h-12 w-12 place-items-center rounded-full border border-white/15 transition-all duration-500 group-hover:border-transparent group-hover:bg-gradient-to-br group-hover:from-[var(--primary)] group-hover:to-[var(--pink)] group-hover:rotate-45">
-                    <ArrowUpRight size={18} />
-                  </span>
-                </button>
-                <span className="text-[14px] text-white/40">
-                  {sent ? "Thanks — I'll be in touch shortly." : "Usually replies in under 24 hours."}
-                </span>
-              </div>
-            </form>
+                </div>
+              </form>
+            </motion.div>
           </Reveal>
+        </div>
 
-          {/* Direct lines — quiet, typographic */}
-          <Reveal delay={0.12} className="min-w-0">
-            <div className="lg:pl-12 lg:border-l lg:border-white/10">
-              <div className="text-[12px] uppercase tracking-[0.3em] text-white/45">Or, directly</div>
-              <div className="mt-7 grid gap-7">
-                <a
-                  href="mailto:hooria.webdesigns@gmail.com"
-                  className="group block min-w-0"
-                >
-                  <span className="flex items-center gap-2 text-[13px] uppercase tracking-[0.24em] text-[var(--neon)]">
-                    <Mail size={14} /> Email
-                  </span>
-                  <span className="mt-2 block truncate text-[17px] text-white/90 transition-colors group-hover:text-[var(--neon)]">
-                    hooria.webdesigns@gmail.com
-                  </span>
-                  <span aria-hidden className="mt-3 block h-px w-full origin-left scale-x-0 bg-[var(--neon)]/60 transition-transform duration-500 group-hover:scale-x-100" />
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/hooria-azam-web-developer/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block min-w-0"
-                >
-                  <span className="flex items-center gap-2 text-[13px] uppercase tracking-[0.24em] text-[var(--cyan)]">
-                    <Linkedin size={14} /> LinkedIn
-                  </span>
-                  <span className="mt-2 block truncate text-[17px] text-white/90 transition-colors group-hover:text-[var(--cyan)]">
-                    /in/hooria-azam-web-developer
-                  </span>
-                  <span aria-hidden className="mt-3 block h-px w-full origin-left scale-x-0 bg-[var(--cyan)]/60 transition-transform duration-500 group-hover:scale-x-100" />
-                </a>
-              </div>
-
-              <div className="mt-10 flex items-center gap-3 text-[13px] uppercase tracking-[0.24em] text-white/60">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
-                </span>
-                Booking new projects
-              </div>
-            </div>
+        {/* Floating direct-line chips */}
+        <div className="mx-auto mt-8 grid max-w-4xl gap-4 sm:grid-cols-2">
+          <Reveal delay={0.08}>
+            <a
+              href="mailto:hooria.webdesigns@gmail.com"
+              className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 backdrop-blur-xl shadow-[0_30px_60px_-40px_rgba(0,0,0,0.9)] transition-all duration-500 hover:-translate-y-1 hover:border-[var(--neon)]/40"
+            >
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--primary)]/40 to-[var(--pink)]/25 text-[var(--neon)]">
+                <Mail size={16} />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[12px] uppercase tracking-[0.24em] text-white/45">Email</span>
+                <span className="block truncate text-[16px] text-white/90 group-hover:text-[var(--neon)]">hooria.webdesigns@gmail.com</span>
+              </span>
+            </a>
           </Reveal>
+          <Reveal delay={0.16}>
+            <a
+              href="https://www.linkedin.com/in/hooria-azam-web-developer/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 backdrop-blur-xl shadow-[0_30px_60px_-40px_rgba(0,0,0,0.9)] transition-all duration-500 hover:-translate-y-1 hover:border-[var(--cyan)]/40"
+            >
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--cyan)]/35 to-[var(--primary)]/25 text-[var(--cyan)]">
+                <Linkedin size={16} />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[12px] uppercase tracking-[0.24em] text-white/45">LinkedIn</span>
+                <span className="block truncate text-[16px] text-white/90 group-hover:text-[var(--cyan)]">/in/hooria-azam-web-developer</span>
+              </span>
+            </a>
+          </Reveal>
+        </div>
+
+        <div className="mt-8 flex items-center justify-center gap-3 text-[13px] uppercase tracking-[0.24em] text-white/60">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
+          </span>
+          Booking new projects
         </div>
       </div>
     </section>
