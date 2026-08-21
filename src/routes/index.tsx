@@ -1426,47 +1426,68 @@ function Why() {
               {WHY.map(([icon, title, text], i) => {
                 const isActive = active === i;
                 return (
-                  <motion.button
+                  <motion.div
                     key={title}
-                    type="button"
                     initial={{ opacity: 0, x: 30 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, margin: "-60px" }}
                     transition={{ delay: 0.1 + i * 0.06, duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
-                    onMouseEnter={() => setActive(i)}
-                    onFocus={() => setActive(i)}
-                    className={`group relative w-full max-w-full text-left overflow-hidden rounded-2xl transition-all duration-500
-                      ${isActive ? "glass-strong lg:translate-x-4" : "glass lg:hover:translate-x-2"}
-                      ${i % 2 === 1 ? "lg:ml-6" : ""}`}
+                    className={i % 2 === 1 ? "lg:ml-6" : ""}
                   >
-                    {isActive && (
-                      <span className="pointer-events-none absolute inset-0 rounded-2xl" style={{
-                        padding: 1,
-                        background: "linear-gradient(90deg, rgba(192,132,252,0.6), rgba(34,211,238,0.3), rgba(232,121,249,0.6))",
-                        WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                        WebkitMaskComposite: "xor",
-                        maskComposite: "exclude",
-                      } as React.CSSProperties} aria-hidden />
-                    )}
-                    <div className="relative flex items-center gap-4 p-4 sm:p-5">
-                      <span className={`font-display text-sm tracking-[0.3em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
-                        0{i + 1}
-                      </span>
-                      <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-2xl transition-all duration-500 ${isActive ? "bg-gradient-to-br from-[var(--primary)]/50 to-[var(--pink)]/35 scale-110" : "bg-white/[0.04]"}`}>
-                        {icon}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="text-sm sm:text-base font-semibold text-white truncate">{title}</div>
-                        <div className={`text-[12px] text-[var(--muted-foreground)] transition-all duration-500 ${isActive ? "opacity-100 max-h-20 mt-1" : "opacity-0 max-h-0 overflow-hidden"}`}>
-                          {text}
-                        </div>
-                      </div>
-                      <ArrowUpRight
-                        size={16}
-                        className={`shrink-0 transition-all duration-500 ${isActive ? "text-[var(--neon)] translate-x-0 opacity-100" : "text-white/30 -translate-x-2 opacity-0"}`}
+                    <motion.button
+                      type="button"
+                      onMouseEnter={() => setActive(i)}
+                      onFocus={() => setActive(i)}
+                      animate={{ x: isActive ? 14 : 0 }}
+                      transition={{ type: "spring", stiffness: 220, damping: 26, mass: 0.6 }}
+                      style={{ willChange: "transform" }}
+                      className={`group relative block w-full max-w-full text-left overflow-hidden rounded-2xl ${isActive ? "glass-strong" : "glass"}`}
+                    >
+                      <motion.span
+                        className="pointer-events-none absolute inset-0 rounded-2xl"
+                        animate={{ opacity: isActive ? 1 : 0 }}
+                        transition={{ duration: 0.45, ease: "easeOut" }}
+                        style={{
+                          padding: 1,
+                          background: "linear-gradient(90deg, rgba(192,132,252,0.6), rgba(34,211,238,0.3), rgba(232,121,249,0.6))",
+                          WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                          WebkitMaskComposite: "xor",
+                          maskComposite: "exclude",
+                        } as React.CSSProperties}
+                        aria-hidden
                       />
-                    </div>
-                  </motion.button>
+                      <div className="relative flex items-center gap-4 p-4 sm:p-5">
+                        <span className={`font-display text-sm tracking-[0.3em] w-8 shrink-0 transition-colors duration-500 ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
+                          0{i + 1}
+                        </span>
+                        <motion.div
+                          animate={{ scale: isActive ? 1.08 : 1 }}
+                          transition={{ type: "spring", stiffness: 220, damping: 24 }}
+                          className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-2xl transition-colors duration-500 ${isActive ? "bg-gradient-to-br from-[var(--primary)]/50 to-[var(--pink)]/35" : "bg-white/[0.04]"}`}
+                        >
+                          {icon}
+                        </motion.div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm sm:text-base font-semibold text-white truncate">{title}</div>
+                          <motion.div
+                            className="mt-1 text-[13px] leading-relaxed text-[var(--muted-foreground)]"
+                            animate={{ opacity: isActive ? 1 : 0.55 }}
+                            transition={{ duration: 0.45, ease: "easeOut" }}
+                          >
+                            {text}
+                          </motion.div>
+                        </div>
+                        <motion.span
+                          className="shrink-0 text-[var(--neon)]"
+                          animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : -8 }}
+                          transition={{ duration: 0.45, ease: "easeOut" }}
+                          aria-hidden
+                        >
+                          <ArrowUpRight size={16} />
+                        </motion.span>
+                      </div>
+                    </motion.button>
+                  </motion.div>
                 );
               })}
             </div>
