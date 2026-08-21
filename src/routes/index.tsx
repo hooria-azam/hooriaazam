@@ -1519,7 +1519,7 @@ function Field3D({ as, label, index, ...props }: any) {
   const Cmp = as || "input";
   return (
     <label className="group relative block" style={{ transform: "translateZ(28px)" }}>
-      <span className="mb-2 flex items-center gap-2 text-[12px] uppercase tracking-[0.3em] text-white/45">
+      <span className="mb-2 flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.3em] text-white">
         <span className="text-[var(--neon)]">{index}</span>
         {label}
       </span>
