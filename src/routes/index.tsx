@@ -892,7 +892,7 @@ const SKILLS = [
   { name: "WooCommerce", pct: 100, icon: "▤", desc: "Stores, checkout flows, product templates, conversions." },
   { name: "Responsive Design", pct: 100, icon: "▢", desc: "Mobile-first layouts that adapt across every viewport." },
 ] as const;
-const TECH = ["HTML5","CSS3","JavaScript","WordPress","Elementor Pro","WooCommerce","Figma","CSS Animations","Bootstrap","Responsive Design","SEO Basics"];
+const TECH = ["Figma","Adobe XD","Bootstrap","CSS Animations","ACF","SEO Basics","Cross-Browser QA","Performance Tuning","Accessibility"];
 
 function Skills() {
   return (
@@ -957,7 +957,7 @@ function Skills() {
             <div className="relative">
               <div className="flex items-center gap-3 mb-5">
                 <span className="h-px w-8 bg-[var(--neon)]" />
-                <span className="text-[15px] sm:text-sm uppercase tracking-[0.25em] text-[var(--muted-foreground)]">Full Stack</span>
+                <span className="text-[15px] sm:text-sm uppercase tracking-[0.25em] text-[var(--muted-foreground)]">Frontend Developer</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {TECH.map((t) => (
@@ -1426,47 +1426,68 @@ function Why() {
               {WHY.map(([icon, title, text], i) => {
                 const isActive = active === i;
                 return (
-                  <motion.button
+                  <motion.div
                     key={title}
-                    type="button"
                     initial={{ opacity: 0, x: 30 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, margin: "-60px" }}
                     transition={{ delay: 0.1 + i * 0.06, duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
-                    onMouseEnter={() => setActive(i)}
-                    onFocus={() => setActive(i)}
-                    className={`group relative w-full max-w-full text-left overflow-hidden rounded-2xl transition-all duration-500
-                      ${isActive ? "glass-strong lg:translate-x-4" : "glass lg:hover:translate-x-2"}
-                      ${i % 2 === 1 ? "lg:ml-6" : ""}`}
+                    className={i % 2 === 1 ? "lg:ml-6" : ""}
                   >
-                    {isActive && (
-                      <span className="pointer-events-none absolute inset-0 rounded-2xl" style={{
-                        padding: 1,
-                        background: "linear-gradient(90deg, rgba(192,132,252,0.6), rgba(34,211,238,0.3), rgba(232,121,249,0.6))",
-                        WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                        WebkitMaskComposite: "xor",
-                        maskComposite: "exclude",
-                      } as React.CSSProperties} aria-hidden />
-                    )}
-                    <div className="relative flex items-center gap-4 p-4 sm:p-5">
-                      <span className={`font-display text-sm tracking-[0.3em] w-8 shrink-0 transition-colors ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
-                        0{i + 1}
-                      </span>
-                      <div className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-2xl transition-all duration-500 ${isActive ? "bg-gradient-to-br from-[var(--primary)]/50 to-[var(--pink)]/35 scale-110" : "bg-white/[0.04]"}`}>
-                        {icon}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="text-sm sm:text-base font-semibold text-white truncate">{title}</div>
-                        <div className={`text-[12px] text-[var(--muted-foreground)] transition-all duration-500 ${isActive ? "opacity-100 max-h-20 mt-1" : "opacity-0 max-h-0 overflow-hidden"}`}>
-                          {text}
-                        </div>
-                      </div>
-                      <ArrowUpRight
-                        size={16}
-                        className={`shrink-0 transition-all duration-500 ${isActive ? "text-[var(--neon)] translate-x-0 opacity-100" : "text-white/30 -translate-x-2 opacity-0"}`}
+                    <motion.button
+                      type="button"
+                      onMouseEnter={() => setActive(i)}
+                      onFocus={() => setActive(i)}
+                      animate={{ x: isActive ? 14 : 0 }}
+                      transition={{ type: "spring", stiffness: 220, damping: 26, mass: 0.6 }}
+                      style={{ willChange: "transform" }}
+                      className={`group relative block w-full max-w-full text-left overflow-hidden rounded-2xl ${isActive ? "glass-strong" : "glass"}`}
+                    >
+                      <motion.span
+                        className="pointer-events-none absolute inset-0 rounded-2xl"
+                        animate={{ opacity: isActive ? 1 : 0 }}
+                        transition={{ duration: 0.45, ease: "easeOut" }}
+                        style={{
+                          padding: 1,
+                          background: "linear-gradient(90deg, rgba(192,132,252,0.6), rgba(34,211,238,0.3), rgba(232,121,249,0.6))",
+                          WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                          WebkitMaskComposite: "xor",
+                          maskComposite: "exclude",
+                        } as React.CSSProperties}
+                        aria-hidden
                       />
-                    </div>
-                  </motion.button>
+                      <div className="relative flex items-center gap-4 p-4 sm:p-5">
+                        <span className={`font-display text-sm tracking-[0.3em] w-8 shrink-0 transition-colors duration-500 ${isActive ? "text-[var(--neon)]" : "text-white/40"}`}>
+                          0{i + 1}
+                        </span>
+                        <motion.div
+                          animate={{ scale: isActive ? 1.08 : 1 }}
+                          transition={{ type: "spring", stiffness: 220, damping: 24 }}
+                          className={`grid h-12 w-12 shrink-0 place-items-center rounded-xl text-2xl transition-colors duration-500 ${isActive ? "bg-gradient-to-br from-[var(--primary)]/50 to-[var(--pink)]/35" : "bg-white/[0.04]"}`}
+                        >
+                          {icon}
+                        </motion.div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm sm:text-base font-semibold text-white truncate">{title}</div>
+                          <motion.div
+                            className="mt-1 text-[13px] leading-relaxed text-[var(--muted-foreground)]"
+                            animate={{ opacity: isActive ? 1 : 0.55 }}
+                            transition={{ duration: 0.45, ease: "easeOut" }}
+                          >
+                            {text}
+                          </motion.div>
+                        </div>
+                        <motion.span
+                          className="shrink-0 text-[var(--neon)]"
+                          animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : -8 }}
+                          transition={{ duration: 0.45, ease: "easeOut" }}
+                          aria-hidden
+                        >
+                          <ArrowUpRight size={16} />
+                        </motion.span>
+                      </div>
+                    </motion.button>
+                  </motion.div>
                 );
               })}
             </div>
@@ -1519,7 +1540,7 @@ function Field3D({ as, label, index, ...props }: any) {
   const Cmp = as || "input";
   return (
     <label className="group relative block" style={{ transform: "translateZ(28px)" }}>
-      <span className="mb-2 flex items-center gap-2 text-[12px] uppercase tracking-[0.3em] text-white/45">
+      <span className="mb-2 flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.3em] text-white">
         <span className="text-[var(--neon)]">{index}</span>
         {label}
       </span>
@@ -1771,8 +1792,8 @@ function Footer() {
             my.set((e.clientY - r.top) / r.height);
           }}
           onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-          style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600 }}
-          className="relative glass-strong rounded-[36px] p-8 sm:p-12 md:p-14 overflow-hidden badge-float"
+          style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600, transformStyle: "preserve-3d" }}
+          className="relative glass-strong rounded-[36px] p-8 sm:p-12 md:p-14 overflow-hidden badge-float shadow-[0_70px_140px_-60px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.12)]"
         >
           <motion.div
             className="pointer-events-none absolute inset-0 opacity-70"
@@ -1780,6 +1801,13 @@ function Footer() {
             aria-hidden
           />
           <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-48 w-[60%] rounded-full bg-[var(--neon)]/25 blur-3xl pointer-events-none" aria-hidden />
+          {/* animated sheen sweep */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent"
+            animate={{ x: ["-40%", "340%"] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
+          />
           <div className="pointer-events-none absolute inset-0 rounded-[36px]" style={{
             padding: 1,
             background: "linear-gradient(135deg, rgba(192,132,252,0.5), rgba(34,211,238,0.25), rgba(232,121,249,0.5))",
@@ -1789,19 +1817,28 @@ function Footer() {
           }} aria-hidden />
 
           {/* CONTENT GRID */}
-          <div className="relative grid gap-10 lg:gap-12 md:grid-cols-2 lg:grid-cols-3">
+          <div
+            className="relative grid gap-10 lg:gap-16 md:grid-cols-[1.15fr_1fr] items-start"
+            style={{ transform: "translateZ(50px)", transformStyle: "preserve-3d" }}
+          >
             {/* About */}
             <div className="min-w-0">
-              <div className="mb-5"><Logo variant="full" tone="gradient" /></div>
-              <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">
+              <motion.div
+                className="mb-5"
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                style={{ transform: "translateZ(30px)" }}
+              >
+                <Logo variant="full" tone="gradient" />
+              </motion.div>
+              <p className="max-w-md text-sm text-[var(--muted-foreground)] leading-relaxed">
                 A frontend studio of one, crafting premium websites and interfaces for founders,
                 agencies, and brands worldwide. Karachi → Everywhere.
               </p>
             </div>
 
-
             {/* Nav */}
-            <div className="min-w-0">
+            <div className="min-w-0" style={{ transform: "translateZ(24px)" }}>
               <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
               <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
                 {nav.map(([l, h]) => (
@@ -1813,37 +1850,6 @@ function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
-
-            {/* Contact — ONLY LinkedIn + Email */}
-            <div className="min-w-0">
-              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Connect</div>
-              <div className="space-y-2.5">
-                <a
-                  href="mailto:hooria.webdesigns@gmail.com"
-                  className="group flex items-center gap-3 rounded-2xl glass px-3.5 py-2.5 hover:border-[var(--neon)]/50 hover:-translate-y-0.5 transition-all duration-300"
-                >
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--primary)]/45 to-[var(--pink)]/30">
-                    <Mail size={15} className="text-white" />
-                  </span>
-                  <span className="min-w-0 flex-1 text-[15px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
-                    hooria.webdesigns@gmail.com
-                  </span>
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/hooria-azam-web-developer/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center gap-3 rounded-2xl glass px-3.5 py-2.5 hover:border-[var(--neon)]/50 hover:-translate-y-0.5 transition-all duration-300"
-                >
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[var(--cyan)]/40 to-[var(--primary)]/30">
-                    <Linkedin size={15} className="text-white" />
-                  </span>
-                  <span className="min-w-0 flex-1 text-[15px] text-white/90 truncate group-hover:text-[var(--neon)] transition-colors">
-                    LinkedIn Profile
-                  </span>
-                </a>
-              </div>
             </div>
           </div>
 
