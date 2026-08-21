@@ -957,7 +957,7 @@ function Skills() {
             <div className="relative">
               <div className="flex items-center gap-3 mb-5">
                 <span className="h-px w-8 bg-[var(--neon)]" />
-                <span className="text-[15px] sm:text-sm uppercase tracking-[0.25em] text-[var(--muted-foreground)]">Full Stack</span>
+                <span className="text-[15px] sm:text-sm uppercase tracking-[0.25em] text-[var(--muted-foreground)]">Frontend Developer</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {TECH.map((t) => (
