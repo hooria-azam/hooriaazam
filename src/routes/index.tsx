@@ -892,7 +892,7 @@ const SKILLS = [
   { name: "WooCommerce", pct: 100, icon: "▤", desc: "Stores, checkout flows, product templates, conversions." },
   { name: "Responsive Design", pct: 100, icon: "▢", desc: "Mobile-first layouts that adapt across every viewport." },
 ] as const;
-const TECH = ["HTML5","CSS3","JavaScript","WordPress","Elementor Pro","WooCommerce","Figma","CSS Animations","Bootstrap","Responsive Design","SEO Basics"];
+const TECH = ["Figma","Adobe XD","Bootstrap","CSS Animations","ACF","SEO Basics","Cross-Browser QA","Performance Tuning","Accessibility"];
 
 function Skills() {
   return (
