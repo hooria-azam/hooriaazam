@@ -880,7 +880,7 @@ function TiltCard({ children, featured }: { children: React.ReactNode; featured?
   );
 }
 
-/* ───────── SKILLS — premium glass redesign ───────── */
+/* ───────── SKILLS — "Skill Reactor" interactive dial ───────── */
 const SKILLS = [
   { name: "HTML5 & CSS3", pct: 100, icon: "◆", desc: "Semantic markup, modern layouts, fluid typography." },
   { name: "JavaScript", pct: 100, icon: "⟨⟩", desc: "Vanilla JS, ES6+, DOM interactions, animation logic." },
@@ -889,80 +889,183 @@ const SKILLS = [
   { name: "WooCommerce", pct: 100, icon: "▤", desc: "Stores, checkout flows, product templates, conversions." },
   { name: "Responsive Design", pct: 100, icon: "▢", desc: "Mobile-first layouts that adapt across every viewport." },
 ] as const;
-const TECH = ["Figma","Adobe XD","Bootstrap","CSS Animations","ACF","SEO Basics","Cross-Browser QA","Performance Tuning","Accessibility"];
+
+const TECH = [
+  "HTML5", "CSS3", "JavaScript", "WordPress", "Elementor Pro", "CPT", "ACF",
+  "WooCommerce", "Figma", "CSS3 Animations", "Bootstrap", "Responsive Design",
+  "SEO Basics", "Cross-Browser Compatibility", "UI/UX Implementation",
+];
+
+function TechMarquee({ items, reverse = false, duration = 34 }: { items: string[]; reverse?: boolean; duration?: number }) {
+  const row = [...items, ...items];
+  return (
+    <div className="relative overflow-hidden" style={{ maskImage: "linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)" }}>
+      <motion.div
+        className="flex w-max gap-3 py-1"
+        animate={{ x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}
+        transition={{ duration, repeat: Infinity, ease: "linear" }}
+      >
+        {row.map((t, i) => (
+          <span
+            key={`${t}-${i}`}
+            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--border)] bg-white/[0.04] px-4 py-2 text-[14px] text-white/90 hover:border-[var(--neon)]/60 hover:bg-white/[0.08] transition-colors"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_8px_var(--neon)]" />
+            {t}
+          </span>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
 
 function Skills() {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => setActive((a) => (a + 1) % SKILLS.length), 3200);
+    return () => clearInterval(id);
+  }, [paused]);
+
+  const s = SKILLS[active];
+
   return (
     <section id="skills" className="relative py-16 sm:py-24 md:py-32 overflow-hidden">
-      {/* Floating ambient blobs */}
       <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-[var(--primary)]/15 blur-3xl float-y" aria-hidden />
       <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-[var(--cyan)]/15 blur-3xl float-y" style={{ animationDelay: "-3s" }} aria-hidden />
 
       <div className="container-x relative">
-        <div className="text-center mb-14 sm:mb-20">
+        <div className="text-center mb-12 sm:mb-16">
           <Reveal className="flex justify-center"><SectionTag>Technical Skills</SectionTag></Reveal>
           <Reveal delay={0.1}>
             <h2 className="leading-[1.05]">Expertise that<br /><span className="text-gradient">delivers results.</span></h2>
           </Reveal>
         </div>
 
-        {/* Skill cards grid */}
-        <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-10 sm:mb-14">
-          {SKILLS.map((s, i) => (
-            <Reveal key={s.name} delay={i * 0.05}>
-              <div className="glass group relative h-full overflow-hidden rounded-3xl p-6 sm:p-7 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_60px_-20px_rgba(192,132,252,0.5)]">
-                {/* hover glow */}
-                <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 rounded-full bg-[var(--primary)]/30 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <div className="relative">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-[var(--primary)]/40 to-[var(--cyan)]/20 text-xl font-bold text-white shrink-0">
-                      {s.icon}
-                    </div>
-                    <div className="font-display text-2xl font-extrabold text-gradient tabular-nums">
-                      <AboutCounter to={s.pct} suffix="%" />
-                    </div>
+        <div
+          className="grid gap-8 lg:gap-12 lg:grid-cols-[0.85fr_1.15fr] items-center"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          {/* REACTOR DIAL */}
+          <Reveal>
+            <div className="relative mx-auto aspect-square w-full max-w-[340px]">
+              {/* rotating outer hairline */}
+              <div className="absolute inset-0 rounded-full border border-white/10 spin-slow" aria-hidden />
+              <div className="absolute inset-6 rounded-full border border-dashed border-[var(--neon)]/20" aria-hidden />
+              {/* conic progress */}
+              <motion.div
+                key={`ring-${active}`}
+                className="absolute inset-3 rounded-full"
+                initial={{ opacity: 0.2, rotate: -12, scale: 0.96 }}
+                animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                style={{
+                  background: `conic-gradient(var(--neon), var(--pink), var(--cyan), var(--neon))`,
+                  WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 8px))",
+                  mask: "radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 8px))",
+                  filter: "drop-shadow(0 0 18px rgba(192,132,252,0.45))",
+                }}
+                aria-hidden
+              />
+              {/* orbiting dot */}
+              <motion.div
+                className="absolute inset-3"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
+                aria-hidden
+              >
+                <span className="absolute left-1/2 -top-1 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-white shadow-[0_0_16px_var(--neon)]" />
+              </motion.div>
+              {/* core */}
+              <div className="absolute inset-12 rounded-full glass-strong grid place-items-center text-center px-5">
+                <motion.div
+                  key={`core-${active}`}
+                  initial={{ opacity: 0, y: 10, filter: "blur(6px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="text-3xl mb-1 text-white">{s.icon}</div>
+                  <div className="font-display text-4xl font-extrabold text-gradient tabular-nums leading-none">
+                    <AboutCounter to={s.pct} suffix="%" />
                   </div>
-                  <h3 className="text-base sm:text-lg font-semibold text-white mb-2 truncate">{s.name}</h3>
-                  <p className="text-sm sm:text-base text-[var(--muted-foreground)] leading-relaxed mb-5">{s.desc}</p>
-                  <div className="relative h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <div className="mt-2 text-[13px] uppercase tracking-[0.22em] text-[var(--muted-foreground)]">
+                    {s.name}
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </Reveal>
+
+          {/* SKILL RAIL */}
+          <div className="min-w-0">
+            <div className="relative">
+              {SKILLS.map((sk, i) => {
+                const isActive = i === active;
+                return (
+                  <motion.button
+                    type="button"
+                    key={sk.name}
+                    onMouseEnter={() => setActive(i)}
+                    onFocus={() => setActive(i)}
+                    initial={{ opacity: 0, x: 24 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-60px" }}
+                    transition={{ delay: 0.05 * i, duration: 0.55, ease: [0.2, 0.8, 0.2, 1] }}
+                    className="group relative block w-full text-left border-b border-white/10 py-4 sm:py-5"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className={`font-display text-[13px] tracking-[0.3em] w-8 shrink-0 transition-colors duration-500 ${isActive ? "text-[var(--neon)]" : "text-white/35"}`}>
+                        0{i + 1}
+                      </span>
+                      <motion.span
+                        animate={{ x: isActive ? 8 : 0, color: isActive ? "#ffffff" : "rgba(255,255,255,0.72)" }}
+                        transition={{ type: "spring", stiffness: 220, damping: 28 }}
+                        className="min-w-0 flex-1 text-base sm:text-lg font-semibold"
+                      >
+                        {sk.name}
+                      </motion.span>
+                      <span className={`shrink-0 text-[13px] tabular-nums transition-colors duration-500 ${isActive ? "text-[var(--neon)]" : "text-white/35"}`}>
+                        {sk.pct}%
+                      </span>
+                    </div>
                     <motion.div
-                      initial={{ width: "0%" }}
-                      whileInView={{ width: "100%" }}
-                      viewport={{ once: true, margin: "-60px" }}
-                      transition={{ duration: 1.5 + i * 0.12, ease: [0.16, 1, 0.3, 1], delay: 0.15 + i * 0.09 }}
-                      className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] via-[var(--pink)] to-[var(--cyan)] shadow-[0_0_18px_rgba(192,132,252,0.7)]"
-                    />
+                      className="overflow-hidden"
+                      initial={false}
+                      animate={{ height: isActive ? "auto" : 0, opacity: isActive ? 1 : 0 }}
+                      transition={{ height: { type: "spring", stiffness: 200, damping: 30, mass: 0.7 }, opacity: { duration: 0.3 } }}
+                    >
+                      <p className="pl-12 pr-2 pt-2 text-sm text-[var(--muted-foreground)] leading-relaxed">{sk.desc}</p>
+                    </motion.div>
+                    {/* progress underline */}
                     <motion.span
                       aria-hidden
-                      className="absolute inset-y-0 w-16 bg-gradient-to-r from-transparent via-white/45 to-transparent"
-                      initial={{ x: "-4rem", opacity: 0 }}
-                      whileInView={{ x: ["-4rem", "100%"], opacity: [0, 1, 0] }}
-                      viewport={{ once: true, margin: "-60px" }}
-                      transition={{ duration: 1.6, delay: 0.5 + i * 0.09, ease: "easeInOut" }}
+                      className="absolute bottom-0 left-0 h-px bg-gradient-to-r from-[var(--neon)] via-[var(--pink)] to-[var(--cyan)] shadow-[0_0_12px_rgba(192,132,252,0.7)]"
+                      initial={false}
+                      animate={{ width: isActive ? "100%" : "0%" }}
+                      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
                     />
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        {/* Tech stack — floating glass pill cluster */}
+        {/* Tech marquee */}
         <Reveal delay={0.1}>
-          <div className="glass-strong rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+          <div className="glass-strong relative mt-12 sm:mt-16 overflow-hidden rounded-3xl p-6 sm:p-8">
             <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-40 rounded-full bg-[var(--pink)]/20 blur-3xl" aria-hidden />
             <div className="relative">
-              <div className="flex items-center gap-3 mb-5">
+              <div className="mb-5 flex items-center gap-3">
                 <span className="h-px w-8 bg-[var(--neon)]" />
                 <span className="text-[15px] sm:text-sm uppercase tracking-[0.25em] text-[var(--muted-foreground)]">Frontend Developer</span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {TECH.map((t) => (
-                  <span key={t} className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white/[0.04] px-3 py-1.5 text-[14px] sm:text-sm text-white/90 hover:bg-white/[0.08] hover:border-[var(--neon)]/50 transition-all">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_8px_var(--neon)]" />
-                    {t}
-                  </span>
-                ))}
+              <div className="space-y-3">
+                <TechMarquee items={TECH.slice(0, 8)} />
+                <TechMarquee items={TECH.slice(8)} reverse duration={28} />
               </div>
             </div>
           </div>
@@ -971,6 +1074,7 @@ function Skills() {
     </section>
   );
 }
+
 
 /* ───────── PROCESS — premium storytelling redesign ───────── */
 const STEPS = [
