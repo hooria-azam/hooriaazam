@@ -779,11 +779,8 @@ function About() {
             {/* Workflow rail */}
             <div className="mt-12">
 
-              <div className="mb-6 flex items-center gap-3 text-[15px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-                <Layers size={12} className="text-[var(--neon)]" />
-                My Workflow
-                <span className="ml-2 h-px flex-1 bg-white/10" />
-              </div>
+
+
               <div className="relative grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-4">
                 <div aria-hidden className="hidden lg:block absolute top-3 left-4 right-4 h-px bg-gradient-to-r from-[var(--neon)]/40 via-[var(--pink)]/30 to-transparent" />
                 {workflow.map((w, i) => (
@@ -1470,12 +1467,15 @@ function Why() {
                         <div className="min-w-0 flex-1">
                           <div className="text-sm sm:text-base font-semibold text-white truncate">{title}</div>
                           <motion.div
-                            className="mt-1 text-[13px] leading-relaxed text-[var(--muted-foreground)]"
-                            animate={{ opacity: isActive ? 1 : 0.55 }}
-                            transition={{ duration: 0.45, ease: "easeOut" }}
+                            className="overflow-hidden text-[13px] leading-relaxed text-[var(--muted-foreground)]"
+                            initial={false}
+                            animate={{ height: isActive ? "auto" : 0, opacity: isActive ? 1 : 0, marginTop: isActive ? 4 : 0 }}
+                            transition={{ height: { type: "spring", stiffness: 200, damping: 30, mass: 0.7 }, opacity: { duration: 0.35, ease: "easeOut" } }}
+                            style={{ willChange: "height, opacity" }}
                           >
                             {text}
                           </motion.div>
+
                         </div>
                         <motion.span
                           className="shrink-0 text-[var(--neon)]"
@@ -1745,14 +1745,6 @@ function Contact() {
 
 /* ───────── FOOTER — floating 3D glassmorphism card ───────── */
 function Footer() {
-  const ref = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [3, -3]), { stiffness: 120, damping: 20 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-4, 4]), { stiffness: 120, damping: 20 });
-  const lx = useTransform(mx, (v) => `${v * 100}%`);
-  const ly = useTransform(my, (v) => `${v * 100}%`);
-
   const nav: [string, string][] = [
     ["Home", "#hero"], ["About", "#about"], ["Services", "#services"],
     ["Skills", "#skills"], ["Process", "#process"], ["Projects", "#projects"],
@@ -1761,123 +1753,64 @@ function Footer() {
 
   return (
     <footer className="relative pt-16 pb-10 sm:pt-24 sm:pb-14 overflow-hidden">
-      {/* Layered decorative background */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-[var(--primary)]/12 blur-3xl float-y" />
         <div className="absolute bottom-10 right-10 h-80 w-80 rounded-full bg-[var(--pink)]/12 blur-3xl float-y" style={{ animationDelay: "-6s" }} />
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 aspect-square w-[70%] max-w-[900px] rounded-full border border-[rgba(192,132,252,0.06)] spin-slow" />
-        {/* Floating shapes */}
-        <motion.div
-          className="absolute top-20 right-[10%] hidden md:block h-16 w-16 rounded-2xl glass-strong"
-          animate={{ y: [0, -12, 0], rotate: [-5, 5, -5] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-24 left-[8%] hidden md:block h-12 w-12 rounded-full border border-[var(--cyan)]/30"
-          animate={{ y: [0, 14, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
       </div>
 
       <div className="container-x relative">
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
-          ref={ref}
-          onMouseMove={(e) => {
-            const r = ref.current!.getBoundingClientRect();
-            mx.set((e.clientX - r.left) / r.width);
-            my.set((e.clientY - r.top) / r.height);
-          }}
-          onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-          style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600, transformStyle: "preserve-3d" }}
-          className="relative glass-strong rounded-[36px] p-8 sm:p-12 md:p-14 overflow-hidden badge-float shadow-[0_70px_140px_-60px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.12)]"
-        >
-          <motion.div
-            className="pointer-events-none absolute inset-0 opacity-70"
-            style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(600px circle at ${x} ${y}, rgba(192,132,252,0.16), transparent 60%)`) }}
-            aria-hidden
-          />
-          <div className="absolute -top-24 left-1/2 -translate-x-1/2 h-48 w-[60%] rounded-full bg-[var(--neon)]/25 blur-3xl pointer-events-none" aria-hidden />
-          {/* animated sheen sweep */}
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent"
-            animate={{ x: ["-40%", "340%"] }}
-            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
-          />
-          <div className="pointer-events-none absolute inset-0 rounded-[36px]" style={{
-            padding: 1,
-            background: "linear-gradient(135deg, rgba(192,132,252,0.5), rgba(34,211,238,0.25), rgba(232,121,249,0.5))",
-            WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude",
-          }} aria-hidden />
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--neon)]/40 to-transparent" aria-hidden />
 
-          {/* CONTENT GRID */}
-          <div
-            className="relative grid gap-10 lg:gap-16 md:grid-cols-[1.15fr_1fr] items-start"
-            style={{ transform: "translateZ(50px)", transformStyle: "preserve-3d" }}
-          >
-            {/* About */}
-            <div className="min-w-0">
-              <motion.div
-                className="mb-5"
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                style={{ transform: "translateZ(30px)" }}
+        <div className="grid gap-10 lg:gap-16 md:grid-cols-[1.15fr_1fr] items-start pt-12">
+          <div className="min-w-0">
+            <div className="mb-5">
+              <Logo variant="full" tone="gradient" />
+            </div>
+            <p className="max-w-md text-sm text-[var(--muted-foreground)] leading-relaxed">
+              A frontend studio of one, crafting premium websites and interfaces for founders,
+              agencies, and brands worldwide. Karachi → Everywhere.
+            </p>
+          </div>
+
+          <div className="min-w-0">
+            <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+              {nav.map(([l, h]) => (
+                <li key={l}>
+                  <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-[var(--neon)] transition-all duration-300 hover:translate-x-1">
+                    <span className="h-px w-3 bg-current opacity-0 group-hover:opacity-100 group-hover:w-5 transition-all" />
+                    {l}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="relative mt-12 pt-6">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
+          <div className="grid gap-3 sm:grid-cols-3 items-center text-[14px] sm:text-sm text-[var(--muted-foreground)]">
+            <div className="text-center sm:text-left">© 2026 Hooria Azam. All Rights Reserved.</div>
+            <div className="text-center">Designed &amp; Developed with Passion.</div>
+            <div className="flex sm:justify-end justify-center">
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="group inline-flex items-center gap-2 rounded-full glass px-4 py-2 hover:border-[var(--neon)]/60 transition-all"
+                aria-label="Back to top"
               >
-                <Logo variant="full" tone="gradient" />
-              </motion.div>
-              <p className="max-w-md text-sm text-[var(--muted-foreground)] leading-relaxed">
-                A frontend studio of one, crafting premium websites and interfaces for founders,
-                agencies, and brands worldwide. Karachi → Everywhere.
-              </p>
-            </div>
-
-            {/* Nav */}
-            <div className="min-w-0" style={{ transform: "translateZ(24px)" }}>
-              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
-              <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
-                {nav.map(([l, h]) => (
-                  <li key={l}>
-                    <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-[var(--neon)] transition-all duration-300 hover:translate-x-1">
-                      <span className="h-px w-3 bg-current opacity-0 group-hover:opacity-100 group-hover:w-5 transition-all" />
-                      {l}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+                <span className="group-hover:text-[var(--neon)] transition-colors">Back to Top</span>
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-white/5 group-hover:bg-[var(--neon)]/20 group-hover:rotate-45 transition-all duration-300">
+                  <ArrowUp className="h-3 w-3" />
+                </span>
+              </button>
             </div>
           </div>
-
-          {/* Bottom bar */}
-          <div className="relative mt-12 pt-6">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--neon)]/50 to-transparent" aria-hidden />
-            <div className="grid gap-3 sm:grid-cols-3 items-center text-[14px] sm:text-sm text-[var(--muted-foreground)]">
-              <div className="text-center sm:text-left">© 2026 Hooria Azam. All Rights Reserved.</div>
-              <div className="text-center">Designed &amp; Developed with Passion.</div>
-              <div className="flex sm:justify-end justify-center">
-                <button
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="group inline-flex items-center gap-2 rounded-full glass px-4 py-2 hover:border-[var(--neon)]/60 hover:shadow-[0_0_20px_rgba(192,132,252,0.4)] transition-all"
-                  aria-label="Back to top"
-                >
-                  <span className="group-hover:text-[var(--neon)] transition-colors">Back to Top</span>
-                  <span className="grid h-6 w-6 place-items-center rounded-full bg-white/5 group-hover:bg-[var(--neon)]/20 group-hover:rotate-45 transition-all duration-300">
-                    <ArrowUp className="h-3 w-3" />
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        </div>
       </div>
     </footer>
   );
 }
+
 
 /* ───────── Page ───────── */
 function Portfolio() {
