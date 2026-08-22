@@ -6,7 +6,7 @@ import {
   Code2, Palette, Braces, MonitorSmartphone, Globe, LayoutTemplate,
   ShoppingCart, Figma, LayoutGrid, Smartphone, Sparkles, Navigation,
   Linkedin, Mail, ArrowUpRight, ArrowUp,
-  Zap, Award, Target, Rocket, Check, Sparkle, Layers, Wand2,
+  Zap, Award, Target, Rocket, Check, Sparkle, Wand2,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
