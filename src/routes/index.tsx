@@ -1056,7 +1056,7 @@ function Skills() {
 
         {/* Tech marquee */}
         <Reveal delay={0.1}>
-          <div className="glass-strong relative mt-12 sm:mt-16 overflow-hidden rounded-3xl p-6 sm:p-8">
+          <div className="glass-strong relative mt-[68px] sm:mt-[84px] overflow-hidden rounded-3xl p-6 sm:p-8">
             <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-40 rounded-full bg-[var(--pink)]/20 blur-3xl" aria-hidden />
             <div className="relative">
               <div className="mb-5 flex items-center gap-3">
@@ -1855,6 +1855,22 @@ function Footer() {
     ["Contact", "#contact"],
   ];
 
+  const ref = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const spring = { stiffness: 90, damping: 20, mass: 0.6 };
+  const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-7, 7]), spring);
+  const rotX = useSpring(useTransform(my, [-0.5, 0.5], [6, -6]), spring);
+  const sheenX = useSpring(useTransform(mx, [-0.5, 0.5], ["-20%", "120%"]), spring);
+
+  const onMove = (e: React.MouseEvent) => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    mx.set((e.clientX - r.left) / r.width - 0.5);
+    my.set((e.clientY - r.top) / r.height - 0.5);
+  };
+  const onLeave = () => { mx.set(0); my.set(0); };
+
   return (
     <footer className="relative pt-16 pb-10 sm:pt-24 sm:pb-14 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
@@ -1862,54 +1878,77 @@ function Footer() {
         <div className="absolute bottom-10 right-10 h-80 w-80 rounded-full bg-[var(--pink)]/12 blur-3xl float-y" style={{ animationDelay: "-6s" }} />
       </div>
 
-      <div className="container-x relative">
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--neon)]/40 to-transparent" aria-hidden />
+      <div className="container-x relative" style={{ perspective: 1400 }}>
+        <motion.div
+          ref={ref}
+          onMouseMove={onMove}
+          onMouseLeave={onLeave}
+          style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
+          initial={{ opacity: 0, y: 60, rotateX: 12 }}
+          whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
+          className="glass-strong relative overflow-hidden rounded-[2rem] p-8 sm:p-12"
+        >
+          {/* depth glow behind the card */}
+          <div
+            className="pointer-events-none absolute -inset-px rounded-[2rem] opacity-70"
+            style={{ background: "radial-gradient(120% 90% at 50% -20%, rgba(192,132,252,0.18), transparent 60%)", transform: "translateZ(-40px)" }}
+            aria-hidden
+          />
+          {/* sheen sweep */}
+          <motion.div
+            className="pointer-events-none absolute inset-y-0 w-1/3 blur-2xl"
+            style={{ left: sheenX, background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent)" }}
+            aria-hidden
+          />
 
-        <div className="grid gap-10 lg:gap-16 md:grid-cols-[1.15fr_1fr] items-start pt-12">
-          <div className="min-w-0">
-            <div className="mb-5">
-              <Logo variant="full" tone="gradient" />
+          <div className="grid gap-10 lg:gap-16 md:grid-cols-[1.15fr_1fr] items-start" style={{ transformStyle: "preserve-3d" }}>
+            <div className="min-w-0" style={{ transform: "translateZ(55px)" }}>
+              <div className="mb-5">
+                <Logo variant="full" tone="gradient" />
+              </div>
+              <p className="max-w-md text-sm text-[var(--muted-foreground)] leading-relaxed">
+                A frontend studio of one, crafting premium websites and interfaces for founders,
+                agencies, and brands worldwide. Karachi → Everywhere.
+              </p>
             </div>
-            <p className="max-w-md text-sm text-[var(--muted-foreground)] leading-relaxed">
-              A frontend studio of one, crafting premium websites and interfaces for founders,
-              agencies, and brands worldwide. Karachi → Everywhere.
-            </p>
-          </div>
 
-          <div className="min-w-0">
-            <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
-              {nav.map(([l, h]) => (
-                <li key={l}>
-                  <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-[var(--neon)] transition-all duration-300 hover:translate-x-1">
-                    <span className="h-px w-3 bg-current opacity-0 group-hover:opacity-100 group-hover:w-5 transition-all" />
-                    {l}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <div className="relative mt-12 pt-6">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
-          <div className="grid gap-3 sm:grid-cols-3 items-center text-[14px] sm:text-sm text-[var(--muted-foreground)]">
-            <div className="text-center sm:text-left">© 2026 Hooria Azam. All Rights Reserved.</div>
-            <div className="text-center">Designed &amp; Developed with Passion.</div>
-            <div className="flex sm:justify-end justify-center">
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="group inline-flex items-center gap-2 rounded-full glass px-4 py-2 hover:border-[var(--neon)]/60 transition-all"
-                aria-label="Back to top"
-              >
-                <span className="group-hover:text-[var(--neon)] transition-colors">Back to Top</span>
-                <span className="grid h-6 w-6 place-items-center rounded-full bg-white/5 group-hover:bg-[var(--neon)]/20 group-hover:rotate-45 transition-all duration-300">
-                  <ArrowUp className="h-3 w-3" />
-                </span>
-              </button>
+            <div className="min-w-0" style={{ transform: "translateZ(35px)" }}>
+              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+                {nav.map(([l, h]) => (
+                  <li key={l}>
+                    <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-[var(--neon)] transition-all duration-300 hover:translate-x-1">
+                      <span className="h-px w-3 bg-current opacity-0 group-hover:opacity-100 group-hover:w-5 transition-all" />
+                      {l}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-        </div>
+
+          <div className="relative mt-12 pt-6" style={{ transform: "translateZ(25px)" }}>
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
+            <div className="grid gap-3 sm:grid-cols-3 items-center text-[14px] sm:text-sm text-[var(--muted-foreground)]">
+              <div className="text-center sm:text-left">© 2026 Hooria Azam. All Rights Reserved.</div>
+              <div className="text-center">Designed &amp; Developed with Passion.</div>
+              <div className="flex sm:justify-end justify-center">
+                <button
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="group inline-flex items-center gap-2 rounded-full glass px-4 py-2 hover:border-[var(--neon)]/60 transition-all"
+                  aria-label="Back to top"
+                >
+                  <span className="group-hover:text-[var(--neon)] transition-colors">Back to Top</span>
+                  <span className="grid h-6 w-6 place-items-center rounded-full bg-white/5 group-hover:bg-[var(--neon)]/20 group-hover:rotate-45 transition-all duration-300">
+                    <ArrowUp className="h-3 w-3" />
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </footer>
   );
