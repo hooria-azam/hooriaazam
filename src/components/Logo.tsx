@@ -11,20 +11,19 @@ interface LogoProps {
 }
 
 /**
- * Hooria Azam — "Orbit H"
+ * Hooria Azam — "Aperture HA"
  *
- * Concept: the H is drawn with two deliberately different weights — a solid
- * stem (code: structural, engineered) and a hairline stem (design: light,
- * considered) — joined by a single crossbar. An open orbit arc sweeps around
- * them and terminates in a signature dot, the mark of a finished piece.
- * No frames, no arrows, no clip-art: one idea, one gesture.
+ * Concept: a precision aperture (two mirrored blades cut on a 60° angle)
+ * frames a monogram where the H's right stem doubles as the A's spine, and
+ * the A's apex is implied by the diagonal blade. Reads as a lens, a diamond
+ * facet, and an H/A ligature at once. Geometric, quiet, luxurious.
  */
 export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: string }>(
   ({ tone = "gradient", className }, ref) => {
-    const g = "ha-orbit-grad";
+    const g = "ha-aperture-grad";
     const stroke =
       tone === "light" ? "#0a0a0f" : tone === "dark" ? "#ffffff" : `url(#${g})`;
-    const dot = tone === "light" ? "#0a0a0f" : "#e879f9";
+    const accent = tone === "light" ? "#0a0a0f" : "#22d3ee";
 
     return (
       <svg
@@ -36,31 +35,42 @@ export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: str
         fill="none"
       >
         <defs>
-          <linearGradient id={g} x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+          <linearGradient id={g} x1="10" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#c084fc" />
-            <stop offset="50%" stopColor="#e879f9" />
+            <stop offset="52%" stopColor="#e879f9" />
             <stop offset="100%" stopColor="#22d3ee" />
           </linearGradient>
         </defs>
 
-        {/* Orbit — open arc, sweeping clockwise from lower-left to upper-right */}
+        {/* Aperture blades — two mirrored angular cuts forming a faceted frame */}
         <path
-          d="M15.5 47.8 A21 21 0 1 1 50.5 44.2"
+          d="M32 5 L57 19.5 V44.5"
           stroke={stroke}
-          strokeWidth="2"
+          strokeWidth="1.6"
           strokeLinecap="round"
-          opacity="0.62"
+          strokeLinejoin="round"
+          opacity="0.55"
+        />
+        <path
+          d="M32 59 L7 44.5 V19.5"
+          stroke={stroke}
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.55"
         />
 
-        {/* H — solid stem (engineering) */}
-        <path d="M23 19 V45" stroke={stroke} strokeWidth="4.6" strokeLinecap="round" />
-        {/* H — crossbar */}
-        <path d="M23 32 H41" stroke={stroke} strokeWidth="2.6" strokeLinecap="round" />
-        {/* H — hairline stem (design), extended as a subtle ascender */}
-        <path d="M41 16 V45" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" />
+        {/* H left stem — solid, structural */}
+        <path d="M22 20 V44" stroke={stroke} strokeWidth="4.4" strokeLinecap="round" />
+        {/* Shared stem — H right / A spine */}
+        <path d="M42 20 V44" stroke={stroke} strokeWidth="2.2" strokeLinecap="round" />
+        {/* Crossbar — the ligature */}
+        <path d="M22 32.5 H42" stroke={stroke} strokeWidth="2.2" strokeLinecap="round" />
+        {/* A apex — implied diagonal rising off the shared stem */}
+        <path d="M42 20 L33.5 44" stroke={stroke} strokeWidth="1.4" strokeLinecap="round" opacity="0.85" />
 
-        {/* Signature dot at the orbit terminus */}
-        <circle cx="50.5" cy="44.2" r="3" fill={dot} />
+        {/* Facet point */}
+        <circle cx="32" cy="5" r="2.4" fill={accent} />
       </svg>
     );
   },
