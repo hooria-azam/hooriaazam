@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useId } from "react";
 
 type Variant = "full" | "monogram" | "icon";
 type Tone = "light" | "dark" | "gradient";
@@ -11,19 +11,22 @@ interface LogoProps {
 }
 
 /**
- * Hooria Azam — "The Facet"
+ * Hooria Azam — "The Aperture"
  *
- * A cut-gem diamond frame (precision, craft) whose inner facets resolve into
- * an A apex sitting on an H crossbar. One continuous geometric idea: rotate
- * the square, cut it, and the initials appear in the negative space.
+ * A tall, softly-cut squircle acting as a light aperture. A single diagonal
+ * shear splits the plate; inside the negative space an H column and an A apex
+ * are knocked out of the light, reading as one continuous cut rather than two
+ * letters stuck together. Minimal at 16px, sculptural at 96px.
  */
 export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: string }>(
   ({ tone = "gradient", className }, ref) => {
-    const g = "ha-facet-grad";
-    const gs = "ha-facet-soft";
-    const stroke =
+    const uid = useId().replace(/:/g, "");
+    const g = `ap-g-${uid}`;
+    const soft = `ap-s-${uid}`;
+    const cut = `ap-m-${uid}`;
+
+    const plate =
       tone === "light" ? "#0a0a0f" : tone === "dark" ? "#ffffff" : `url(#${g})`;
-    const dot = tone === "light" ? "#0a0a0f" : "#e879f9";
 
     return (
       <svg
@@ -35,35 +38,39 @@ export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: str
         fill="none"
       >
         <defs>
-          <linearGradient id={g} x1="10" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+          <linearGradient id={g} x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#c084fc" />
-            <stop offset="52%" stopColor="#e879f9" />
+            <stop offset="48%" stopColor="#e879f9" />
             <stop offset="100%" stopColor="#22d3ee" />
           </linearGradient>
-          <linearGradient id={gs} x1="20" y1="10" x2="44" y2="54" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#e879f9" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.05" />
+          <linearGradient id={soft} x1="32" y1="0" x2="32" y2="64" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
+
+          <mask id={cut} maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">
+            {/* visible plate */}
+            <rect x="6" y="2" width="52" height="60" rx="18" fill="#fff" />
+            {/* H column — two stems + bar knocked out */}
+            <rect x="19" y="17" width="5.4" height="30" rx="2.7" fill="#000" />
+            <rect x="19" y="29.4" width="26" height="5.2" rx="2.6" fill="#000" />
+            {/* A apex — diagonal rising out of the right stem */}
+            <path
+              d="M39.6 47 L45 17 L45 47 Z"
+              fill="#000"
+            />
+            {/* the shear: one clean diagonal slicing the whole plate */}
+            <path d="M6 54 L58 26 L58 30.5 L6 58.5 Z" fill="#000" />
+          </mask>
         </defs>
 
-        {/* Gem frame — rotated square with a cut top-right corner */}
-        <path
-          d="M32 5 L54 24 L46 52 L18 52 L10 24 Z"
-          stroke={stroke}
-          strokeWidth="2.2"
-          strokeLinejoin="round"
-        />
+        <g mask={`url(#${cut})`}>
+          <rect x="6" y="2" width="52" height="60" rx="18" fill={plate} />
+          {tone !== "light" && <rect x="6" y="2" width="52" height="60" rx="18" fill={`url(#${soft})`} />}
+        </g>
 
-        {/* Inner facet wash */}
-        <path d="M32 5 L54 24 L32 30 Z" fill={tone === "light" ? "none" : `url(#${gs})`} />
-
-        {/* A — apex strokes rising from the base */}
-        <path d="M22.5 44 L32 19 L41.5 44" stroke={stroke} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
-        {/* H / A crossbar */}
-        <path d="M26.4 35.2 H37.6" stroke={stroke} strokeWidth="2.2" strokeLinecap="round" />
-
-        {/* Signature facet point */}
-        <circle cx="54" cy="24" r="3" fill={dot} />
+        {/* aperture spark riding the shear line */}
+        <circle cx="52.5" cy="28.6" r="2.6" fill={tone === "light" ? "#0a0a0f" : "#22d3ee"} />
       </svg>
     );
   },
@@ -93,17 +100,17 @@ export function Logo({ variant = "full", tone = "gradient", className, title }: 
 
   return (
     <span
-      className={`inline-flex items-center gap-3 ${className ?? ""}`}
+      className={`inline-flex items-center gap-2.5 sm:gap-3 ${className ?? ""}`}
       aria-label={title ?? "Hooria Azam"}
     >
-      <LogoMark tone={tone} className="h-9 w-9 shrink-0" />
-      <span className="flex flex-col leading-none">
+      <LogoMark tone={tone} className="h-7 w-7 sm:h-9 sm:w-9 shrink-0" />
+      <span className="flex min-w-0 flex-col leading-none">
         <span
-          className={`font-display text-[21px] sm:text-[23px] font-semibold tracking-[-0.01em] ${wordColor}`}
+          className={`font-display text-[17px] sm:text-[23px] font-semibold tracking-[-0.01em] truncate ${wordColor}`}
         >
           Hooria Azam
         </span>
-        <span className="mt-1.5 text-[10px] tracking-[0.34em] uppercase text-[var(--muted-foreground)]">
+        <span className="mt-1 hidden sm:block text-[10px] tracking-[0.34em] uppercase text-[var(--muted-foreground)]">
           Design · Code · Craft
         </span>
       </span>
