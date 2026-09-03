@@ -1056,7 +1056,7 @@ function Skills() {
 
         {/* Tech marquee */}
         <Reveal delay={0.1}>
-          <div className="glass-strong relative mt-12 sm:mt-16 overflow-hidden rounded-3xl p-6 sm:p-8">
+          <div className="glass-strong relative mt-[68px] sm:mt-[84px] overflow-hidden rounded-3xl p-6 sm:p-8">
             <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-40 rounded-full bg-[var(--pink)]/20 blur-3xl" aria-hidden />
             <div className="relative">
               <div className="mb-5 flex items-center gap-3">
