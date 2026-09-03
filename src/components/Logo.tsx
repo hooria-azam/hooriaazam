@@ -11,17 +11,16 @@ interface LogoProps {
 }
 
 /**
- * Hooria Azam — "Orbit H"
+ * Hooria Azam — "The Facet"
  *
- * Concept: the H is drawn with two deliberately different weights — a solid
- * stem (code: structural, engineered) and a hairline stem (design: light,
- * considered) — joined by a single crossbar. An open orbit arc sweeps around
- * them and terminates in a signature dot, the mark of a finished piece.
- * No frames, no arrows, no clip-art: one idea, one gesture.
+ * A cut-gem diamond frame (precision, craft) whose inner facets resolve into
+ * an A apex sitting on an H crossbar. One continuous geometric idea: rotate
+ * the square, cut it, and the initials appear in the negative space.
  */
 export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: string }>(
   ({ tone = "gradient", className }, ref) => {
-    const g = "ha-orbit-grad";
+    const g = "ha-facet-grad";
+    const gs = "ha-facet-soft";
     const stroke =
       tone === "light" ? "#0a0a0f" : tone === "dark" ? "#ffffff" : `url(#${g})`;
     const dot = tone === "light" ? "#0a0a0f" : "#e879f9";
@@ -36,31 +35,35 @@ export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: str
         fill="none"
       >
         <defs>
-          <linearGradient id={g} x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+          <linearGradient id={g} x1="10" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#c084fc" />
-            <stop offset="50%" stopColor="#e879f9" />
+            <stop offset="52%" stopColor="#e879f9" />
             <stop offset="100%" stopColor="#22d3ee" />
+          </linearGradient>
+          <linearGradient id={gs} x1="20" y1="10" x2="44" y2="54" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#e879f9" stopOpacity="0.28" />
+            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.05" />
           </linearGradient>
         </defs>
 
-        {/* Orbit — open arc, sweeping clockwise from lower-left to upper-right */}
+        {/* Gem frame — rotated square with a cut top-right corner */}
         <path
-          d="M15.5 47.8 A21 21 0 1 1 50.5 44.2"
+          d="M32 5 L54 24 L46 52 L18 52 L10 24 Z"
           stroke={stroke}
-          strokeWidth="2"
-          strokeLinecap="round"
-          opacity="0.62"
+          strokeWidth="2.2"
+          strokeLinejoin="round"
         />
 
-        {/* H — solid stem (engineering) */}
-        <path d="M23 19 V45" stroke={stroke} strokeWidth="4.6" strokeLinecap="round" />
-        {/* H — crossbar */}
-        <path d="M23 32 H41" stroke={stroke} strokeWidth="2.6" strokeLinecap="round" />
-        {/* H — hairline stem (design), extended as a subtle ascender */}
-        <path d="M41 16 V45" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" />
+        {/* Inner facet wash */}
+        <path d="M32 5 L54 24 L32 30 Z" fill={tone === "light" ? "none" : `url(#${gs})`} />
 
-        {/* Signature dot at the orbit terminus */}
-        <circle cx="50.5" cy="44.2" r="3" fill={dot} />
+        {/* A — apex strokes rising from the base */}
+        <path d="M22.5 44 L32 19 L41.5 44" stroke={stroke} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+        {/* H / A crossbar */}
+        <path d="M26.4 35.2 H37.6" stroke={stroke} strokeWidth="2.2" strokeLinecap="round" />
+
+        {/* Signature facet point */}
+        <circle cx="54" cy="24" r="3" fill={dot} />
       </svg>
     );
   },
