@@ -1855,43 +1855,87 @@ function Footer() {
     ["Contact", "#contact"],
   ];
 
+  const cardRef = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rx = useSpring(useTransform(my, [-0.5, 0.5], [7, -7]), { stiffness: 90, damping: 18, mass: 0.5 });
+  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-9, 9]), { stiffness: 90, damping: 18, mass: 0.5 });
+  const sheenX = useSpring(useTransform(mx, [-0.5, 0.5], ["10%", "90%"]), { stiffness: 80, damping: 20 });
+
+  const onMove = (e: React.MouseEvent) => {
+    const r = cardRef.current?.getBoundingClientRect();
+    if (!r) return;
+    mx.set((e.clientX - r.left) / r.width - 0.5);
+    my.set((e.clientY - r.top) / r.height - 0.5);
+  };
+  const onLeave = () => { mx.set(0); my.set(0); };
+
   return (
     <footer className="relative pt-16 pb-10 sm:pt-24 sm:pb-14 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-[var(--primary)]/12 blur-3xl float-y" />
         <div className="absolute bottom-10 right-10 h-80 w-80 rounded-full bg-[var(--pink)]/12 blur-3xl float-y" style={{ animationDelay: "-6s" }} />
+        <div className="absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 rounded-full bg-[var(--cyan)]/10 blur-3xl float-y" style={{ animationDelay: "-3s" }} />
       </div>
 
-      <div className="container-x relative">
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--neon)]/40 to-transparent" aria-hidden />
+      <div className="container-x relative" style={{ perspective: 1400 }}>
+        <motion.div
+          ref={cardRef}
+          onMouseMove={onMove}
+          onMouseLeave={onLeave}
+          style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
+          className="glass-strong relative overflow-hidden rounded-[32px] p-7 sm:p-12"
+        >
+          {/* depth glow floor */}
+          <div className="pointer-events-none absolute -bottom-24 left-1/2 h-48 w-[70%] -translate-x-1/2 rounded-full bg-[var(--primary)]/20 blur-3xl" aria-hidden />
+          {/* animated sheen */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: "radial-gradient(420px circle at var(--sx) 0%, rgba(232,121,249,0.16), transparent 65%)",
+              ["--sx" as string]: sheenX,
+            }}
+          />
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/8 to-transparent"
+            animate={{ x: ["0%", "420%"] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
+          />
 
-        <div className="grid gap-10 lg:gap-16 md:grid-cols-[1.15fr_1fr] items-start pt-12">
-          <div className="min-w-0">
-            <div className="mb-5">
-              <Logo variant="full" tone="gradient" />
+          <div className="grid gap-10 lg:gap-16 md:grid-cols-[1.15fr_1fr] items-start" style={{ transformStyle: "preserve-3d" }}>
+            <div className="min-w-0" style={{ transform: "translateZ(48px)" }}>
+              <div className="mb-5">
+                <Logo variant="full" tone="gradient" />
+              </div>
+              <p className="max-w-md text-sm text-[var(--muted-foreground)] leading-relaxed">
+                A frontend studio of one, crafting premium websites and interfaces for founders,
+                agencies, and brands worldwide. Karachi → Everywhere.
+              </p>
             </div>
-            <p className="max-w-md text-sm text-[var(--muted-foreground)] leading-relaxed">
-              A frontend studio of one, crafting premium websites and interfaces for founders,
-              agencies, and brands worldwide. Karachi → Everywhere.
-            </p>
-          </div>
 
-          <div className="min-w-0">
-            <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
-              {nav.map(([l, h]) => (
-                <li key={l}>
-                  <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-[var(--neon)] transition-all duration-300 hover:translate-x-1">
-                    <span className="h-px w-3 bg-current opacity-0 group-hover:opacity-100 group-hover:w-5 transition-all" />
-                    {l}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <div className="min-w-0" style={{ transform: "translateZ(32px)" }}>
+              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+                {nav.map(([l, h]) => (
+                  <li key={l}>
+                    <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-[var(--neon)] transition-all duration-300 hover:translate-x-1">
+                      <span className="h-px w-3 bg-current opacity-0 group-hover:opacity-100 group-hover:w-5 transition-all" />
+                      {l}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="relative mt-12 pt-6">
+        <div className="relative mt-10 pt-6">
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden />
           <div className="grid gap-3 sm:grid-cols-3 items-center text-[14px] sm:text-sm text-[var(--muted-foreground)]">
             <div className="text-center sm:text-left">© 2026 Hooria Azam. All Rights Reserved.</div>
