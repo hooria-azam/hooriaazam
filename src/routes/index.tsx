@@ -836,12 +836,12 @@ function About() {
 
 /* ───────── Services ───────── */
 const SERVICES = [
-  { icon: "◇", title: "Frontend Development", desc: "Clean, semantic, and performant code using HTML5, CSS3, and JavaScript. I build interfaces that move fast, scale elegantly, and feel genuinely alive.", featured: true },
-  { icon: "✦", title: "UI/UX Design", desc: "Interfaces designed to solve real problems beautifully. Wireframes turned into visual systems users actually enjoy." },
-  { icon: "◆", title: "WordPress Development", desc: "Custom WordPress builds using Elementor Pro, WooCommerce, and tailored CSS. Flexible, manageable, built right." },
-  { icon: "◆", title: "WooCommerce Stores", desc: "E-commerce experiences that convert. Clean product layouts, optimized checkout, performance-first architecture." },
-  { icon: "▭", title: "Responsive Design", desc: "Pixel-perfect on every device. Mobile-first, fluid, carefully tested across screen sizes and browsers." },
-  { icon: "✧", title: "Website Redesign", desc: "Modernize outdated sites while keeping what works. A fresh identity with improved UX and performance." },
+  { icon: "◇", label: "Build", accent: "192,132,252", title: "Frontend Development", desc: "Clean, semantic, performant code in HTML5, CSS3 and JavaScript. Interfaces that move fast, scale elegantly and feel genuinely alive.", featured: true },
+  { icon: "✦", label: "Design", accent: "232,121,249", title: "UI/UX Design", desc: "Interfaces designed to solve real problems beautifully. Wireframes turned into visual systems users actually enjoy." },
+  { icon: "◆", label: "CMS", accent: "34,211,238", title: "WordPress Development", desc: "Custom builds with Elementor Pro, ACF and tailored CSS. Flexible, manageable, built right." },
+  { icon: "▤", label: "Commerce", accent: "168,85,247", title: "WooCommerce Stores", desc: "E-commerce that converts. Clean product layouts, optimized checkout, performance-first architecture." },
+  { icon: "▭", label: "Adaptive", accent: "34,211,238", title: "Responsive Design", desc: "Pixel-perfect on every device. Mobile-first, fluid, carefully tested across screens and browsers." },
+  { icon: "✧", label: "Rework", accent: "232,121,249", title: "Website Redesign", desc: "Modernize outdated sites while keeping what works. A fresh identity with improved UX and performance." },
 ];
 
 function Services() {
@@ -865,10 +865,45 @@ function Services() {
         <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.06}>
-              <TiltCard featured={s.featured}>
-                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary)]/30 to-[var(--pink)]/20 text-2xl">{s.icon}</div>
-                <h3 className="mb-3 text-lg sm:text-xl font-semibold text-white">{s.title}</h3>
-                <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">{s.desc}</p>
+              <TiltCard featured={s.featured} accent={s.accent}>
+                {/* corner index rule */}
+                <div className="mb-6 flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="h-px w-6 shrink-0"
+                        style={{ background: `rgba(${s.accent},0.7)` }}
+                        aria-hidden
+                      />
+                      <span className="truncate text-[10px] uppercase tracking-[0.32em] text-[var(--muted-foreground)]">
+                        {s.label}
+                      </span>
+                    </div>
+                    <div
+                      className="mt-4 grid h-12 w-12 place-items-center rounded-2xl text-xl transition-transform duration-500 group-hover:-translate-y-0.5"
+                      style={{
+                        background: `linear-gradient(140deg, rgba(${s.accent},0.22), rgba(255,255,255,0.02))`,
+                        border: `1px solid rgba(${s.accent},0.28)`,
+                        boxShadow: `inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 24px -18px rgba(${s.accent},0.9)`,
+                        color: `rgb(${s.accent})`,
+                      }}
+                    >
+                      {s.icon}
+                    </div>
+                  </div>
+                  <span className="font-display text-[26px] leading-none text-white/12 tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+
+                <h3 className={`mb-3 font-semibold tracking-[-0.01em] text-white ${s.featured ? "text-xl sm:text-[26px]" : "text-lg sm:text-xl"}`}>
+                  {s.title}
+                </h3>
+                <p className="text-[14px] leading-relaxed text-[var(--muted-foreground)]">{s.desc}</p>
+
+                {/* baseline accent rule that extends on hover */}
+                <div className="mt-7 h-px w-10 transition-all duration-500 group-hover:w-full"
+                     style={{ background: `linear-gradient(90deg, rgba(${s.accent},0.85), transparent)` }} aria-hidden />
               </TiltCard>
             </Reveal>
           ))}
@@ -878,7 +913,7 @@ function Services() {
   );
 }
 
-function TiltCard({ children, featured }: { children: React.ReactNode; featured?: boolean }) {
+function TiltCard({ children, featured, accent = "192,132,252" }: { children: React.ReactNode; featured?: boolean; accent?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -894,14 +929,33 @@ function TiltCard({ children, featured }: { children: React.ReactNode; featured?
       }}
       onMouseLeave={() => { x.set(0); y.set(0); }}
       style={{ rotateX: rotX, rotateY: rotY, transformPerspective: 1000 }}
-      className={`glass group relative h-full overflow-hidden rounded-3xl p-6 sm:p-8 ${featured ? "ring-1 ring-[var(--primary)]/40" : ""}`}
+      className={`glass group relative flex h-full flex-col overflow-hidden rounded-[26px] p-6 sm:p-8 ${featured ? "ring-1 ring-[var(--primary)]/40" : ""}`}
     >
-      <div className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      {/* layered depth: top sheen + corner bloom + fine grid */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" aria-hidden />
+      <div
+        className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full opacity-60 blur-3xl transition-opacity duration-700 group-hover:opacity-100"
+        style={{ background: `rgba(${accent},0.18)` }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+          backgroundSize: "34px 34px",
+          maskImage: "radial-gradient(120% 90% at 100% 0%, #000, transparent 70%)",
+          WebkitMaskImage: "radial-gradient(120% 90% at 100% 0%, #000, transparent 70%)",
+        }}
+        aria-hidden
+      />
+      <div className="pointer-events-none absolute -inset-px rounded-[26px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
            style={{ background: "linear-gradient(135deg, rgba(192,132,252,0.4), rgba(34,211,238,0.2))", maskImage: "linear-gradient(black, black) content-box, linear-gradient(black, black)", maskComposite: "exclude", padding: 1 }} />
-      <div className="relative">{children}</div>
+      <div className="relative flex h-full flex-col">{children}</div>
     </motion.div>
   );
 }
+
 
 /* ───────── SKILLS — "Skill Reactor" interactive dial ───────── */
 const SKILLS = [
