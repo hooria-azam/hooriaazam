@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useScroll, useTransform, useMotionValue, useSpring, useInView } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/hooks/use-lenis";
 import {
@@ -62,10 +62,10 @@ function Nav() {
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
-      className={`fixed left-1/2 top-3 sm:top-5 z-50 -translate-x-1/2 transition-all duration-500 w-[min(94vw,1200px)] ${scrolled ? "max-w-[1100px]" : ""}`}
+      className={`fixed left-1/2 top-3 sm:top-5 z-50 -translate-x-1/2 transition-all duration-500 w-[min(92vw,1200px)] max-w-[calc(100vw-1.5rem)] ${scrolled ? "lg:max-w-[1100px]" : ""}`}
     >
-      <div className="glass-strong flex items-center justify-between rounded-full pl-5 pr-3 py-2.5 sm:pl-6 sm:pr-4 sm:py-3 gap-3">
-        <a href="#hero" className="shrink-0 group" aria-label="Hooria Azam — Home">
+      <div className="glass-strong flex items-center justify-between rounded-full gap-2 pl-4 pr-2 py-2 sm:pl-6 sm:pr-4 sm:py-3 sm:gap-3">
+        <a href="#hero" className="min-w-0 shrink group" aria-label="Hooria Azam — Home">
           <Logo variant="full" tone="gradient" className="transition-opacity group-hover:opacity-80" />
         </a>
         <ul className="hidden lg:flex items-center gap-7 min-w-0">
@@ -76,28 +76,51 @@ function Nav() {
           ))}
         </ul>
         <div className="flex items-center gap-2 shrink-0">
-          <a href="#contact" className="hidden sm:inline-flex btn-primary !py-2 !px-5 text-sm">Hire Me</a>
+          {/* Hire Me — desktop only, never in the mobile menu */}
+          <a href="#contact" className="hidden lg:inline-flex btn-primary !py-2 !px-5 text-sm">Hire Me</a>
           <button
-            aria-label="Toggle menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
             onClick={() => setOpen(v => !v)}
-            className="lg:hidden grid place-items-center h-10 w-10 rounded-full border border-[var(--border)] bg-white/[0.04]"
+            className="lg:hidden grid place-items-center h-10 w-10 shrink-0 rounded-full border border-[var(--border)] bg-white/[0.05] active:scale-95 transition-transform"
           >
-            <span className="block h-0.5 w-4 bg-current relative before:absolute before:-top-1.5 before:left-0 before:h-0.5 before:w-4 before:bg-current after:absolute after:top-1.5 after:left-0 after:h-0.5 after:w-4 after:bg-current" />
+            <span className="relative block h-3.5 w-4">
+              <span className={`absolute left-0 h-0.5 w-4 rounded-full bg-current transition-all duration-300 ${open ? "top-1.5 rotate-45" : "top-0"}`} />
+              <span className={`absolute left-0 top-1.5 h-0.5 w-4 rounded-full bg-current transition-all duration-300 ${open ? "opacity-0" : "opacity-100"}`} />
+              <span className={`absolute left-0 h-0.5 w-4 rounded-full bg-current transition-all duration-300 ${open ? "top-1.5 -rotate-45" : "top-3"}`} />
+            </span>
           </button>
         </div>
       </div>
-      {open && (
-        <div className="lg:hidden mt-2 glass-strong rounded-3xl p-4">
-          <ul className="grid gap-1">
-            {links.map(([label, href]) => (
-              <li key={href}>
-                <a href={href} onClick={() => setOpen(false)} className="block rounded-2xl px-4 py-3 text-sm text-[var(--muted-foreground)] hover:bg-white/5 hover:text-[var(--neon)]">{label}</a>
-              </li>
-            ))}
-            <li><a href="#contact" onClick={() => setOpen(false)} className="btn-primary w-full mt-2 !py-3 text-sm">Hire Me</a></li>
-          </ul>
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="mnav"
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1] }}
+            className="lg:hidden mt-2 glass-strong overflow-hidden rounded-3xl p-2"
+          >
+            <ul className="grid gap-0.5">
+              {links.map(([label, href], i) => (
+                <li key={href}>
+                  <a
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center justify-between rounded-2xl px-4 py-3 text-[15px] text-white/85 transition-colors hover:bg-white/5 hover:text-[var(--neon)]"
+                  >
+                    <span>{label}</span>
+                    <span className="text-[11px] tracking-[0.2em] text-[var(--muted-foreground)]">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }
@@ -813,12 +836,12 @@ function About() {
 
 /* ───────── Services ───────── */
 const SERVICES = [
-  { icon: "◇", title: "Frontend Development", desc: "Clean, semantic, and performant code using HTML5, CSS3, and JavaScript. I build interfaces that move fast, scale elegantly, and feel genuinely alive.", featured: true },
-  { icon: "✦", title: "UI/UX Design", desc: "Interfaces designed to solve real problems beautifully. Wireframes turned into visual systems users actually enjoy." },
-  { icon: "◆", title: "WordPress Development", desc: "Custom WordPress builds using Elementor Pro, WooCommerce, and tailored CSS. Flexible, manageable, built right." },
-  { icon: "◆", title: "WooCommerce Stores", desc: "E-commerce experiences that convert. Clean product layouts, optimized checkout, performance-first architecture." },
-  { icon: "▭", title: "Responsive Design", desc: "Pixel-perfect on every device. Mobile-first, fluid, carefully tested across screen sizes and browsers." },
-  { icon: "✧", title: "Website Redesign", desc: "Modernize outdated sites while keeping what works. A fresh identity with improved UX and performance." },
+  { icon: "◇", label: "Build", accent: "192,132,252", title: "Frontend Development", desc: "Clean, semantic, performant code in HTML5, CSS3 and JavaScript. Interfaces that move fast, scale elegantly and feel genuinely alive.", featured: true },
+  { icon: "✦", label: "Design", accent: "232,121,249", title: "UI/UX Design", desc: "Interfaces designed to solve real problems beautifully. Wireframes turned into visual systems users actually enjoy." },
+  { icon: "◆", label: "CMS", accent: "34,211,238", title: "WordPress Development", desc: "Custom builds with Elementor Pro, ACF and tailored CSS. Flexible, manageable, built right." },
+  { icon: "▤", label: "Commerce", accent: "168,85,247", title: "WooCommerce Stores", desc: "E-commerce that converts. Clean product layouts, optimized checkout, performance-first architecture." },
+  { icon: "▭", label: "Adaptive", accent: "34,211,238", title: "Responsive Design", desc: "Pixel-perfect on every device. Mobile-first, fluid, carefully tested across screens and browsers." },
+  { icon: "✧", label: "Rework", accent: "232,121,249", title: "Website Redesign", desc: "Modernize outdated sites while keeping what works. A fresh identity with improved UX and performance." },
 ];
 
 function Services() {
@@ -842,10 +865,45 @@ function Services() {
         <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.06}>
-              <TiltCard featured={s.featured}>
-                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary)]/30 to-[var(--pink)]/20 text-2xl">{s.icon}</div>
-                <h3 className="mb-3 text-lg sm:text-xl font-semibold text-white">{s.title}</h3>
-                <p className="text-sm leading-relaxed text-[var(--muted-foreground)]">{s.desc}</p>
+              <TiltCard featured={s.featured} accent={s.accent}>
+                {/* corner index rule */}
+                <div className="mb-6 flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="h-px w-6 shrink-0"
+                        style={{ background: `rgba(${s.accent},0.7)` }}
+                        aria-hidden
+                      />
+                      <span className="truncate text-[10px] uppercase tracking-[0.32em] text-[var(--muted-foreground)]">
+                        {s.label}
+                      </span>
+                    </div>
+                    <div
+                      className="mt-4 grid h-12 w-12 place-items-center rounded-2xl text-xl transition-transform duration-500 group-hover:-translate-y-0.5"
+                      style={{
+                        background: `linear-gradient(140deg, rgba(${s.accent},0.22), rgba(255,255,255,0.02))`,
+                        border: `1px solid rgba(${s.accent},0.28)`,
+                        boxShadow: `inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 24px -18px rgba(${s.accent},0.9)`,
+                        color: `rgb(${s.accent})`,
+                      }}
+                    >
+                      {s.icon}
+                    </div>
+                  </div>
+                  <span className="font-display text-[26px] leading-none text-white/12 tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+
+                <h3 className={`mb-3 font-semibold tracking-[-0.01em] text-white ${s.featured ? "text-xl sm:text-[26px]" : "text-lg sm:text-xl"}`}>
+                  {s.title}
+                </h3>
+                <p className="text-[14px] leading-relaxed text-[var(--muted-foreground)]">{s.desc}</p>
+
+                {/* baseline accent rule that extends on hover */}
+                <div className="mt-7 h-px w-10 transition-all duration-500 group-hover:w-full"
+                     style={{ background: `linear-gradient(90deg, rgba(${s.accent},0.85), transparent)` }} aria-hidden />
               </TiltCard>
             </Reveal>
           ))}
@@ -855,7 +913,7 @@ function Services() {
   );
 }
 
-function TiltCard({ children, featured }: { children: React.ReactNode; featured?: boolean }) {
+function TiltCard({ children, featured, accent = "192,132,252" }: { children: React.ReactNode; featured?: boolean; accent?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -871,14 +929,33 @@ function TiltCard({ children, featured }: { children: React.ReactNode; featured?
       }}
       onMouseLeave={() => { x.set(0); y.set(0); }}
       style={{ rotateX: rotX, rotateY: rotY, transformPerspective: 1000 }}
-      className={`glass group relative h-full overflow-hidden rounded-3xl p-6 sm:p-8 ${featured ? "ring-1 ring-[var(--primary)]/40" : ""}`}
+      className={`glass group relative flex h-full flex-col overflow-hidden rounded-[26px] p-6 sm:p-8 ${featured ? "ring-1 ring-[var(--primary)]/40" : ""}`}
     >
-      <div className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      {/* layered depth: top sheen + corner bloom + fine grid */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" aria-hidden />
+      <div
+        className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full opacity-60 blur-3xl transition-opacity duration-700 group-hover:opacity-100"
+        style={{ background: `rgba(${accent},0.18)` }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+          backgroundSize: "34px 34px",
+          maskImage: "radial-gradient(120% 90% at 100% 0%, #000, transparent 70%)",
+          WebkitMaskImage: "radial-gradient(120% 90% at 100% 0%, #000, transparent 70%)",
+        }}
+        aria-hidden
+      />
+      <div className="pointer-events-none absolute -inset-px rounded-[26px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
            style={{ background: "linear-gradient(135deg, rgba(192,132,252,0.4), rgba(34,211,238,0.2))", maskImage: "linear-gradient(black, black) content-box, linear-gradient(black, black)", maskComposite: "exclude", padding: 1 }} />
-      <div className="relative">{children}</div>
+      <div className="relative flex h-full flex-col">{children}</div>
     </motion.div>
   );
 }
+
 
 /* ───────── SKILLS — "Skill Reactor" interactive dial ───────── */
 const SKILLS = [
@@ -1908,8 +1985,8 @@ function Footer() {
             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
           />
 
-          <div className="grid gap-10 lg:gap-16 md:grid-cols-[1.15fr_1fr] items-start" style={{ transformStyle: "preserve-3d" }}>
-            <div className="min-w-0" style={{ transform: "translateZ(48px)" }}>
+          <div className="grid gap-10 sm:gap-12 lg:gap-16 md:grid-cols-2 lg:grid-cols-[1.3fr_0.85fr_1fr] items-start" style={{ transformStyle: "preserve-3d" }}>
+            <div className="min-w-0 md:col-span-2 lg:col-span-1" style={{ transform: "translateZ(48px)" }}>
               <div className="mb-5">
                 <Logo variant="full" tone="gradient" />
               </div>
@@ -1917,19 +1994,62 @@ function Footer() {
                 A frontend studio of one, crafting premium websites and interfaces for founders,
                 agencies, and brands worldwide. Karachi → Everywhere.
               </p>
+              <div className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[12px] uppercase tracking-[0.22em] text-white/70">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                </span>
+                Available for work
+              </div>
             </div>
 
             <div className="min-w-0" style={{ transform: "translateZ(32px)" }}>
-              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
-              <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+              <div className="mb-5 text-[13px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
+              <ul className="grid gap-y-2.5">
                 {nav.map(([l, h]) => (
                   <li key={l}>
-                    <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-[var(--neon)] transition-all duration-300 hover:translate-x-1">
-                      <span className="h-px w-3 bg-current opacity-0 group-hover:opacity-100 group-hover:w-5 transition-all" />
+                    <a href={h} className="group relative inline-block text-sm text-white/85 transition-colors duration-300 hover:text-[var(--neon)]">
                       {l}
+                      <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-current transition-all duration-300 group-hover:w-full" aria-hidden />
                     </a>
                   </li>
                 ))}
+              </ul>
+            </div>
+
+            <div className="min-w-0" style={{ transform: "translateZ(32px)" }}>
+              <div className="mb-5 text-[13px] uppercase tracking-[0.28em] text-[var(--cyan)]">Connect</div>
+              <ul className="grid gap-3">
+                <li>
+                  <a
+                    href="mailto:hooriaazam2004@gmail.com"
+                    className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--neon)]/40"
+                  >
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[0.06] text-[var(--neon)]">
+                      <Mail size={14} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[10px] uppercase tracking-[0.22em] text-white/45">Email</span>
+                      <span className="block truncate text-[13px] text-white/90 group-hover:text-[var(--neon)]">hooriaazam2004@gmail.com</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.linkedin.com/in/hooria-azam-web-developer/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--cyan)]/40"
+                  >
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[0.06] text-[var(--cyan)]">
+                      <Linkedin size={14} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[10px] uppercase tracking-[0.22em] text-white/45">LinkedIn</span>
+                      <span className="block truncate text-[13px] text-white/90 group-hover:text-[var(--cyan)]">/in/hooria-azam-web-developer</span>
+                    </span>
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
