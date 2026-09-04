@@ -62,10 +62,10 @@ function Nav() {
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
-      className={`fixed left-1/2 top-3 sm:top-5 z-50 -translate-x-1/2 transition-all duration-500 w-[min(94vw,1200px)] ${scrolled ? "max-w-[1100px]" : ""}`}
+      className={`fixed left-1/2 top-3 sm:top-5 z-50 -translate-x-1/2 transition-all duration-500 w-[min(92vw,1200px)] max-w-[calc(100vw-1.5rem)] ${scrolled ? "lg:max-w-[1100px]" : ""}`}
     >
-      <div className="glass-strong flex items-center justify-between rounded-full pl-5 pr-3 py-2.5 sm:pl-6 sm:pr-4 sm:py-3 gap-3">
-        <a href="#hero" className="shrink-0 group" aria-label="Hooria Azam — Home">
+      <div className="glass-strong flex items-center justify-between rounded-full gap-2 pl-4 pr-2 py-2 sm:pl-6 sm:pr-4 sm:py-3 sm:gap-3">
+        <a href="#hero" className="min-w-0 shrink group" aria-label="Hooria Azam — Home">
           <Logo variant="full" tone="gradient" className="transition-opacity group-hover:opacity-80" />
         </a>
         <ul className="hidden lg:flex items-center gap-7 min-w-0">
@@ -76,28 +76,51 @@ function Nav() {
           ))}
         </ul>
         <div className="flex items-center gap-2 shrink-0">
-          <a href="#contact" className="hidden sm:inline-flex btn-primary !py-2 !px-5 text-sm">Hire Me</a>
+          {/* Hire Me — desktop only, never in the mobile menu */}
+          <a href="#contact" className="hidden lg:inline-flex btn-primary !py-2 !px-5 text-sm">Hire Me</a>
           <button
-            aria-label="Toggle menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
             onClick={() => setOpen(v => !v)}
-            className="lg:hidden grid place-items-center h-10 w-10 rounded-full border border-[var(--border)] bg-white/[0.04]"
+            className="lg:hidden grid place-items-center h-10 w-10 shrink-0 rounded-full border border-[var(--border)] bg-white/[0.05] active:scale-95 transition-transform"
           >
-            <span className="block h-0.5 w-4 bg-current relative before:absolute before:-top-1.5 before:left-0 before:h-0.5 before:w-4 before:bg-current after:absolute after:top-1.5 after:left-0 after:h-0.5 after:w-4 after:bg-current" />
+            <span className="relative block h-3.5 w-4">
+              <span className={`absolute left-0 h-0.5 w-4 rounded-full bg-current transition-all duration-300 ${open ? "top-1.5 rotate-45" : "top-0"}`} />
+              <span className={`absolute left-0 top-1.5 h-0.5 w-4 rounded-full bg-current transition-all duration-300 ${open ? "opacity-0" : "opacity-100"}`} />
+              <span className={`absolute left-0 h-0.5 w-4 rounded-full bg-current transition-all duration-300 ${open ? "top-1.5 -rotate-45" : "top-3"}`} />
+            </span>
           </button>
         </div>
       </div>
-      {open && (
-        <div className="lg:hidden mt-2 glass-strong rounded-3xl p-4">
-          <ul className="grid gap-1">
-            {links.map(([label, href]) => (
-              <li key={href}>
-                <a href={href} onClick={() => setOpen(false)} className="block rounded-2xl px-4 py-3 text-sm text-[var(--muted-foreground)] hover:bg-white/5 hover:text-[var(--neon)]">{label}</a>
-              </li>
-            ))}
-            <li><a href="#contact" onClick={() => setOpen(false)} className="btn-primary w-full mt-2 !py-3 text-sm">Hire Me</a></li>
-          </ul>
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="mnav"
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1] }}
+            className="lg:hidden mt-2 glass-strong overflow-hidden rounded-3xl p-2"
+          >
+            <ul className="grid gap-0.5">
+              {links.map(([label, href], i) => (
+                <li key={href}>
+                  <a
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center justify-between rounded-2xl px-4 py-3 text-[15px] text-white/85 transition-colors hover:bg-white/5 hover:text-[var(--neon)]"
+                  >
+                    <span>{label}</span>
+                    <span className="text-[11px] tracking-[0.2em] text-[var(--muted-foreground)]">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }
