@@ -100,7 +100,7 @@ export function Logo({ variant = "full", tone = "gradient", className, title }: 
         >
           Hooria Azam
         </span>
-        <span className="mt-1 sm:mt-1.5 hidden xs:block text-[9px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.34em] uppercase text-[var(--muted-foreground)]">
+        <span className="mt-1 sm:mt-1.5 hidden sm:block text-[10px] tracking-[0.34em] uppercase text-[var(--muted-foreground)]">
           Design · Code · Craft
         </span>
       </span>
