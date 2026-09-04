@@ -1985,8 +1985,8 @@ function Footer() {
             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
           />
 
-          <div className="grid gap-10 lg:gap-16 md:grid-cols-[1.15fr_1fr] items-start" style={{ transformStyle: "preserve-3d" }}>
-            <div className="min-w-0" style={{ transform: "translateZ(48px)" }}>
+          <div className="grid gap-10 sm:gap-12 lg:gap-16 md:grid-cols-2 lg:grid-cols-[1.3fr_0.85fr_1fr] items-start" style={{ transformStyle: "preserve-3d" }}>
+            <div className="min-w-0 md:col-span-2 lg:col-span-1" style={{ transform: "translateZ(48px)" }}>
               <div className="mb-5">
                 <Logo variant="full" tone="gradient" />
               </div>
@@ -1994,19 +1994,62 @@ function Footer() {
                 A frontend studio of one, crafting premium websites and interfaces for founders,
                 agencies, and brands worldwide. Karachi → Everywhere.
               </p>
+              <div className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[12px] uppercase tracking-[0.22em] text-white/70">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                </span>
+                Available for work
+              </div>
             </div>
 
             <div className="min-w-0" style={{ transform: "translateZ(32px)" }}>
-              <div className="mb-4 text-[15px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
-              <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+              <div className="mb-5 text-[13px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
+              <ul className="grid gap-y-2.5">
                 {nav.map(([l, h]) => (
                   <li key={l}>
-                    <a href={h} className="group inline-flex items-center gap-2 text-sm text-white/85 hover:text-[var(--neon)] transition-all duration-300 hover:translate-x-1">
-                      <span className="h-px w-3 bg-current opacity-0 group-hover:opacity-100 group-hover:w-5 transition-all" />
+                    <a href={h} className="group relative inline-block text-sm text-white/85 transition-colors duration-300 hover:text-[var(--neon)]">
                       {l}
+                      <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-current transition-all duration-300 group-hover:w-full" aria-hidden />
                     </a>
                   </li>
                 ))}
+              </ul>
+            </div>
+
+            <div className="min-w-0" style={{ transform: "translateZ(32px)" }}>
+              <div className="mb-5 text-[13px] uppercase tracking-[0.28em] text-[var(--cyan)]">Connect</div>
+              <ul className="grid gap-3">
+                <li>
+                  <a
+                    href="mailto:hooriaazam2004@gmail.com"
+                    className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--neon)]/40"
+                  >
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[0.06] text-[var(--neon)]">
+                      <Mail size={14} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[10px] uppercase tracking-[0.22em] text-white/45">Email</span>
+                      <span className="block truncate text-[13px] text-white/90 group-hover:text-[var(--neon)]">hooriaazam2004@gmail.com</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.linkedin.com/in/hooria-azam-web-developer/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--cyan)]/40"
+                  >
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[0.06] text-[var(--cyan)]">
+                      <Linkedin size={14} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[10px] uppercase tracking-[0.22em] text-white/45">LinkedIn</span>
+                      <span className="block truncate text-[13px] text-white/90 group-hover:text-[var(--cyan)]">/in/hooria-azam-web-developer</span>
+                    </span>
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
