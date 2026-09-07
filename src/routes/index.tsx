@@ -675,7 +675,7 @@ function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
-            className="relative glass-strong rounded-[40px] p-6 sm:p-10 md:p-14 overflow-hidden"
+            className="relative glass-strong rounded-[40px] p-7 sm:p-12 md:p-16 lg:p-20 overflow-hidden"
           >
             {/* Gradient hairline border */}
             <div className="pointer-events-none absolute inset-0 rounded-[40px]" style={{
@@ -693,20 +693,20 @@ function About() {
               style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(600px circle at ${x} ${y}, rgba(232,121,249,0.18), transparent 60%)`) }}
             />
 
-            <div className="relative grid gap-12 lg:gap-16 lg:grid-cols-[1.15fr_1fr] items-start">
+            <div className="relative grid gap-14 lg:gap-24 lg:grid-cols-[1.15fr_1fr] items-start">
               {/* LEFT — editorial copy */}
               <div className="min-w-0">
-                <h3 className="font-display text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.08] text-white mb-6">
+                <h3 className="font-display text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.12] text-white mb-8">
                   Frontend developer <span className="text-white/50">&</span><br />
                   WordPress specialist crafting<br />
                   <span className="text-gradient">premium digital experiences.</span>
                 </h3>
 
-                <p className="text-[17px] sm:text-xl text-[var(--muted-foreground)] leading-relaxed mb-5 max-w-[52ch]">
+                <p className="text-[17px] sm:text-xl text-[var(--muted-foreground)] leading-[1.75] mb-7 max-w-[52ch]">
                   I architect interfaces that strike the balance between beautiful and functional —
                   thoughtful design, clean code, and meticulous detail that elevates every interaction.
                 </p>
-                <p className="text-[15px] sm:text-[17px] text-[var(--muted-foreground)]/85 leading-relaxed mb-8 max-w-[52ch]">
+                <p className="text-[15px] sm:text-[17px] text-[var(--muted-foreground)]/85 leading-[1.75] mb-12 max-w-[52ch]">
                   Over <strong className="text-white">5+ years</strong>, I've partnered with founders, agencies,
                   and brands to ship websites that feel premium, load fast, and convert.
                 </p>
@@ -717,8 +717,9 @@ function About() {
                 </div>
               </div>
 
+
               {/* RIGHT — four uniquely-treated statistics */}
-              <div className="grid grid-cols-2 gap-4 sm:gap-5">
+              <div className="grid grid-cols-2 gap-5 sm:gap-6">
                 {/* 01 — Years: outlined numeral inside a slow-spinning ring */}
                 <motion.div
                   initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
@@ -800,12 +801,10 @@ function About() {
             </div>
 
             {/* Workflow rail */}
-            <div className="mt-12">
-
-
-
-              <div className="relative grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-16 sm:mt-24 pt-12 sm:pt-16 border-t border-white/[0.07]">
+              <div className="relative grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-4">
                 <div aria-hidden className="hidden lg:block absolute top-3 left-4 right-4 h-px bg-gradient-to-r from-[var(--neon)]/40 via-[var(--pink)]/30 to-transparent" />
+
                 {workflow.map((w, i) => (
                   <motion.div
                     key={w.n}
