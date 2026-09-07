@@ -11,19 +11,19 @@ interface LogoProps {
 }
 
 /**
- * Hooria Azam — "The Aperture Stem"
+ * Hooria Azam — "Eclipse"
  *
- * Concept: a monoline aperture (lens) opened at the top-right, wrapped around
- * two parallel stems bridged by a rising diagonal — the H and the A read as a
- * single continuous ligature. The open arc suggests a lens focusing; the offset
- * spark marks the point of light. Distinct at 16px, luxurious at 400px.
+ * A cinematic mark: a solid eclipse disc crossed by a crescent of light and a
+ * single anamorphic flare streak. The negative-space crescent silently forms an
+ * "H" gate on the left and an "A" apex on the right. Reads as a lens, a moon,
+ * and a projector gate at once — unmistakable at 16px, luxurious at 400px.
  */
 export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: string }>(
   ({ tone = "gradient", className }, ref) => {
-    const g = "ha-ap-grad";
-    const stroke =
-      tone === "light" ? "#0a0a0f" : tone === "dark" ? "#ffffff" : `url(#${g})`;
-    const spark = tone === "light" ? "#0a0a0f" : "#22d3ee";
+    const id = "ha-eclipse";
+    const light = tone === "light" ? "#0a0a0f" : `url(#${id}-g)`;
+    const disc = tone === "light" ? "rgba(10,10,15,0.10)" : "rgba(255,255,255,0.06)";
+    const flare = tone === "light" ? "#0a0a0f" : "#22d3ee";
 
     return (
       <svg
@@ -35,32 +35,42 @@ export const LogoMark = forwardRef<SVGSVGElement, { tone?: Tone; className?: str
         fill="none"
       >
         <defs>
-          <linearGradient id={g} x1="8" y1="10" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+          <linearGradient id={`${id}-g`} x1="14" y1="8" x2="52" y2="58" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#c084fc" />
-            <stop offset="55%" stopColor="#e879f9" />
+            <stop offset="52%" stopColor="#e879f9" />
             <stop offset="100%" stopColor="#22d3ee" />
           </linearGradient>
+          <linearGradient id={`${id}-f`} x1="2" y1="32" x2="62" y2="32" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0" />
+            <stop offset="45%" stopColor="#22d3ee" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#e879f9" stopOpacity="0" />
+          </linearGradient>
+          <clipPath id={`${id}-c`}>
+            <circle cx="32" cy="32" r="23" />
+          </clipPath>
         </defs>
 
-        {/* Aperture arc — open at the top-right */}
-        <path
-          d="M46.5 12.8 A24 24 0 1 0 55 30"
-          stroke={stroke}
-          strokeWidth="2.6"
-          strokeLinecap="round"
-        />
+        {/* Eclipse body */}
+        <circle cx="32" cy="32" r="23" fill={disc} />
+        <circle cx="32" cy="32" r="23" stroke={light} strokeWidth="1.4" strokeOpacity="0.5" />
 
-        {/* Left stem */}
-        <path d="M23 20 V44" stroke={stroke} strokeWidth="3.6" strokeLinecap="round" />
-        {/* Right stem */}
-        <path d="M41 20 V44" stroke={stroke} strokeWidth="3.6" strokeLinecap="round" />
-        {/* Rising diagonal — the A apex tying both stems */}
-        <path d="M23 44 L41 20" stroke={stroke} strokeWidth="2.4" strokeLinecap="round" />
-        {/* Shared crossbar */}
-        <path d="M23 33 H41" stroke={stroke} strokeWidth="2.4" strokeLinecap="round" />
+        {/* Crescent of light — the eclipse rim */}
+        <g clipPath={`url(#${id}-c)`}>
+          <path
+            d="M32 9a23 23 0 0 1 0 46A23 23 0 0 0 32 9Z"
+            fill={light}
+            opacity="0.95"
+          />
+          {/* Gate bars: negative-space H on the shadow side */}
+          <path d="M20 22 V42" stroke={light} strokeWidth="3.2" strokeLinecap="round" />
+          <path d="M20 32 H32" stroke={light} strokeWidth="2.2" strokeLinecap="round" />
+          {/* A apex cutting through the lit side */}
+          <path d="M38 44 L44 20 L50 44" stroke="#06040f" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" opacity={tone === "light" ? 0.9 : 1} />
+        </g>
 
-        {/* Focal spark at the aperture opening */}
-        <circle cx="53.4" cy="16.2" r="3.1" fill={spark} />
+        {/* Anamorphic flare streak */}
+        <path d="M3 32 H61" stroke={`url(#${id}-f)`} strokeWidth="1.6" strokeLinecap="round" />
+        <circle cx="48.5" cy="17.5" r="2.6" fill={flare} />
       </svg>
     );
   },
