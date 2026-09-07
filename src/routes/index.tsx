@@ -2003,18 +2003,28 @@ function Footer() {
             </div>
 
             <div className="min-w-0" style={{ transform: "translateZ(32px)" }}>
-              <div className="mb-5 text-[13px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
-              <ul className="grid gap-y-2.5">
-                {nav.map(([l, h]) => (
+              <div className="mb-2 text-[13px] uppercase tracking-[0.28em] text-[var(--neon)]">Navigate</div>
+              <div aria-hidden className="mb-5 h-px w-10 bg-gradient-to-r from-[var(--neon)]/70 to-transparent" />
+              <ul className="grid gap-y-1">
+                {nav.map(([l, h], i) => (
                   <li key={l}>
-                    <a href={h} className="group relative inline-block text-sm text-white/85 transition-colors duration-300 hover:text-[var(--neon)]">
-                      {l}
-                      <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-current transition-all duration-300 group-hover:w-full" aria-hidden />
+                    <a
+                      href={h}
+                      className="group flex items-center gap-2 py-1 text-sm text-white/80 transition-colors duration-300 hover:text-[var(--neon)]"
+                    >
+                      <span className="font-display text-[10px] tabular-nums tracking-[0.2em] text-white/25 transition-colors duration-300 group-hover:text-[var(--neon)]/70">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="relative inline-block transition-transform duration-300 group-hover:translate-x-1">
+                        {l}
+                        <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-current transition-all duration-300 group-hover:w-full" aria-hidden />
+                      </span>
                     </a>
                   </li>
                 ))}
               </ul>
             </div>
+
 
             <div className="min-w-0" style={{ transform: "translateZ(32px)" }}>
               <div className="mb-5 text-[13px] uppercase tracking-[0.28em] text-[var(--cyan)]">Connect</div>
