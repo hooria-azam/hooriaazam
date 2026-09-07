@@ -1983,8 +1983,17 @@ function Footer() {
             animate={{ x: ["0%", "420%"] }}
             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
           />
+          {/* cinematic texture + ghost wordmark */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 grid-bg opacity-[0.35]" />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-6 left-0 right-0 select-none text-center font-display uppercase leading-none tracking-[-0.02em] text-white/[0.035] text-[clamp(3.5rem,16vw,13rem)]"
+          >
+            Hooria Azam
+          </div>
 
-          <div className="grid gap-10 sm:gap-12 lg:gap-16 md:grid-cols-2 lg:grid-cols-[1.3fr_0.85fr_1fr] items-start" style={{ transformStyle: "preserve-3d" }}>
+          <div className="relative grid gap-10 sm:gap-12 lg:gap-16 md:grid-cols-2 lg:grid-cols-[1.3fr_0.85fr_1fr] items-start" style={{ transformStyle: "preserve-3d" }}>
+
             <div className="min-w-0 md:col-span-2 lg:col-span-1" style={{ transform: "translateZ(48px)" }}>
               <div className="mb-5">
                 <Logo variant="full" tone="gradient" />
