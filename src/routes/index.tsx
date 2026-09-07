@@ -2027,8 +2027,10 @@ function Footer() {
 
 
             <div className="min-w-0" style={{ transform: "translateZ(32px)" }}>
-              <div className="mb-5 text-[13px] uppercase tracking-[0.28em] text-[var(--cyan)]">Connect</div>
+              <div className="mb-2 text-[13px] uppercase tracking-[0.28em] text-[var(--cyan)]">Connect</div>
+              <div aria-hidden className="mb-5 h-px w-10 bg-gradient-to-r from-[var(--cyan)]/70 to-transparent" />
               <ul className="grid gap-3">
+
                 <li>
                   <a
                     href="mailto:hooriaazam2004@gmail.com"
