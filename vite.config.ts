@@ -7,6 +7,12 @@ export default defineConfig({
   },
   tanstackStart: {
     server: { entry: "server" },
+    spa: {
+      enabled: true,
+      prerender: {
+        crawlLinks: true,
+      },
+    },
     prerender: {
       enabled: true,
       autoSubfolderIndex: true,
