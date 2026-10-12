@@ -10,14 +10,8 @@ export default defineConfig({
     spa: {
       enabled: true,
       prerender: {
-        crawlLinks: true,
+        outputPath: "/index.html",
       },
-    },
-    prerender: {
-      enabled: true,
-      autoSubfolderIndex: true,
-      crawlLinks: true,
-      failOnError: false,
     },
   },
 });
