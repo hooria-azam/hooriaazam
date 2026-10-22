@@ -1,0 +1,4 @@
+- [ ] Finish the About and What I Do refinements while preserving the existing portfolio content and motion design.
+- [ ] Apply the requested three-line footer copy and white hover treatment to Navigate counts.
+- [ ] Convert the provided portfolio source into an installable WordPress theme with Elementor-editable sections and documentation.
+- [ ] Package and inspect the WordPress theme ZIP, then verify PHP syntax, asset references, and package versions/build.
