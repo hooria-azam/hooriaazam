@@ -580,253 +580,130 @@ function AboutCounter({ to, suffix = "" }: { to: number; suffix?: string }) {
 }
 
 function About() {
-  const secRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [6, -6]), { stiffness: 120, damping: 20 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-8, 8]), { stiffness: 120, damping: 20 });
-  const lx = useTransform(mx, (v) => `${v * 100}%`);
-  const ly = useTransform(my, (v) => `${v * 100}%`);
-
-  // Scroll parallax for floating shapes
-  const { scrollYProgress } = useScroll({ target: secRef, offset: ["start end", "end start"] });
-  const blobY1 = useTransform(scrollYProgress, [0, 1], [-40, 80]);
-  const blobY2 = useTransform(scrollYProgress, [0, 1], [40, -70]);
-  const blobY3 = useTransform(scrollYProgress, [0, 1], [-20, 60]);
-
-
-
-
-
-
+  const sectionRef = useRef<HTMLElement>(null);
+  const artifactRef = useRef<HTMLDivElement>(null);
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const rotateX = useSpring(useTransform(pointerY, [-1, 1], [7, -7]), { stiffness: 90, damping: 22 });
+  const rotateY = useSpring(useTransform(pointerX, [-1, 1], [-9, 9]), { stiffness: 90, damping: 22 });
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const haloY = useTransform(scrollYProgress, [0, 1], [36, -36]);
 
   const workflow = [
     { n: "01", t: "Discover", d: "Understand goals, audience, and the story to tell." },
-    { n: "02", t: "Design",   d: "Craft a visual system rooted in clarity and feeling." },
-    { n: "03", t: "Build",    d: "Engineer clean, performant, animation-ready code." },
-    { n: "04", t: "Polish",   d: "Refine every detail until it feels effortless." },
+    { n: "02", t: "Design", d: "Craft a visual system rooted in clarity and feeling." },
+    { n: "03", t: "Build", d: "Engineer clean, performant, animation-ready code." },
+    { n: "04", t: "Polish", d: "Refine every detail until it feels effortless." },
+  ];
+  const metrics = [
+    { value: 5, suffix: "+", label: "Years in the craft", note: "Experience" },
+    { value: 150, suffix: "+", label: "Ideas made tangible", note: "Projects shipped" },
+    { value: 60, suffix: "+", label: "People who trusted me", note: "Happy clients" },
+    { value: 99, suffix: "%", label: "On-time delivery", note: "Reliability" },
   ];
 
   return (
-    <section id="about" ref={secRef} className="relative py-16 sm:py-28 md:py-40 overflow-hidden">
-      {/* Ambient stage */}
-      <div className="absolute inset-0 -z-10" aria-hidden style={{
-        background:
-          "radial-gradient(1000px 500px at 15% 10%, rgba(124,58,237,0.16), transparent 60%)," +
-          "radial-gradient(900px 500px at 85% 90%, rgba(232,121,249,0.12), transparent 60%)," +
-          "radial-gradient(700px 400px at 50% 50%, rgba(34,211,238,0.06), transparent 65%)",
-      }} />
-
-      {/* Organic floating shapes (parallax) */}
-      <motion.svg style={{ y: blobY1 }} className="absolute -left-24 top-10 h-[520px] w-[520px] opacity-[0.22] blur-2xl" viewBox="0 0 200 200" aria-hidden>
-        <defs>
-          <linearGradient id="ab-blob-a" x1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#7c3aed" />
-            <stop offset="100%" stopColor="#e879f9" />
-          </linearGradient>
-        </defs>
-        <path fill="url(#ab-blob-a)" d="M46,-63C58,-52,64,-35,68,-18C72,-1,74,17,68,32C61,47,45,58,27,64C10,70,-9,71,-27,66C-45,60,-62,49,-70,32C-78,15,-77,-8,-70,-27C-63,-46,-50,-62,-33,-71C-16,-79,4,-80,21,-77C38,-74,53,-68,46,-63Z" transform="translate(100 100)" />
-      </motion.svg>
-      <motion.svg style={{ y: blobY2 }} className="absolute -right-24 bottom-10 h-[560px] w-[560px] opacity-[0.18] blur-2xl" viewBox="0 0 200 200" aria-hidden>
-        <defs>
-          <linearGradient id="ab-blob-b" x1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#22d3ee" />
-            <stop offset="100%" stopColor="#7c3aed" />
-          </linearGradient>
-        </defs>
-        <path fill="url(#ab-blob-b)" d="M40,-58C52,-49,62,-38,67,-24C72,-10,72,7,67,22C62,37,52,50,39,58C25,66,8,70,-9,71C-27,72,-45,71,-56,60C-67,50,-70,32,-72,14C-74,-4,-75,-22,-67,-35C-59,-48,-42,-56,-26,-63C-10,-70,4,-76,17,-74C29,-72,28,-67,40,-58Z" transform="translate(100 100)" />
-      </motion.svg>
-      <motion.div style={{ y: blobY3 }} className="absolute left-1/2 top-1/2 -translate-x-1/2 h-[720px] w-[720px] rounded-[42%_58%_46%_54%/52%_44%_56%_48%] border border-[rgba(192,132,252,0.08)] spin-slow pointer-events-none" aria-hidden />
-
+    <section id="about" ref={sectionRef} className="relative overflow-hidden py-24 sm:py-32 md:py-40">
+      <motion.div aria-hidden style={{ y: haloY }} className="pointer-events-none absolute -right-44 top-24 h-[34rem] w-[34rem] rounded-full border border-[var(--neon)]/[0.08]" />
       <div className="container-x relative">
-        {/* Editorial header */}
-        <div className="mb-16 sm:mb-24 max-w-4xl">
-          <Reveal className="flex"><SectionTag>About — Hooria Azam</SectionTag></Reveal>
-          <Reveal delay={0.08}>
-            <h2 className="leading-[0.95] mt-6">
-              Design that <span className="italic font-display">thinks.</span><br />
-              <span className="text-gradient">Code that performs.</span>
-            </h2>
-          </Reveal>
+        <div className="mb-16 grid gap-10 border-b border-white/10 pb-12 md:mb-24 md:grid-cols-[minmax(0,1fr)_minmax(220px,0.42fr)] md:items-end md:gap-20 md:pb-16">
+          <div>
+            <Reveal className="flex"><SectionTag>About — Hooria Azam</SectionTag></Reveal>
+            <Reveal delay={0.08}>
+              <h2 className="mt-5 max-w-[13ch] text-[clamp(3.2rem,8vw,7.5rem)] leading-[0.92] normal-case">
+                I build the part <span className="italic">people</span> <span className="text-gradient">remember.</span>
+              </h2>
+            </Reveal>
+          </div>
           <Reveal delay={0.16}>
-            <div className="mt-6 flex items-center gap-4 text-sm uppercase tracking-[0.32em] text-[var(--muted-foreground)]">
-              <span className="h-px w-10 bg-[var(--neon)]/60" />
-              A frontend studio of one · Karachi → Worldwide
+            <div className="md:mb-2 md:border-l md:border-[var(--neon)]/35 md:pl-7">
+              <p className="text-[17px] leading-[1.8] text-[var(--muted-foreground)]">
+                Independent by design. Collaborative by nature. I bring design thinking and frontend craft together to make every interaction feel considered.
+              </p>
+              <div className="mt-5 flex items-center gap-3 text-[13px] uppercase tracking-[0.22em] text-white/55">
+                <span className="h-px w-7 bg-[var(--neon)]" /> Karachi · Working worldwide
+              </div>
             </div>
           </Reveal>
         </div>
 
-        {/* 3D Layered composition */}
-        <div className="relative">
+        <div className="grid gap-14 lg:grid-cols-[1fr_0.8fr] lg:gap-24">
+          <div className="flex flex-col justify-center">
+            <Reveal delay={0.08}>
+              <p className="max-w-[60ch] text-[clamp(1.25rem,2.4vw,2rem)] leading-[1.55] text-white/90">
+                Frontend developer and WordPress specialist crafting <span className="text-gradient">premium digital experiences.</span>
+              </p>
+              <p className="mt-7 max-w-[58ch] text-[16px] leading-[1.9] text-[var(--muted-foreground)] sm:text-[17px]">
+                I architect interfaces that strike the balance between beautiful and functional — thoughtful design, clean code, and meticulous detail that elevates every interaction.
+              </p>
+              <p className="mt-5 max-w-[58ch] text-[15px] leading-[1.85] text-[var(--muted-foreground)]/85 sm:text-base">
+                Over <strong className="font-semibold text-white">5+ years</strong>, I've partnered with founders, agencies, and brands to ship websites that feel premium, load fast, and convert.
+              </p>
+              <div className="mt-9 flex flex-wrap gap-3">
+                <a href="#projects" className="btn-primary !py-3 !px-6 text-sm">Explore my work <ArrowUpRight size={16} /></a>
+                <a href="#contact" className="btn-ghost !py-3 !px-6 text-sm">Start a project</a>
+              </div>
+            </Reveal>
+          </div>
 
-
-
-          <motion.div
-            ref={cardRef}
-            onMouseMove={(e) => {
-              const r = cardRef.current!.getBoundingClientRect();
-              mx.set((e.clientX - r.left) / r.width);
-              my.set((e.clientY - r.top) / r.height);
-            }}
-            onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-            style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600 }}
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
-            className="relative glass-strong rounded-[40px] p-7 sm:p-12 md:p-16 lg:p-20 overflow-hidden"
-          >
-            {/* Gradient hairline border */}
-            <div className="pointer-events-none absolute inset-0 rounded-[40px]" style={{
-              padding: 1,
-              background: "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.2) 40%, rgba(232,121,249,0.55))",
-              WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude",
-            } as React.CSSProperties} aria-hidden />
-
-            {/* Cursor spotlight */}
+          <Reveal delay={0.12}>
             <motion.div
-              aria-hidden
-              className="pointer-events-none absolute inset-0"
-              style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(600px circle at ${x} ${y}, rgba(232,121,249,0.18), transparent 60%)`) }}
-            />
+              ref={artifactRef}
+              onMouseMove={(event) => {
+                const bounds = artifactRef.current?.getBoundingClientRect();
+                if (!bounds) return;
+                pointerX.set(((event.clientX - bounds.left) / bounds.width) * 2 - 1);
+                pointerY.set(((event.clientY - bounds.top) / bounds.height) * 2 - 1);
+              }}
+              onMouseLeave={() => { pointerX.set(0); pointerY.set(0); }}
+              style={{ rotateX, rotateY, transformPerspective: 1400 }}
+              className="relative flex min-h-[19rem] flex-col justify-between overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(145deg,rgba(255,255,255,0.07),rgba(255,255,255,0.015))] p-7 shadow-[0_40px_90px_-55px_rgba(0,0,0,0.9)] sm:min-h-[22rem] sm:p-10"
+            >
+              <div aria-hidden className="pointer-events-none absolute -right-14 -top-20 h-72 w-72 rounded-full border border-[var(--neon)]/15" />
+              <div aria-hidden className="pointer-events-none absolute -right-3 -top-9 h-52 w-52 rounded-full border border-dashed border-[var(--cyan)]/20" />
+              <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px)", backgroundSize: "38px 38px", maskImage: "linear-gradient(135deg, black, transparent 76%)" }} />
+              <div className="relative flex items-center justify-between gap-3">
+                <span className="text-[12px] uppercase tracking-[0.24em] text-white/55">Independent creative practice</span>
+                <span className="h-2 w-2 rounded-full bg-[var(--cyan)] shadow-[0_0_14px_var(--cyan)]" />
+              </div>
+              <div className="relative py-7">
+                <div className="font-display text-[clamp(7rem,16vw,12rem)] leading-[0.82] text-white">5<span className="text-gradient">+</span></div>
+                <p className="mt-5 text-[13px] uppercase tracking-[0.25em] text-white/65">Years shaping digital experiences</p>
+              </div>
+              <div className="relative flex items-center justify-between border-t border-white/10 pt-4 text-[12px] uppercase tracking-[0.18em] text-white/45">
+                <span>Design, code, detail</span><span>01 / 04</span>
+              </div>
+            </motion.div>
+          </Reveal>
+        </div>
 
-            <div className="relative grid gap-14 lg:gap-24 lg:grid-cols-[1.15fr_1fr] items-start">
-              {/* LEFT — editorial copy */}
-              <div className="min-w-0">
-                <h3 className="font-display text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.12] text-white mb-8">
-                  Frontend developer <span className="text-white/50">&</span><br />
-                  WordPress specialist crafting<br />
-                  <span className="text-gradient">premium digital experiences.</span>
-                </h3>
-
-                <p className="text-[17px] sm:text-xl text-[var(--muted-foreground)] leading-[1.75] mb-7 max-w-[52ch]">
-                  I architect interfaces that strike the balance between beautiful and functional —
-                  thoughtful design, clean code, and meticulous detail that elevates every interaction.
-                </p>
-                <p className="text-[15px] sm:text-[17px] text-[var(--muted-foreground)]/85 leading-[1.75] mb-12 max-w-[52ch]">
-                  Over <strong className="text-white">5+ years</strong>, I've partnered with founders, agencies,
-                  and brands to ship websites that feel premium, load fast, and convert.
-                </p>
-
-                <div className="flex flex-wrap gap-3">
-                  <a href="#projects" className="btn-primary !py-3 !px-6 text-sm">Explore my work <ArrowUpRight size={16} /></a>
-                  <a href="#contact" className="btn-ghost !py-3 !px-6 text-sm">Start a project</a>
+        <div className="mt-20 border-y border-white/10 sm:mt-28">
+          <div className="grid grid-cols-2 lg:grid-cols-4">
+            {metrics.map((metric, index) => (
+              <div key={metric.note} className={`group relative px-4 py-7 sm:px-7 sm:py-9 ${index % 2 ? "border-l border-white/10" : ""} ${index > 1 ? "border-t border-white/10 lg:border-t-0" : ""} ${index === 2 ? "lg:border-l" : "lg:border-l"}`}>
+                <div className="flex items-baseline gap-1 font-display text-[clamp(2.8rem,5vw,4.4rem)] leading-none text-white transition-transform duration-500 group-hover:-translate-y-1">
+                  <AboutCounter to={metric.value} suffix={metric.suffix} />
                 </div>
+                <div className="mt-3 text-[11px] uppercase tracking-[0.18em] text-[var(--neon)] sm:text-[12px]">{metric.note}</div>
+                <div className="mt-1.5 text-[13px] leading-relaxed text-[var(--muted-foreground)] sm:text-sm">{metric.label}</div>
               </div>
+            ))}
+          </div>
+        </div>
 
-
-              {/* RIGHT — four uniquely-treated statistics */}
-              <div className="grid grid-cols-2 gap-5 sm:gap-6">
-                {/* 01 — Years: outlined numeral inside a slow-spinning ring */}
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7 }}
-                  className="group relative overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.02] p-5 sm:p-6"
-                >
-                  <div aria-hidden className="absolute -right-10 -top-10 h-32 w-32 rounded-full border border-dashed border-[var(--neon)]/30 spin-slow" />
-                  <Award size={20} className="mb-4 text-[var(--neon)]" />
-                  <div
-                    className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] leading-none tracking-tight text-transparent transition-all duration-500 group-hover:text-white"
-                    style={{ WebkitTextStroke: "1.5px rgba(192,132,252,0.9)" }}
-                  >
-                    <AboutCounter to={5} suffix="+" />
-                  </div>
-                  <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">Years Experience</div>
-                </motion.div>
-
-                {/* 02 — Projects: solid gradient plate with grid texture */}
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.08 }}
-                  className="group relative overflow-hidden rounded-[26px] p-5 sm:p-6 transition-transform duration-500 hover:-translate-y-1"
-                  style={{ background: "linear-gradient(150deg, rgba(124,58,237,0.55), rgba(232,121,249,0.30))", border: "1px solid rgba(255,255,255,0.14)" }}
-                >
-                  <div aria-hidden className="absolute inset-0 grid-bg opacity-50" />
-                  <div className="relative">
-                    <Rocket size={20} className="mb-4 text-white" />
-                    <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
-                      <AboutCounter to={150} suffix="+" />
-                    </div>
-                    <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-white/80">Projects Shipped</div>
-                  </div>
-                </motion.div>
-
-                {/* 03 — Clients: layered stacked cards */}
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.16 }}
-                  className="group relative rounded-[26px]"
-                >
-                  <span aria-hidden className="absolute inset-x-3 -top-2 h-10 rounded-[22px] border border-white/10 bg-white/[0.03] transition-all duration-500 group-hover:-top-3" />
-                  <div className="relative overflow-hidden rounded-[26px] glass-strong p-5 sm:p-6">
-                    <div aria-hidden className="absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-[var(--cyan)]/25 blur-2xl" />
-                    <div className="relative">
-                      <div className="mb-4 flex -space-x-2">
-                        {["#c084fc", "#e879f9", "#22d3ee"].map((c) => (
-                          <span key={c} className="h-5 w-5 rounded-full border border-white/25" style={{ background: c }} />
-                        ))}
-                      </div>
-                      <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
-                        <AboutCounter to={60} suffix="+" />
-                      </div>
-                      <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">Happy Clients</div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* 04 — Delivery: progress arc treatment */}
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.24 }}
-                  className="group relative overflow-hidden rounded-[26px] border border-[var(--cyan)]/25 bg-[radial-gradient(120%_90%_at_100%_0%,rgba(34,211,238,0.18),transparent_60%)] p-5 sm:p-6"
-                >
-                  <Zap size={20} className="mb-4 text-[var(--cyan)]" />
-                  <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
-                    <AboutCounter to={99} suffix="%" />
-                  </div>
-                  <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">On-Time Delivery</div>
-                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
-                    <motion.div
-                      initial={{ width: 0 }} whileInView={{ width: "99%" }} viewport={{ once: true }}
-                      transition={{ duration: 1.6, ease: [0.2, 0.8, 0.2, 1] }}
-                      className="h-full rounded-full bg-gradient-to-r from-[var(--cyan)] to-[var(--neon)] shadow-[0_0_16px_rgba(34,211,238,0.6)]"
-                    />
-                  </div>
-                </motion.div>
-              </div>
-
-            </div>
-
-            {/* Workflow rail */}
-            <div className="mt-16 sm:mt-24 pt-12 sm:pt-16 border-t border-white/[0.07]">
-              <div className="relative grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-4">
-                <div aria-hidden className="hidden lg:block absolute top-3 left-4 right-4 h-px bg-gradient-to-r from-[var(--neon)]/40 via-[var(--pink)]/30 to-transparent" />
-
-                {workflow.map((w, i) => (
-                  <motion.div
-                    key={w.n}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-60px" }}
-                    transition={{ delay: 0.1 + i * 0.08, duration: 0.6 }}
-                    className="relative"
-                  >
-                    <div className="relative flex items-center gap-3 mb-3">
-                      <span className="relative grid h-6 w-6 place-items-center rounded-full bg-[var(--background)] border border-[var(--neon)]/50">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_8px_var(--neon)]" />
-                      </span>
-                      <span className="font-display text-sm tracking-[0.3em] text-[var(--neon)]">{w.n}</span>
-                    </div>
-                    <h5 className="text-white text-base font-semibold mb-1.5">{w.t}</h5>
-                    <p className="text-[15px] text-[var(--muted-foreground)] leading-relaxed max-w-[28ch]">{w.d}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+        <div className="mt-20 sm:mt-28">
+          <Reveal className="mb-8 flex items-end justify-between gap-4">
+            <div><div className="text-[12px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">From first brief to final detail</div><h3 className="mt-3 font-display text-3xl text-white sm:text-4xl">A considered process.</h3></div>
+            <span className="hidden text-[12px] uppercase tracking-[0.22em] text-white/35 sm:block">Four deliberate steps</span>
+          </Reveal>
+          <div className="grid gap-x-8 gap-y-8 border-t border-white/10 pt-7 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-10">
+            {workflow.map((step, index) => (
+              <Reveal key={step.n} delay={index * 0.06}>
+                <div className="flex items-baseline gap-3"><span className="font-display text-[13px] tracking-[0.2em] text-[var(--neon)]">{step.n}</span><h4 className="text-[16px] font-semibold text-white">{step.t}</h4></div>
+                <p className="mt-3 max-w-[30ch] text-[14px] leading-[1.75] text-[var(--muted-foreground)]">{step.d}</p>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -865,39 +742,24 @@ function Services() {
           {SERVICES.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.06}>
               <TiltCard featured={s.featured} accent={s.accent}>
-                {/* corner index rule */}
-                <div className="mb-6 flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="h-px w-6 shrink-0"
-                        style={{ background: `rgba(${s.accent},0.7)` }}
-                        aria-hidden
-                      />
-                      <span className="truncate text-[10px] uppercase tracking-[0.32em] text-[var(--muted-foreground)]">
-                        {s.label}
-                      </span>
-                    </div>
-                    <div
-                      className="mt-4 grid h-12 w-12 place-items-center rounded-2xl text-xl transition-transform duration-500 group-hover:-translate-y-0.5"
-                      style={{
-                        background: `linear-gradient(140deg, rgba(${s.accent},0.22), rgba(255,255,255,0.02))`,
-                        border: `1px solid rgba(${s.accent},0.28)`,
-                        boxShadow: `inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 24px -18px rgba(${s.accent},0.9)`,
-                        color: `rgb(${s.accent})`,
-                      }}
-                    >
-                      {s.icon}
-                    </div>
+                <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-4">
+                  <div className="flex items-center gap-3">
+                    <span className="h-px w-8" style={{ background: `rgba(${s.accent},0.9)` }} aria-hidden />
+                    <span className="text-[11px] uppercase tracking-[0.28em] text-[var(--muted-foreground)]">{s.label} / Service</span>
                   </div>
-                  <span className="font-display text-[26px] leading-none text-white/12 tabular-nums">
+                  <span className="font-display text-2xl leading-none tabular-nums text-white/35 transition-colors duration-500 group-hover:text-white">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                 </div>
 
-                <h3 className={`mb-3 font-semibold tracking-[-0.01em] text-white ${s.featured ? "text-xl sm:text-[26px]" : "text-lg sm:text-xl"}`}>
-                  {s.title}
-                </h3>
+                <div className="relative mb-4 flex min-h-20 items-center">
+                  <span aria-hidden className="pointer-events-none absolute -left-1 top-1/2 -translate-y-1/2 font-display text-7xl leading-none text-white/[0.035] transition-transform duration-700 group-hover:translate-x-2" style={{ transform: `translateY(-50%) translateX(0)`, color: `rgba(${s.accent},0.09)` }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className={`relative max-w-[16ch] font-display leading-[1.05] text-white ${s.featured ? "text-3xl sm:text-4xl" : "text-2xl sm:text-[30px]"}`}>
+                    {s.title}
+                  </h3>
+                </div>
                 <p className="text-[14px] leading-relaxed text-[var(--muted-foreground)]">{s.desc}</p>
 
                 {/* baseline accent rule that extends on hover */}
@@ -1998,9 +1860,10 @@ function Footer() {
               <div className="mb-5">
                 <Logo variant="full" tone="gradient" />
               </div>
-              <p className="max-w-md text-sm text-[var(--muted-foreground)] leading-relaxed">
-                A frontend studio of one, crafting premium websites and interfaces for founders,
-                agencies, and brands worldwide. Karachi → Everywhere.
+              <p className="max-w-[30rem] text-sm leading-[1.8] text-[var(--muted-foreground)]">
+                <span className="block">A frontend studio of one,</span>
+                <span className="block">crafting premium websites and interfaces for</span>
+                <span className="block">founders, agencies, and brands worldwide. Karachi → Everywhere.</span>
               </p>
               <div className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[12px] uppercase tracking-[0.22em] text-white/70">
                 <span className="relative flex h-1.5 w-1.5">
@@ -2021,7 +1884,7 @@ function Footer() {
                       href={h}
                       className="group flex items-center gap-2 py-1 text-sm text-white/80 transition-colors duration-300 hover:text-[var(--neon)]"
                     >
-                      <span className="font-display text-[10px] tabular-nums tracking-[0.2em] text-white/25 transition-colors duration-300 group-hover:text-[var(--neon)]/70">
+                      <span className="font-display text-[10px] tabular-nums tracking-[0.2em] text-white/25 transition-all duration-300 group-hover:text-white group-hover:opacity-100">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <span className="relative inline-block transition-transform duration-300 group-hover:translate-x-1">
