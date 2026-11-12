@@ -580,253 +580,148 @@ function AboutCounter({ to, suffix = "" }: { to: number; suffix?: string }) {
 }
 
 function About() {
-  const secRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [6, -6]), { stiffness: 120, damping: 20 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-8, 8]), { stiffness: 120, damping: 20 });
-  const lx = useTransform(mx, (v) => `${v * 100}%`);
-  const ly = useTransform(my, (v) => `${v * 100}%`);
-
-  // Scroll parallax for floating shapes
+  const secRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: secRef, offset: ["start end", "end start"] });
-  const blobY1 = useTransform(scrollYProgress, [0, 1], [-40, 80]);
-  const blobY2 = useTransform(scrollYProgress, [0, 1], [40, -70]);
-  const blobY3 = useTransform(scrollYProgress, [0, 1], [-20, 60]);
-
-
-
-
-
-
+  const railY = useTransform(scrollYProgress, [0, 1], [28, -28]);
 
   const workflow = [
     { n: "01", t: "Discover", d: "Understand goals, audience, and the story to tell." },
-    { n: "02", t: "Design",   d: "Craft a visual system rooted in clarity and feeling." },
-    { n: "03", t: "Build",    d: "Engineer clean, performant, animation-ready code." },
-    { n: "04", t: "Polish",   d: "Refine every detail until it feels effortless." },
+    { n: "02", t: "Design", d: "Craft a visual system rooted in clarity and feeling." },
+    { n: "03", t: "Build", d: "Engineer clean, performant, animation-ready code." },
+    { n: "04", t: "Polish", d: "Refine every detail until it feels effortless." },
   ];
 
   return (
-    <section id="about" ref={secRef} className="relative py-16 sm:py-28 md:py-40 overflow-hidden">
-      {/* Ambient stage */}
-      <div className="absolute inset-0 -z-10" aria-hidden style={{
-        background:
-          "radial-gradient(1000px 500px at 15% 10%, rgba(124,58,237,0.16), transparent 60%)," +
-          "radial-gradient(900px 500px at 85% 90%, rgba(232,121,249,0.12), transparent 60%)," +
-          "radial-gradient(700px 400px at 50% 50%, rgba(34,211,238,0.06), transparent 65%)",
-      }} />
-
-      {/* Organic floating shapes (parallax) */}
-      <motion.svg style={{ y: blobY1 }} className="absolute -left-24 top-10 h-[520px] w-[520px] opacity-[0.22] blur-2xl" viewBox="0 0 200 200" aria-hidden>
-        <defs>
-          <linearGradient id="ab-blob-a" x1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#7c3aed" />
-            <stop offset="100%" stopColor="#e879f9" />
-          </linearGradient>
-        </defs>
-        <path fill="url(#ab-blob-a)" d="M46,-63C58,-52,64,-35,68,-18C72,-1,74,17,68,32C61,47,45,58,27,64C10,70,-9,71,-27,66C-45,60,-62,49,-70,32C-78,15,-77,-8,-70,-27C-63,-46,-50,-62,-33,-71C-16,-79,4,-80,21,-77C38,-74,53,-68,46,-63Z" transform="translate(100 100)" />
-      </motion.svg>
-      <motion.svg style={{ y: blobY2 }} className="absolute -right-24 bottom-10 h-[560px] w-[560px] opacity-[0.18] blur-2xl" viewBox="0 0 200 200" aria-hidden>
-        <defs>
-          <linearGradient id="ab-blob-b" x1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#22d3ee" />
-            <stop offset="100%" stopColor="#7c3aed" />
-          </linearGradient>
-        </defs>
-        <path fill="url(#ab-blob-b)" d="M40,-58C52,-49,62,-38,67,-24C72,-10,72,7,67,22C62,37,52,50,39,58C25,66,8,70,-9,71C-27,72,-45,71,-56,60C-67,50,-70,32,-72,14C-74,-4,-75,-22,-67,-35C-59,-48,-42,-56,-26,-63C-10,-70,4,-76,17,-74C29,-72,28,-67,40,-58Z" transform="translate(100 100)" />
-      </motion.svg>
-      <motion.div style={{ y: blobY3 }} className="absolute left-1/2 top-1/2 -translate-x-1/2 h-[720px] w-[720px] rounded-[42%_58%_46%_54%/52%_44%_56%_48%] border border-[rgba(192,132,252,0.08)] spin-slow pointer-events-none" aria-hidden />
-
+    <section id="about" ref={secRef} className="relative overflow-hidden py-20 sm:py-28 md:py-36">
+      <div className="pointer-events-none absolute inset-0 -z-10 grid-bg opacity-[0.18]" aria-hidden />
+      <motion.div
+        aria-hidden
+        style={{ y: railY }}
+        className="pointer-events-none absolute right-[9%] top-1/4 hidden h-56 w-px bg-gradient-to-b from-transparent via-[var(--neon)]/40 to-transparent lg:block"
+      />
       <div className="container-x relative">
-        {/* Editorial header */}
-        <div className="mb-16 sm:mb-24 max-w-4xl">
-          <Reveal className="flex"><SectionTag>About — Hooria Azam</SectionTag></Reveal>
-          <Reveal delay={0.08}>
-            <h2 className="leading-[0.95] mt-6">
-              Design that <span className="italic font-display">thinks.</span><br />
-              <span className="text-gradient">Code that performs.</span>
-            </h2>
-          </Reveal>
+        <div className="mb-14 grid gap-8 sm:mb-20 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:gap-12">
+          <div>
+            <Reveal><SectionTag>About — Hooria Azam</SectionTag></Reveal>
+            <Reveal delay={0.08}>
+              <h2 className="mt-6 leading-[0.98]">
+                Design that <span className="italic font-display">thinks.</span><br />
+                <span className="text-gradient">Code that performs.</span>
+              </h2>
+            </Reveal>
+          </div>
           <Reveal delay={0.16}>
-            <div className="mt-6 flex items-center gap-4 text-sm uppercase tracking-[0.32em] text-[var(--muted-foreground)]">
-              <span className="h-px w-10 bg-[var(--neon)]/60" />
-              A frontend studio of one · Karachi → Worldwide
+            <div className="max-w-lg lg:justify-self-end">
+              <p className="text-base leading-relaxed text-[var(--muted-foreground)] sm:text-lg">
+                Independent creative development, built around thoughtful design and precise execution.
+              </p>
+              <div className="mt-6 flex items-center gap-3 text-[11px] uppercase tracking-[0.24em] text-white/65 sm:text-xs">
+                <span className="h-px w-8 bg-[var(--neon)]/70" aria-hidden />
+                Karachi <span className="text-[var(--neon)]">—</span> Worldwide
+              </div>
             </div>
           </Reveal>
         </div>
 
-        {/* 3D Layered composition */}
-        <div className="relative">
+        <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-7">
+            <Reveal delay={0.08}>
+              <h3 className="max-w-2xl font-display text-3xl leading-[1.14] text-white sm:text-4xl">
+                Frontend developer <span className="text-white/45">&amp;</span> WordPress specialist crafting <span className="text-gradient">premium digital experiences.</span>
+              </h3>
+            </Reveal>
+            <Reveal delay={0.14}>
+              <p className="mt-7 max-w-[58ch] text-[16px] leading-[1.8] text-[var(--muted-foreground)] sm:mt-9 sm:text-lg">
+                I architect interfaces that strike the balance between beautiful and functional — thoughtful design, clean code, and meticulous detail that elevates every interaction.
+              </p>
+              <p className="mt-5 max-w-[58ch] text-[15px] leading-[1.8] text-[var(--muted-foreground)]/85 sm:mt-6 sm:text-base">
+                Over <strong className="text-white">5+ years</strong>, I've partnered with founders, agencies, and brands to ship websites that feel premium, load fast, and convert.
+              </p>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <div className="mt-9 flex flex-wrap gap-3 sm:mt-11">
+                <a href="#projects" className="btn-primary !py-3 !px-6 text-sm">Explore my work <ArrowUpRight size={16} /></a>
+                <a href="#contact" className="btn-ghost !py-3 !px-6 text-sm">Start a project</a>
+              </div>
+            </Reveal>
+          </div>
 
-
-
-          <motion.div
-            ref={cardRef}
-            onMouseMove={(e) => {
-              const r = cardRef.current!.getBoundingClientRect();
-              mx.set((e.clientX - r.left) / r.width);
-              my.set((e.clientY - r.top) / r.height);
-            }}
-            onMouseLeave={() => { mx.set(0.5); my.set(0.5); }}
-            style={{ rotateX: rx, rotateY: ry, transformPerspective: 1600 }}
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 1, ease: [0.2, 0.8, 0.2, 1] }}
-            className="relative glass-strong rounded-[40px] p-7 sm:p-12 md:p-16 lg:p-20 overflow-hidden"
-          >
-            {/* Gradient hairline border */}
-            <div className="pointer-events-none absolute inset-0 rounded-[40px]" style={{
-              padding: 1,
-              background: "linear-gradient(135deg, rgba(192,132,252,0.55), rgba(34,211,238,0.2) 40%, rgba(232,121,249,0.55))",
-              WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude",
-            } as React.CSSProperties} aria-hidden />
-
-            {/* Cursor spotlight */}
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute inset-0"
-              style={{ background: useTransform([lx, ly] as any, ([x, y]: any) => `radial-gradient(600px circle at ${x} ${y}, rgba(232,121,249,0.18), transparent 60%)`) }}
-            />
-
-            <div className="relative grid gap-14 lg:gap-24 lg:grid-cols-[1.15fr_1fr] items-start">
-              {/* LEFT — editorial copy */}
-              <div className="min-w-0">
-                <h3 className="font-display text-[clamp(1.75rem,3.4vw,2.75rem)] leading-[1.12] text-white mb-8">
-                  Frontend developer <span className="text-white/50">&</span><br />
-                  WordPress specialist crafting<br />
-                  <span className="text-gradient">premium digital experiences.</span>
-                </h3>
-
-                <p className="text-[17px] sm:text-xl text-[var(--muted-foreground)] leading-[1.75] mb-7 max-w-[52ch]">
-                  I architect interfaces that strike the balance between beautiful and functional —
-                  thoughtful design, clean code, and meticulous detail that elevates every interaction.
-                </p>
-                <p className="text-[15px] sm:text-[17px] text-[var(--muted-foreground)]/85 leading-[1.75] mb-12 max-w-[52ch]">
-                  Over <strong className="text-white">5+ years</strong>, I've partnered with founders, agencies,
-                  and brands to ship websites that feel premium, load fast, and convert.
-                </p>
-
-                <div className="flex flex-wrap gap-3">
-                  <a href="#projects" className="btn-primary !py-3 !px-6 text-sm">Explore my work <ArrowUpRight size={16} /></a>
-                  <a href="#contact" className="btn-ghost !py-3 !px-6 text-sm">Start a project</a>
+          <div className="lg:col-span-5">
+            <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-3 text-[10px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">
+              <span>Selected milestones</span><span className="text-white/35">01 — 04</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.65 }}
+                className="group relative min-h-[148px] overflow-hidden border border-white/10 bg-white/[0.025] p-4 transition-colors duration-500 hover:bg-white/[0.05] sm:min-h-[164px] sm:p-5"
+              >
+                <div aria-hidden className="absolute -right-8 -top-8 h-24 w-24 rounded-full border border-dashed border-[var(--neon)]/30 transition-transform duration-700 group-hover:rotate-45" />
+                <Award size={18} className="mb-5 text-[var(--neon)]" />
+                <div className="font-display text-4xl leading-none text-white sm:text-5xl"><AboutCounter to={5} suffix="+" /></div>
+                <div className="mt-3 text-[10px] uppercase tracking-[0.18em] text-[var(--muted-foreground)] sm:text-[11px]">Years experience</div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.65, delay: 0.07 }}
+                className="group relative min-h-[148px] overflow-hidden border border-white/10 p-4 transition-transform duration-500 hover:-translate-y-1 sm:min-h-[164px] sm:p-5"
+                style={{ background: "linear-gradient(145deg, rgba(124,58,237,0.34), rgba(232,121,249,0.12) 62%, rgba(255,255,255,0.025))" }}
+              >
+                <div aria-hidden className="absolute inset-0 grid-bg opacity-40" />
+                <div className="relative flex h-full flex-col justify-end">
+                  <Rocket size={18} className="mb-auto text-white/90" />
+                  <div className="font-display text-4xl leading-none text-white sm:text-5xl"><AboutCounter to={150} suffix="+" /></div>
+                  <div className="mt-3 text-[10px] uppercase tracking-[0.18em] text-white/75 sm:text-[11px]">Projects shipped</div>
                 </div>
-              </div>
-
-
-              {/* RIGHT — four uniquely-treated statistics */}
-              <div className="grid grid-cols-2 gap-5 sm:gap-6">
-                {/* 01 — Years: outlined numeral inside a slow-spinning ring */}
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7 }}
-                  className="group relative overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.02] p-5 sm:p-6"
-                >
-                  <div aria-hidden className="absolute -right-10 -top-10 h-32 w-32 rounded-full border border-dashed border-[var(--neon)]/30 spin-slow" />
-                  <Award size={20} className="mb-4 text-[var(--neon)]" />
-                  <div
-                    className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] leading-none tracking-tight text-transparent transition-all duration-500 group-hover:text-white"
-                    style={{ WebkitTextStroke: "1.5px rgba(192,132,252,0.9)" }}
-                  >
-                    <AboutCounter to={5} suffix="+" />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.65, delay: 0.14 }}
+                className="group relative min-h-[148px] overflow-hidden border border-white/10 bg-white/[0.025] p-4 transition-colors duration-500 hover:bg-white/[0.05] sm:min-h-[164px] sm:p-5"
+              >
+                <span aria-hidden className="absolute inset-x-3 -top-2 h-8 border border-white/10 bg-white/[0.025] transition-all duration-500 group-hover:-top-3" />
+                <div className="relative flex h-full flex-col justify-end">
+                  <div className="mb-auto flex -space-x-2">
+                    {["#c084fc", "#e879f9", "#22d3ee"].map((color) => <span key={color} className="h-4 w-4 rounded-full border border-white/25" style={{ background: color }} />)}
                   </div>
-                  <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">Years Experience</div>
-                </motion.div>
-
-                {/* 02 — Projects: solid gradient plate with grid texture */}
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.08 }}
-                  className="group relative overflow-hidden rounded-[26px] p-5 sm:p-6 transition-transform duration-500 hover:-translate-y-1"
-                  style={{ background: "linear-gradient(150deg, rgba(124,58,237,0.55), rgba(232,121,249,0.30))", border: "1px solid rgba(255,255,255,0.14)" }}
-                >
-                  <div aria-hidden className="absolute inset-0 grid-bg opacity-50" />
-                  <div className="relative">
-                    <Rocket size={20} className="mb-4 text-white" />
-                    <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
-                      <AboutCounter to={150} suffix="+" />
-                    </div>
-                    <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-white/80">Projects Shipped</div>
-                  </div>
-                </motion.div>
-
-                {/* 03 — Clients: layered stacked cards */}
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.16 }}
-                  className="group relative rounded-[26px]"
-                >
-                  <span aria-hidden className="absolute inset-x-3 -top-2 h-10 rounded-[22px] border border-white/10 bg-white/[0.03] transition-all duration-500 group-hover:-top-3" />
-                  <div className="relative overflow-hidden rounded-[26px] glass-strong p-5 sm:p-6">
-                    <div aria-hidden className="absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-[var(--cyan)]/25 blur-2xl" />
-                    <div className="relative">
-                      <div className="mb-4 flex -space-x-2">
-                        {["#c084fc", "#e879f9", "#22d3ee"].map((c) => (
-                          <span key={c} className="h-5 w-5 rounded-full border border-white/25" style={{ background: c }} />
-                        ))}
-                      </div>
-                      <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
-                        <AboutCounter to={60} suffix="+" />
-                      </div>
-                      <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">Happy Clients</div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* 04 — Delivery: progress arc treatment */}
-                <motion.div
-                  initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.24 }}
-                  className="group relative overflow-hidden rounded-[26px] border border-[var(--cyan)]/25 bg-[radial-gradient(120%_90%_at_100%_0%,rgba(34,211,238,0.18),transparent_60%)] p-5 sm:p-6"
-                >
-                  <Zap size={20} className="mb-4 text-[var(--cyan)]" />
-                  <div className="font-display text-[clamp(2.5rem,4.4vw,3.5rem)] font-semibold leading-none tracking-tight text-white">
-                    <AboutCounter to={99} suffix="%" />
-                  </div>
-                  <div className="mt-3 text-[12px] uppercase tracking-[0.24em] text-[var(--muted-foreground)]">On-Time Delivery</div>
-                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
-                    <motion.div
-                      initial={{ width: 0 }} whileInView={{ width: "99%" }} viewport={{ once: true }}
-                      transition={{ duration: 1.6, ease: [0.2, 0.8, 0.2, 1] }}
-                      className="h-full rounded-full bg-gradient-to-r from-[var(--cyan)] to-[var(--neon)] shadow-[0_0_16px_rgba(34,211,238,0.6)]"
-                    />
-                  </div>
-                </motion.div>
-              </div>
-
+                  <div className="font-display text-4xl leading-none text-white sm:text-5xl"><AboutCounter to={60} suffix="+" /></div>
+                  <div className="mt-3 text-[10px] uppercase tracking-[0.18em] text-[var(--muted-foreground)] sm:text-[11px]">Happy clients</div>
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.65, delay: 0.21 }}
+                className="group relative min-h-[148px] overflow-hidden border border-[var(--cyan)]/25 bg-[radial-gradient(120%_90%_at_100%_0%,rgba(34,211,238,0.13),transparent_65%)] p-4 sm:min-h-[164px] sm:p-5"
+              >
+                <Zap size={18} className="mb-5 text-[var(--cyan)]" />
+                <div className="font-display text-4xl leading-none text-white sm:text-5xl"><AboutCounter to={99} suffix="%" /></div>
+                <div className="mt-3 text-[10px] uppercase tracking-[0.18em] text-[var(--muted-foreground)] sm:text-[11px]">On-time delivery</div>
+                <div className="mt-4 h-px overflow-hidden bg-white/15">
+                  <motion.div initial={{ width: 0 }} whileInView={{ width: "99%" }} viewport={{ once: true }} transition={{ duration: 1.4 }} className="h-full bg-gradient-to-r from-[var(--cyan)] to-[var(--neon)]" />
+                </div>
+              </motion.div>
             </div>
+          </div>
+        </div>
 
-            {/* Workflow rail */}
-            <div className="mt-16 sm:mt-24 pt-12 sm:pt-16 border-t border-white/[0.07]">
-              <div className="relative grid gap-8 sm:gap-10 lg:gap-12 sm:grid-cols-2 lg:grid-cols-4">
-                <div aria-hidden className="hidden lg:block absolute top-3 left-4 right-4 h-px bg-gradient-to-r from-[var(--neon)]/40 via-[var(--pink)]/30 to-transparent" />
-
-                {workflow.map((w, i) => (
-                  <motion.div
-                    key={w.n}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-60px" }}
-                    transition={{ delay: 0.1 + i * 0.08, duration: 0.6 }}
-                    className="relative"
-                  >
-                    <div className="relative flex items-center gap-3 mb-3">
-                      <span className="relative grid h-6 w-6 place-items-center rounded-full bg-[var(--background)] border border-[var(--neon)]/50">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--neon)] shadow-[0_0_8px_var(--neon)]" />
-                      </span>
-                      <span className="font-display text-sm tracking-[0.3em] text-[var(--neon)]">{w.n}</span>
-                    </div>
-                    <h5 className="text-white text-base font-semibold mb-1.5">{w.t}</h5>
-                    <p className="text-[15px] text-[var(--muted-foreground)] leading-relaxed max-w-[28ch]">{w.d}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+        <div className="mt-16 border-t border-white/10 pt-9 sm:mt-24 sm:pt-12">
+          <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+            {workflow.map((step, i) => (
+              <motion.div
+                key={step.n}
+                initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }} transition={{ delay: 0.06 + i * 0.07, duration: 0.55 }}
+                className="relative border-l border-white/10 pl-4 sm:pl-5"
+              >
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="font-display text-xs tracking-[0.2em] text-[var(--neon)]">{step.n}</span>
+                  <span className="h-px w-8 bg-[var(--neon)]/35" aria-hidden />
+                </div>
+                <h5 className="mb-1.5 text-base font-semibold text-white">{step.t}</h5>
+                <p className="max-w-[28ch] text-[14px] leading-relaxed text-[var(--muted-foreground)]">{step.d}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -835,12 +730,12 @@ function About() {
 
 /* ───────── Services ───────── */
 const SERVICES = [
-  { icon: "◇", label: "Build", accent: "192,132,252", title: "Frontend Development", desc: "Clean, semantic, performant code in HTML5, CSS3 and JavaScript. Interfaces that move fast, scale elegantly and feel genuinely alive.", featured: true },
-  { icon: "✦", label: "Design", accent: "232,121,249", title: "UI/UX Design", desc: "Interfaces designed to solve real problems beautifully. Wireframes turned into visual systems users actually enjoy." },
-  { icon: "◆", label: "CMS", accent: "34,211,238", title: "WordPress Development", desc: "Custom builds with Elementor Pro, ACF and tailored CSS. Flexible, manageable, built right." },
-  { icon: "▤", label: "Commerce", accent: "168,85,247", title: "WooCommerce Stores", desc: "E-commerce that converts. Clean product layouts, optimized checkout, performance-first architecture." },
-  { icon: "▭", label: "Adaptive", accent: "34,211,238", title: "Responsive Design", desc: "Pixel-perfect on every device. Mobile-first, fluid, carefully tested across screens and browsers." },
-  { icon: "✧", label: "Rework", accent: "232,121,249", title: "Website Redesign", desc: "Modernize outdated sites while keeping what works. A fresh identity with improved UX and performance." },
+  { label: "Build", accent: "192,132,252", title: "Frontend Development", desc: "Clean, semantic, performant code in HTML5, CSS3 and JavaScript. Interfaces that move fast, scale elegantly and feel genuinely alive.", featured: true },
+  { label: "Design", accent: "232,121,249", title: "UI/UX Design", desc: "Interfaces designed to solve real problems beautifully. Wireframes turned into visual systems users actually enjoy." },
+  { label: "CMS", accent: "34,211,238", title: "WordPress Development", desc: "Custom builds with Elementor Pro, ACF and tailored CSS. Flexible, manageable, built right." },
+  { label: "Commerce", accent: "168,85,247", title: "WooCommerce Stores", desc: "E-commerce that converts. Clean product layouts, optimized checkout, performance-first architecture." },
+  { label: "Adaptive", accent: "34,211,238", title: "Responsive Design", desc: "Pixel-perfect on every device. Mobile-first, fluid, carefully tested across screens and browsers." },
+  { label: "Rework", accent: "232,121,249", title: "Website Redesign", desc: "Modernize outdated sites while keeping what works. A fresh identity with improved UX and performance." },
 ];
 
 function Services() {
@@ -865,40 +760,27 @@ function Services() {
           {SERVICES.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.06}>
               <TiltCard featured={s.featured} accent={s.accent}>
-                {/* corner index rule */}
-                <div className="mb-6 flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="h-px w-6 shrink-0"
-                        style={{ background: `rgba(${s.accent},0.7)` }}
-                        aria-hidden
-                      />
-                      <span className="truncate text-[10px] uppercase tracking-[0.32em] text-[var(--muted-foreground)]">
-                        {s.label}
-                      </span>
-                    </div>
-                    <div
-                      className="mt-4 grid h-12 w-12 place-items-center rounded-2xl text-xl transition-transform duration-500 group-hover:-translate-y-0.5"
-                      style={{
-                        background: `linear-gradient(140deg, rgba(${s.accent},0.22), rgba(255,255,255,0.02))`,
-                        border: `1px solid rgba(${s.accent},0.28)`,
-                        boxShadow: `inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 24px -18px rgba(${s.accent},0.9)`,
-                        color: `rgb(${s.accent})`,
-                      }}
-                    >
-                      {s.icon}
-                    </div>
+                <div className="mb-8 flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="h-px w-8 shrink-0" style={{ background: `rgba(${s.accent},0.85)` }} aria-hidden />
+                    <span className="truncate text-[10px] uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
+                      {s.label}
+                    </span>
                   </div>
-                  <span className="font-display text-[26px] leading-none text-white/12 tabular-nums">
+                  <span
+                    className="font-display text-4xl leading-none tabular-nums text-white/20 transition-colors duration-500 group-hover:text-white/70"
+                    aria-hidden
+                  >
                     {String(i + 1).padStart(2, "0")}
                   </span>
                 </div>
 
-                <h3 className={`mb-3 font-semibold tracking-[-0.01em] text-white ${s.featured ? "text-xl sm:text-[26px]" : "text-lg sm:text-xl"}`}>
-                  {s.title}
-                </h3>
-                <p className="text-[14px] leading-relaxed text-[var(--muted-foreground)]">{s.desc}</p>
+                <div className="relative flex flex-1 flex-col">
+                  <h3 className={`mb-4 max-w-[18ch] font-semibold leading-tight tracking-normal text-white ${s.featured ? "text-2xl sm:text-[28px]" : "text-xl sm:text-2xl"}`}>
+                    {s.title}
+                  </h3>
+                  <p className="max-w-[42ch] text-[14px] leading-[1.8] text-[var(--muted-foreground)]">{s.desc}</p>
+                </div>
 
                 {/* baseline accent rule that extends on hover */}
                 <div className="mt-7 h-px w-10 transition-all duration-500 group-hover:w-full"
@@ -1999,8 +1881,9 @@ function Footer() {
                 <Logo variant="full" tone="gradient" />
               </div>
               <p className="max-w-md text-sm text-[var(--muted-foreground)] leading-relaxed">
-                A frontend studio of one, crafting premium websites and interfaces for founders,
-                agencies, and brands worldwide. Karachi → Everywhere.
+                <span className="block">A frontend studio of one, crafting premium websites</span>
+                <span className="block">and interfaces for founders, agencies, and brands</span>
+                <span className="block">worldwide. Karachi → Everywhere.</span>
               </p>
               <div className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[12px] uppercase tracking-[0.22em] text-white/70">
                 <span className="relative flex h-1.5 w-1.5">
@@ -2021,7 +1904,7 @@ function Footer() {
                       href={h}
                       className="group flex items-center gap-2 py-1 text-sm text-white/80 transition-colors duration-300 hover:text-[var(--neon)]"
                     >
-                      <span className="font-display text-[10px] tabular-nums tracking-[0.2em] text-white/25 transition-colors duration-300 group-hover:text-[var(--neon)]/70">
+                      <span className="font-display text-[10px] tabular-nums tracking-[0.2em] text-white/25 transition-colors duration-300 group-hover:text-white group-hover:opacity-100">
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <span className="relative inline-block transition-transform duration-300 group-hover:translate-x-1">
@@ -2042,7 +1925,7 @@ function Footer() {
 
                 <li>
                   <a
-                    href="mailto:hooriaazam2004@gmail.com"
+                    href="mailto:hooria.webdesigns@gmail.com"
                     className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--neon)]/40"
                   >
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[0.06] text-[var(--neon)]">
@@ -2050,7 +1933,7 @@ function Footer() {
                     </span>
                     <span className="min-w-0">
                       <span className="block text-[10px] uppercase tracking-[0.22em] text-white/45">Email</span>
-                      <span className="block truncate text-[13px] text-white/90 group-hover:text-[var(--neon)]">hooriaazam2004@gmail.com</span>
+                      <span className="block truncate text-[13px] text-white/90 group-hover:text-[var(--neon)]">hooria.webdesigns@gmail.com</span>
                     </span>
                   </a>
                 </li>
